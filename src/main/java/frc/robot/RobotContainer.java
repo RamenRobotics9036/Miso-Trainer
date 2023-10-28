@@ -5,15 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Auto;
 import frc.robot.commands.RetractArmCommand;
 import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
-import frc.robot.commands.TurnActiveIntake;
-import frc.robot.subsystems.ActiveIntakeSystem;
 import frc.robot.subsystems.ArmSystem;
 import frc.robot.subsystems.ArmSystemSim;
 import frc.robot.subsystems.GrabberSystem;
@@ -21,9 +18,6 @@ import frc.robot.subsystems.GrabberSystemSim;
 import frc.robot.subsystems.TankDriveSystem;
 import frc.robot.subsystems.TankDriveSystemSim;
 import java.util.function.BooleanSupplier;
-
-import com.revrobotics.CANSparkMax; // $TODO1 - Move into subsystem
-import com.revrobotics.CANSparkMaxLowLevel.MotorType; // $TODO1 - Move into subsystem
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,10 +32,6 @@ public class RobotContainer {
   public final TankDriveSystem m_driveSystem;
   public final ArmSystem m_armSystem;
   public final GrabberSystem m_grabSystem;
-  public final ActiveIntakeSystem m_intakeSystem;
-
-  private final CANSparkMax m_activeIntakeMotor1; // $TODO1 - Move into subsystem
-  private final CANSparkMax m_activeIntakeMotor2; // $TODO1 - Move into subsystem
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -63,26 +53,8 @@ public class RobotContainer {
     m_armSystem = ArmSystemSim.createArmSystemInstance(m_controller2);
     m_grabSystem = GrabberSystemSim.createGrabberSystemInstance(m_controller2);
 
-    // $TODO1 - Move into subsystem
-    // Create intake motors
-    m_activeIntakeMotor1 = new CANSparkMax(Constants.OperatorConstants.kActiveIntakeMotorChannel1,
-        MotorType.kBrushless);
-    m_activeIntakeMotor1.setInverted(true);
-    // m_activeIntakeMotor1.burnFlash();
-
-    if (Constants.OperatorConstants.kActiveIntakeMotorChannel2 != null) {
-      m_activeIntakeMotor2 = new CANSparkMax(Constants.OperatorConstants.kActiveIntakeMotorChannel2,
-          MotorType.kBrushless);
-      // m_activeIntakeMotor2.burnFlash();
-    }
-    else {
-      m_activeIntakeMotor2 = null;
-    }
-
-    m_intakeSystem = new ActiveIntakeSystem(m_activeIntakeMotor1, m_activeIntakeMotor2,
-        m_controller2);
-
     setDefaultCommands();
+
     setupGrabberNotificationsToArm();
   }
 
@@ -90,8 +62,15 @@ public class RobotContainer {
    * Binds a button on the joystick to a command to run.
    */
   public void configureBindings() {
+    new Trigger(m_controller2::getAButtonReleased).onTrue(
+        new SetWinchToAngle(m_armSystem, Constants.OperatorConstants.kWinchMiddleNodeCone, 1));
+
     new Trigger(m_controller2::getXButtonReleased).onTrue(
         new SetWinchToAngle(m_armSystem, Constants.OperatorConstants.kWinchMiddleNodeCube, 1));
+
+    new Trigger(m_controller2::getBButtonReleased)
+        .onTrue(new RetractArmCommand(m_armSystem).andThen(
+            new SetWinchToAngle(m_armSystem, Constants.OperatorConstants.kWinchGroundAngle, 1)));
 
     new Trigger(m_controller2::getYButtonReleased)
         .onTrue(new RetractArmCommand(m_armSystem).andThen(new SetSoftLimitCommand(m_armSystem)));

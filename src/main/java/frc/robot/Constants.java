@@ -23,8 +23,8 @@ public final class Constants {
 
     public static final int kLeftMotorForwardChannel = 13;
     public static final int kLeftMotorBackChannel = 12;
-    public static final int kRightMotorBackChannel = 42;
-    public static final int kRightMotorForwardChannel = 43;
+    public static final int kRightMotorBackChannel = 10;
+    public static final int kRightMotorForwardChannel = 11;
 
     public static final int kArmWinchChannel = 19;
     public static final int kArmExtenderChannel = 20;
@@ -34,8 +34,8 @@ public final class Constants {
 
     public static boolean kSquareInputsDrive = true;
 
-    public static double kMaxOutputDrive = 0.2;
-    public static double kMaxOutputWinch = 0.15;
+    public static double kMaxOutputDrive = 0.7;
+    public static double kMaxOutputWinch = 0.8;
 
     public static double kDeadband = 0.14;
     public static boolean kUseArcadeDrive = false;
@@ -49,8 +49,6 @@ public final class Constants {
 
     public static double kSlewLimit = 3;
     public static double kTurboSlew = 4;
-
-    public static double maxExtenderOutput = 0.6;
 
     public static double kWheelDiameterInchWinch = 0.75;
     public static double kWheelCircumferenceInchesWinch = 0.75 * Math.PI;
@@ -72,23 +70,20 @@ public final class Constants {
     public static int kAbsoluteEncoderWinchChannel = 5;
 
     // public static double kWinchEncoderUpperLimit = 0.61;
-    public static double kWinchEncoderUpperLimit = 0.78 - 0.16;
-    public static double kWinchEncoderLowerLimit = 0.56 - 0.16;
+    public static double kWinchEncoderUpperLimit = 0.78;
+    public static double kWinchEncoderLowerLimit = 0.56;
 
-    public static double kWinchMiddleNodeCone = 0.77 - 0.16;
-    public static double kWinchMiddleNodeCube = 0.75 - 0.16;
-    public static double kWinchRetractAngle = 0.56 - 0.16;
-    public static double kWinchGroundAngle = 0.57 - 0.16;
-    public static double kEmergencyAngle = 0.72 - 0.16;
+    public static double kWinchMiddleNodeCone = 0.77;
+    public static double kWinchMiddleNodeCube = 0.75;
+    public static double kWinchRetractAngle = 0.56;
+    public static double kWinchGroundAngle = 0.57;
+    public static double kEmergencyAngle = 0.72;
 
-    public static float kExtenderSoftLimitTurns = (float) -54; // Max is 155
+    public static float kExtenderSoftLimitTurns = (float) -125; // Max is 155
     public static int kHallEffectExtenderChannel = 4;
 
     public static int kLEDLightsChannel = 9;
     public static int kLEDLightsLength = 40;
-
-    public static Integer kActiveIntakeMotorChannel1 = 51;
-    public static Integer kActiveIntakeMotorChannel2 = 52;
   }
 
   /**

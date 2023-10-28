@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,9 +57,6 @@ public class Robot extends TimedRobot {
 
     m_verifyJoysticks.verifyJoysticksPeriodically();
     m_ledLights.updateLeds();
-
-    SmartDashboard.putBoolean("See Hall Effect", m_robotContainer.m_armSystem.getDigitalSensor());
-    SmartDashboard.putNumber("Extender encoder value.", m_robotContainer.m_armSystem.getExtenderEncoder());
   }
 
   /**

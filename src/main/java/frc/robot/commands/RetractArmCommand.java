@@ -20,18 +20,21 @@ public class RetractArmCommand extends CommandBase {
 
   @Override
   public void execute() {
-    m_armSystem.setExtenderSpeed(0.1);
+    m_armSystem.setExtenderSpeed(0.7);
   }
 
   @Override
   public boolean isFinished() {
-    return !(m_armSystem.getDigitalSensor());
+    if (!m_armSystem.getDigitalSensor()) {
+      return true;
+    }
+
+    return false;
   }
 
   @Override
   public void end(boolean interrupted) {
     m_armSystem.setExtenderSpeed(0);
     m_armSystem.resetExtenderEncoder();
-    System.out.println("Finished retracting");
   }
 }

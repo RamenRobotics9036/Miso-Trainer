@@ -1,11 +1,11 @@
-# Miso-Trainer Simulation
+# Miso Robot Simulation
 [Ramen Robotics 9036 Homepage](https://ramenrobotics9036.com/what-we-do/)
 
 **Ramen Robotics** is the [FIRST](https://www.firstinspires.org/robotics/frc) Robotics team from Big Picture school in Bellevue, WA.  2022 was our Rookie year, and the programming team quickly ran into a problem while working on our robot, named *Miso*:
 
 “We only have one physical Robot, and there’s limited time per week that the programming team gets to test their code on the Robot.  So how do we help *everyone* on the programming team learn and get a chance to test and debug their code when our allocated time flies by too quickly?”
 
-After our 1st season ended, we created the **Miso Trainer** - a full simulation of our 2022 Miso Robot!
+After our 1st season ended, we created the **Miso Robot Simulation** - a full simulation of our 2022 Miso Robot!
 ![](images/Demo%20Screenshot.PNG)
 
 
@@ -16,7 +16,7 @@ The simulation features:
 * **…This is a great opportunity for all FIRST programmers to try to fix the Miso robot software, so that the robot arm can’t be broken**! 
 
 
-## How to install Miso-Trainer
+## How to install Miso Robot Simulation
 1. We assume you have the [WPILib libraries and FIRST Robotics version of VS Code](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/index.html) already installed
 2. Clone the [Miso-Trainer Github repository](https://github.com/RamenRobotics9036/Miso-Trainer) to your laptop/computer
 3. Install the custom Robot arm Shuffleboard widget:

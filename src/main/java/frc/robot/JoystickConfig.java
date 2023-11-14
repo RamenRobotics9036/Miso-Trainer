@@ -1,26 +1,32 @@
 package frc.robot;
 
+/**
+ * This class is used to store the configuration for a joystick. This is used
+ * to ensure that the joystick is configured correctly.
+ */
 public class JoystickConfig {
-  public int port;
-  public int expectedAxisCount;
-  public int expectedButtonCount;
-  public int expectedPOVCount;
-  public String expectedJoystickName;
-  public int expectedJoystickType;
+  public int m_port;
+  public int m_expectedAxisCount;
+  public int m_expectedButtonCount;
+  public int m_expectedPovCount;
+  public String m_expectedJoystickName;
+  public int m_expectedJoystickType;
 
-  // Constructor
+  /**
+   * Constructor.
+   */
   public JoystickConfig(int port,
       int expectedAxisCount,
       int expectedButtonCount,
-      int expectedPOVCount,
+      int expectedPovCount,
       String expectedJoystickName,
       int expectedJoystickType) {
 
-    this.port = port;
-    this.expectedAxisCount = expectedAxisCount;
-    this.expectedButtonCount = expectedButtonCount;
-    this.expectedPOVCount = expectedPOVCount;
-    this.expectedJoystickName = expectedJoystickName;
-    this.expectedJoystickType = expectedJoystickType;
+    this.m_port = port;
+    this.m_expectedAxisCount = expectedAxisCount;
+    this.m_expectedButtonCount = expectedButtonCount;
+    this.m_expectedPovCount = expectedPovCount;
+    this.m_expectedJoystickName = expectedJoystickName;
+    this.m_expectedJoystickType = expectedJoystickType;
   }
 }

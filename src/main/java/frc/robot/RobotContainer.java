@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Auto;
@@ -80,9 +81,13 @@ public class RobotContainer {
    * When autonomous mode is started, this is the one command we run. It sequences
    * together lots of smaller commands.
    */
-  public Command getAutonomousCommand() {
+  public Command getAutonomousCommand(SendableChooser<String> chooser) {
+    if (chooser == null) {
+      throw new IllegalArgumentException("Chooser cannot be null");
+    }
+
     System.out.println("Auto command scheduled container");
-    return Auto.getAutoCommand(m_driveSystem, m_armSystem, m_grabSystem);
+    return Auto.getAutoCommand(chooser, m_driveSystem, m_armSystem, m_grabSystem);
   }
 
   /**

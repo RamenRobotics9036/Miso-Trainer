@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.time.Instant;
 import java.util.function.Supplier;
@@ -27,17 +28,24 @@ public class VerifyJoysticks {
       m_lastSuccess = true;
     }
 
+    private void printJoystickWarning(String msg) {
+      // Only print if physical Robot is running, not in Simulation
+      if (!RobotBase.isSimulation()) {
+        System.out.println(msg);
+      }
+    }
+
     public boolean runTest(int port) {
       String errorMsg = m_testLambda.get();
       boolean newSuccess = errorMsg == null;
 
       // NOTE: We only print errors or successes when there's a change
       if (!newSuccess && m_lastSuccess) {
-        System.out
-            .println(String.format("Joystick test [%s] FAILED: %s", m_joystickTestName, errorMsg));
+        printJoystickWarning(
+            String.format("Joystick test [%s] FAILED: %s", m_joystickTestName, errorMsg));
       }
       else if (newSuccess && !m_lastSuccess) {
-        System.out.println(
+        printJoystickWarning(
             String.format("Joystick test [%s] passed on port=%d", m_joystickTestName, port));
       }
 
@@ -113,12 +121,12 @@ public class VerifyJoysticks {
     JoystickTest[][] allTests = new JoystickTest[joystickConfigs.length][];
 
     for (int i = 0; i < joystickConfigs.length; i++) {
-      allTests[i] = createInitializedJoystickTest(joystickConfigs[i].port,
-          joystickConfigs[i].expectedAxisCount,
-          joystickConfigs[i].expectedButtonCount,
-          joystickConfigs[i].expectedPOVCount,
-          joystickConfigs[i].expectedJoystickName,
-          joystickConfigs[i].expectedJoystickType);
+      allTests[i] = createInitializedJoystickTest(joystickConfigs[i].m_port,
+          joystickConfigs[i].m_expectedAxisCount,
+          joystickConfigs[i].m_expectedButtonCount,
+          joystickConfigs[i].m_expectedPovCount,
+          joystickConfigs[i].m_expectedJoystickName,
+          joystickConfigs[i].m_expectedJoystickType);
     }
 
     return allTests;
@@ -228,12 +236,12 @@ public class VerifyJoysticks {
         || (currentTime.getEpochSecond() - m_recordedTime.getEpochSecond()) >= m_periodSeconds) {
 
       for (int i = 0; i < m_joystickConfigs.length; i++) {
-        if (!verifySingleJoystick(m_joystickConfigs[i].port,
-            m_joystickConfigs[i].expectedAxisCount,
-            m_joystickConfigs[i].expectedButtonCount,
-            m_joystickConfigs[i].expectedPOVCount,
-            m_joystickConfigs[i].expectedJoystickName,
-            m_joystickConfigs[i].expectedJoystickType,
+        if (!verifySingleJoystick(m_joystickConfigs[i].m_port,
+            m_joystickConfigs[i].m_expectedAxisCount,
+            m_joystickConfigs[i].m_expectedButtonCount,
+            m_joystickConfigs[i].m_expectedPovCount,
+            m_joystickConfigs[i].m_expectedJoystickName,
+            m_joystickConfigs[i].m_expectedJoystickType,
             m_tests[i])) {
 
           allSuccess = false;

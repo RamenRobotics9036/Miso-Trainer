@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -32,18 +31,6 @@ public class Auto {
         + "One should utilize this class via static methods.");
   }
 
-  private static String getSelectedAutoMode() {
-    Sendable retrievedChooserVal = SmartDashboard.getData(Auto.kAutoModeKey);
-
-    if (retrievedChooserVal == null) {
-      System.out.println("UNEXPECTED: Got back null for smartdash chooser");
-      return "";
-    }
-
-    SendableChooser<String> retrievedChooser = (SendableChooser<String>) retrievedChooserVal;
-    return retrievedChooser.getSelected();
-  }
-
   /**
    * Creates a SendableChooser for the auto mode and adds it to the smartdashboard.
    */
@@ -69,10 +56,25 @@ public class Auto {
   /**
    * Returns the command to run for autonomous.
    */
-  public static CommandBase getAutoCommand(TankDriveSystem driveSystem,
+  public static CommandBase getAutoCommand(SendableChooser<String> chooser,
+      TankDriveSystem driveSystem,
       ArmSystem armSystem,
       GrabberSystem grabSystem) {
-    String autoMode = getSelectedAutoMode();
+
+    if (chooser == null) {
+      throw new IllegalArgumentException("Chooser cannot be null");
+    }
+    if (driveSystem == null) {
+      throw new IllegalArgumentException("Drive system cannot be null");
+    }
+    if (armSystem == null) {
+      throw new IllegalArgumentException("Arm system cannot be null");
+    }
+    if (grabSystem == null) {
+      throw new IllegalArgumentException("Grab system cannot be null");
+    }
+
+    String autoMode = chooser.getSelected();
     System.out.println("Auto mode selected: " + autoMode);
 
     // Switch statement to use specific autoroutines based on sendable dropdown

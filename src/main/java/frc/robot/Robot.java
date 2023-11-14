@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private VerifyJoysticks m_verifyJoysticks;
-  private SendableChooser<String> m_chooser;
+  private SendableChooser<String> m_chooser = null;
   private LedLights m_ledLights;
 
   /**
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     m_ledLights.resetLeds();
 
     CommandScheduler.getInstance().cancelAll();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_chooser);
     m_autonomousCommand.schedule();
   }
 

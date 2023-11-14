@@ -59,6 +59,18 @@ public class Robot extends TimedRobot {
     m_ledLights.updateLeds();
   }
 
+  @Override
+  public void disabledInit() {
+    m_ledLights.resetLeds();
+
+    CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.m_driveSystem.calibrate();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+  }
+
   /**
    * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
    */
@@ -69,6 +81,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_chooser);
     m_autonomousCommand.schedule();
+  }
+
+  @Override
+  public void autonomousPeriodic() {
   }
 
   @Override
@@ -112,6 +128,10 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
+  @Override
+  public void testPeriodic() {
+  }
+
   /**
    * This function is called once when the robot is first started up.
    */
@@ -121,10 +141,6 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {
-    m_ledLights.resetLeds();
-
-    CommandScheduler.getInstance().cancelAll();
-    m_robotContainer.m_driveSystem.calibrate();
+  public void simulationPeriodic() {
   }
 }

@@ -30,13 +30,13 @@ public class TankDriveSystemSim extends TankDriveSystem {
     if (RobotBase.isSimulation()) {
       result = new TankDriveSystemSim(controller);
 
-      System.out.println("TANKDRIVESYSTEM: **** Simulation ****");
+      //System.out.println("TANKDRIVESYSTEM: **** Simulation ****");
 
     }
     else {
       result = new TankDriveSystem(controller);
 
-      System.out.println("TANKDRIVESYSTEM: Physical Robot version");
+      //System.out.println("TANKDRIVESYSTEM: Physical Robot version");
     }
 
     return result;

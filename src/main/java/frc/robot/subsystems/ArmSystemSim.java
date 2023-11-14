@@ -50,13 +50,13 @@ public class ArmSystemSim extends ArmSystem {
     if (RobotBase.isSimulation()) {
       result = new ArmSystemSimWithWidgets(controller);
 
-      System.out.println("ARMSYSTEM: **** Simulation ****");
+      //System.out.println("ARMSYSTEM: **** Simulation ****");
 
     }
     else {
       result = new ArmSystem(controller);
 
-      System.out.println("ARMSYSTEM: Physical Robot version");
+      //System.out.println("ARMSYSTEM: Physical Robot version");
     }
 
     return result;

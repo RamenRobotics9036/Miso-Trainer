@@ -36,13 +36,13 @@ public class GrabberSystemSim extends GrabberSystem {
     if (RobotBase.isSimulation()) {
       result = new GrabberSystemSim(controller);
 
-      System.out.println("GRABBERSYSTEM: **** Simulation ****");
+      //System.out.println("GRABBERSYSTEM: **** Simulation ****");
 
     }
     else {
       result = new GrabberSystem(controller);
 
-      System.out.println("GRABBERSYSTEM: Physical Robot version");
+      //System.out.println("GRABBERSYSTEM: Physical Robot version");
     }
 
     return result;

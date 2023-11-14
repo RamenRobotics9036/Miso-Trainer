@@ -86,7 +86,7 @@ public class RobotContainer {
       throw new IllegalArgumentException("Chooser cannot be null");
     }
 
-    System.out.println("Auto command scheduled container");
+    //System.out.println("Auto command scheduled container");
     return Auto.getAutoCommand(chooser, m_driveSystem, m_armSystem, m_grabSystem);
   }
 

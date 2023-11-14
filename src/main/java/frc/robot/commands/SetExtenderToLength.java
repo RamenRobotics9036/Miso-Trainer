@@ -27,11 +27,11 @@ public class SetExtenderToLength extends CommandBase {
   public void initialize() {
     if (m_armSystem.getExtenderEncoder() > m_rotations) {
       m_inverse = -1;
-      System.out.println("inversed");
+      //System.out.println("inversed");
     }
     else {
       m_inverse = 1;
-      System.out.println("not inversed");
+      //System.out.println("not inversed");
     }
   }
 

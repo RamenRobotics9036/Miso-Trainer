@@ -30,20 +30,20 @@ public class SetWinchToAngle extends CommandBase {
     double currentRotations = m_armSystem.getWinchAbsoluteEncoder();
     if (currentRotations > m_angle) {
       m_inverse = -1;
-      System.out.println("inversed");
+      //System.out.println("inversed");
     }
     else {
       m_inverse = 1;
-      System.out.println("not inversed");
+      //System.out.println("not inversed");
     }
-    System.out.println("Command initialized with enoder at " + currentRotations);
-    System.out.println("Command initialized with speed at " + m_speed);
+    //System.out.println("Command initialized with enoder at " + currentRotations);
+    //System.out.println("Command initialized with speed at " + m_speed);
   }
 
   @Override
   public void execute() {
     m_armSystem.setWinchSpeed(m_inverse * m_speed);
-    System.out.println("Command executed " + m_armSystem.getWinchAbsoluteEncoder());
+    //System.out.println("Command executed " + m_armSystem.getWinchAbsoluteEncoder());
   }
 
   @Override
@@ -53,14 +53,14 @@ public class SetWinchToAngle extends CommandBase {
       return true;
 
     }
-    System.out.println("ENCODER" + m_armSystem.getWinchAbsoluteEncoder());
-    System.out.println("ANGLE" + m_angle);
+    //System.out.println("ENCODER" + m_armSystem.getWinchAbsoluteEncoder());
+    //System.out.println("ANGLE" + m_angle);
     if (m_inverse == 1 && m_armSystem.getWinchAbsoluteEncoder() >= m_angle) {
-      System.out.println("Is finished with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
+      //System.out.println("Is finished with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
       return true;
     }
     else if (m_inverse == -1 && m_armSystem.getWinchAbsoluteEncoder() <= m_angle) {
-      System.out.println("Is finished with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
+      //System.out.println("Is finished with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
       return true;
     }
     return false;
@@ -68,7 +68,7 @@ public class SetWinchToAngle extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("Ended with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
+    //System.out.println("Ended with encoder at " + m_armSystem.getWinchAbsoluteEncoder());
     m_armSystem.setWinchSpeed(0);
   }
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
+import frc.robot.UnitConversions;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.subsystems.DutyCycleEncoderSim2;

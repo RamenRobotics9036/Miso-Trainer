@@ -2,6 +2,7 @@ package frc.robot.simulation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import frc.robot.UnitConversions;
 import frc.robot.simulation.CalcArmAngleHelper.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

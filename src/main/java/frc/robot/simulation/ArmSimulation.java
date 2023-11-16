@@ -1,6 +1,7 @@
 package frc.robot.simulation;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
+import frc.robot.UnitConversions;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 

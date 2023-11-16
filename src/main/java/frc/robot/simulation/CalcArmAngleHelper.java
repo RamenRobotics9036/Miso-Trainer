@@ -1,6 +1,7 @@
 package frc.robot.simulation;
 
 import frc.robot.Constants;
+import frc.robot.UnitConversions;
 
 /**
  * The CalcArmAngleHelper class is responsible for calculating the signed degrees

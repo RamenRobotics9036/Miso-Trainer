@@ -25,9 +25,6 @@ public class WinchSimManager extends SimManagerBase<Double, WinchState> {
 
   @Override
   protected WinchState doSimulation(Double winchMotorEncoderRotations) {
-    // No need to call super, since it's abstract class and doesn't
-    // implement doSimulation()
-
     m_model.updateNewLenSpooled(winchMotorEncoderRotations);
 
     WinchState result = new WinchState(m_model.getTotalStringLenMeters());

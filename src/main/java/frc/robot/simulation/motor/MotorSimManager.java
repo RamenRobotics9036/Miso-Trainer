@@ -17,11 +17,6 @@ public class MotorSimManager extends SimManagerBase<Double, Double> {
 
   @Override
   protected Double doSimulation(Double motorPowerPercentage) {
-    // No need to call super, since it's abstract class and doesn't
-    // implement doSimulation()
-
-    double newEncoderPosition = m_model.updateMotorPosition(motorPowerPercentage);
-
-    return newEncoderPosition;
+    return m_model.updateMotorPosition(motorPowerPercentage);
   }
 }

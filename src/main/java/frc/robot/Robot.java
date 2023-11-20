@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Auto;
 import frc.robot.commands.RetractArmCommand;
+import frc.robot.helpers.DriverStationFunctions;
+import frc.robot.helpers.VerifyJoysticks;
 
 /**
  * Main Robot class.

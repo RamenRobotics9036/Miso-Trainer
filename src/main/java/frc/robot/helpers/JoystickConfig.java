@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.helpers;
 
 /**
  * This class is used to store the configuration for a joystick. This is used

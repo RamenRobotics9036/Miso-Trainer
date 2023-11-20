@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.helpers;
 
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 

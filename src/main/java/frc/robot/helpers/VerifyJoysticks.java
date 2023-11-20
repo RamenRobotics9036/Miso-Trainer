@@ -1,7 +1,8 @@
-package frc.robot;
+package frc.robot.helpers;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.time.Instant;
 import java.util.function.Supplier;
 

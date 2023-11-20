@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.helpers.RelEncoderWrapper;
 
 /**
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown
@@ -165,7 +166,7 @@ public class DriveSimulation {
     // System.out.println("ARCADE: xSpeed = " + xSpeed);
 
     // $TODO - If the robot is stopped too quickly, or direction is changed instantly,
-    // this robot simulation doesnt handle it well.  Consider adding slew within this
+    // this robot simulation doesnt handle it well. Consider adding slew within this
     // simulation to avoid that.
     xspeed = MathUtil.clamp(xspeed, -1.0, 1.0);
     rot = MathUtil.clamp(rot, -1.0, 1.0);

@@ -19,6 +19,8 @@ public class WinchSimManager extends SimManagerBase<Double, WinchState> {
       WindingOrientation initialWindingOrientation,
       boolean invertMotor) {
 
+    super();
+
     m_model = new WinchSimModel(spoolDiameterMeters, totalStringLenMeters, initialLenSpooled,
         initialWindingOrientation, invertMotor);
   }

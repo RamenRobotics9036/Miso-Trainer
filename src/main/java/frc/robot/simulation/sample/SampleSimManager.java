@@ -1,6 +1,7 @@
 package frc.robot.simulation.sample;
 
 import frc.robot.simulation.framework.SimManagerBase;
+import java.util.function.Supplier;
 
 /**
  * Simulation manager for a simple motor, AND an encoder that reads that motor position.
@@ -9,9 +10,11 @@ public class SampleSimManager extends SimManagerBase<Integer, Integer> {
   private final SampleSimModel m_model;
 
   /**
-   * Constructor.
+   * Constructor requires the user to specify a custom function to
+   * determine if the robot is enabled.
    */
-  public SampleSimManager(int ratio) {
+  public SampleSimManager(int ratio, Supplier<Boolean> isRobotEnabled) {
+    super(isRobotEnabled);
     m_model = new SampleSimModel(ratio);
   }
 

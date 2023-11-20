@@ -1,6 +1,7 @@
 package frc.robot.simulation.framework;
 
 import edu.wpi.first.wpilibj.RobotState;
+import java.util.function.Supplier;
 
 /**
  * Partially implements SimManagerInterface.
@@ -11,11 +12,26 @@ public abstract class SimManagerBase<InputT, OutputT>
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
+  private Supplier<Boolean> m_isRobotEnabled = () -> RobotState.isEnabled();
 
   /**
    * Constructor.
    */
   public SimManagerBase() {
+  }
+
+  /**
+   * Optional Constructor that allows the user to specify a custom function to
+   * determine if the robot is enabled.
+   */
+  public SimManagerBase(Supplier<Boolean> isRobotEnabled) {
+    // Call default constuctor first
+    this();
+
+    if (isRobotEnabled == null) {
+      throw new IllegalArgumentException("isRobotEnabled cannot be null");
+    }
+    m_isRobotEnabled = isRobotEnabled;
   }
 
   @Override
@@ -31,7 +47,7 @@ public abstract class SimManagerBase<InputT, OutputT>
   }
 
   private boolean isRobotEnabled() {
-    return RobotState.isEnabled();
+    return m_isRobotEnabled.get();
   }
 
   // Once the input and output handler are both setup, we want to do one run of the

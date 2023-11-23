@@ -140,6 +140,9 @@ public class UnitConversions {
     return result;
   }
 
+  /**
+   * Ensures that the given angle is in the range [0, 360).
+   */
   public static double clampUnsignedDegrees(double unsignedDegrees) {
     unsignedDegrees = unsignedDegrees % 360;
 
@@ -160,6 +163,27 @@ public class UnitConversions {
     }
 
     return result;
+  }
+
+  /**
+   * Check if signed degrees is between [-180, 180].
+   */
+  public static boolean isSignedDegreesValid(double signedDegrees) {
+    return signedDegrees >= -180 && signedDegrees <= 180;
+  }
+
+  /**
+   * Check if unisgned degrees is between [0, 360).
+   */
+  public static boolean isUnsignedDegreesValid(double unsignedDegrees) {
+    return unsignedDegrees >= 0 && unsignedDegrees < 360;
+  }
+
+  /**
+   * Check if rotation is between [0, 1).
+   */
+  public static boolean isRotationValid(double rotation) {
+    return rotation >= 0 && rotation < 1;
   }
 
   /**

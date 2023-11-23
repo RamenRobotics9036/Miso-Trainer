@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
+import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ArmSimulation;
 import frc.robot.simulation.ArmSimulationParams;
 import frc.robot.simulation.ExtenderSimulation;
@@ -50,13 +51,13 @@ public class ArmSystemSim extends ArmSystem {
     if (RobotBase.isSimulation()) {
       result = new ArmSystemSimWithWidgets(controller);
 
-      //System.out.println("ARMSYSTEM: **** Simulation ****");
+      // System.out.println("ARMSYSTEM: **** Simulation ****");
 
     }
     else {
       result = new ArmSystem(controller);
 
-      //System.out.println("ARMSYSTEM: Physical Robot version");
+      // System.out.println("ARMSYSTEM: Physical Robot version");
     }
 
     return result;
@@ -91,14 +92,18 @@ public class ArmSystemSim extends ArmSystem {
     };
 
     ArmSimulationParams armParams = new ArmSimulationParams(
-        Constants.OperatorConstants.kWinchEncoderUpperLimit,
-        Constants.OperatorConstants.kWinchEncoderLowerLimit,
-        Constants.SimConstants.kdeltaRotationsBeforeBroken,
-        Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit,
+        UnitConversions
+            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit),
+        UnitConversions
+            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderLowerLimit),
+        UnitConversions
+            .rotationToUnsignedDegrees(Constants.SimConstants.kdeltaRotationsBeforeBroken),
+        UnitConversions
+            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit),
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
         Constants.SimConstants.karmLengthFromEdgeToPivot,
-        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
-        Constants.SimConstants.karmEncoderRotationsOffset);
+        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min, UnitConversions
+            .rotationToUnsignedDegrees(Constants.SimConstants.karmEncoderRotationsOffset));
 
     m_armSimulation = new ArmSimulation(stringUnspooledLenSupplier, m_winchAbsoluteEncoderSim,
         armParams);

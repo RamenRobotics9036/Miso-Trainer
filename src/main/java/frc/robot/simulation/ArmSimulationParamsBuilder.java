@@ -21,23 +21,24 @@ public class ArmSimulationParamsBuilder {
     instance = new ArmSimulationParams(defaults);
   }
 
-  public ArmSimulationParamsBuilder setTopRotationsLimit(double value) {
-    instance.m_topRotationsLimit = value;
+  public ArmSimulationParamsBuilder setTopSignedDegreesLimit(double value) {
+    instance.m_topSignedDegreesLimit = value;
     return this;
   }
 
-  public ArmSimulationParamsBuilder setBottomRotationsLimit(double value) {
-    instance.m_bottomRotationsLimit = value;
+  public ArmSimulationParamsBuilder setBottomSignedDegreesLimit(double value) {
+    instance.m_bottomSignedDegreesLimit = value;
     return this;
   }
 
-  public ArmSimulationParamsBuilder setDeltaRotationsBeforeBroken(double value) {
-    instance.m_deltaRotationsBeforeBroken = value;
+  public ArmSimulationParamsBuilder setDeltaDegreesBeforeBroken(double value) {
+    instance.m_deltaDegreesBeforeBroken = value;
     return this;
   }
 
-  public ArmSimulationParamsBuilder setGrabberBreaksIfOpenBelowThisLimit(double value) {
-    instance.m_grabberBreaksIfOpenBelowThisLimit = value;
+  public ArmSimulationParamsBuilder setGrabberBreaksIfOpenBelowThisSignedDegreesLimit(
+      double value) {
+    instance.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit = value;
     return this;
   }
 
@@ -56,8 +57,8 @@ public class ArmSimulationParamsBuilder {
     return this;
   }
 
-  public ArmSimulationParamsBuilder setEncoderRotationsOffset(double value) {
-    instance.m_encoderRotationsOffset = value;
+  public ArmSimulationParamsBuilder setEncoderDegreesOffset(double value) {
+    instance.m_encoderDegreesOffset = value;
     return this;
   }
 

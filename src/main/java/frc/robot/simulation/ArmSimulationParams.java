@@ -11,7 +11,7 @@ public class ArmSimulationParams {
   public double m_heightFromWinchToPivotPoint;
   public double m_armLengthFromEdgeToPivot;
   public double m_armLengthFromEdgeToPivotMin;
-  public double m_encoderDegreesOffset;
+  public double m_encoderRotationsOffset;
 
   /**
    * Constructor with 0 params.
@@ -29,7 +29,7 @@ public class ArmSimulationParams {
       double heightFromWinchToPivotPoint,
       double armLengthFromEdgeToPivot,
       double armLengthFromEdgeToPivotMin,
-      double encoderDegreesOffset) {
+      double encoderRotationsOffset) {
 
     m_topSignedDegreesLimit = topSignedDegreesLimit;
     m_bottomSignedDegreesLimit = bottomSignedDegreesLimit;
@@ -38,7 +38,7 @@ public class ArmSimulationParams {
     m_heightFromWinchToPivotPoint = heightFromWinchToPivotPoint;
     m_armLengthFromEdgeToPivot = armLengthFromEdgeToPivot;
     m_armLengthFromEdgeToPivotMin = armLengthFromEdgeToPivotMin;
-    m_encoderDegreesOffset = encoderDegreesOffset;
+    m_encoderRotationsOffset = encoderRotationsOffset;
   }
 
   /**
@@ -52,6 +52,6 @@ public class ArmSimulationParams {
     m_heightFromWinchToPivotPoint = other.m_heightFromWinchToPivotPoint;
     m_armLengthFromEdgeToPivot = other.m_armLengthFromEdgeToPivot;
     m_armLengthFromEdgeToPivotMin = other.m_armLengthFromEdgeToPivotMin;
-    m_encoderDegreesOffset = other.m_encoderDegreesOffset;
+    m_encoderRotationsOffset = other.m_encoderRotationsOffset;
   }
 }

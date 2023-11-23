@@ -93,17 +93,17 @@ public class ArmSystemSim extends ArmSystem {
 
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions
-            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit),
+            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit - Constants.SimConstants.karmEncoderRotationsOffset),
         UnitConversions
-            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderLowerLimit),
+            .rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderLowerLimit - Constants.SimConstants.karmEncoderRotationsOffset),
         UnitConversions
             .rotationToUnsignedDegrees(Constants.SimConstants.kdeltaRotationsBeforeBroken),
         UnitConversions
-            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit),
+            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit - Constants.SimConstants.karmEncoderRotationsOffset),
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
         Constants.SimConstants.karmLengthFromEdgeToPivot,
-        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min, UnitConversions
-            .rotationToUnsignedDegrees(Constants.SimConstants.karmEncoderRotationsOffset));
+        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
+        Constants.SimConstants.karmEncoderRotationsOffset);
 
     m_armSimulation = new ArmSimulation(stringUnspooledLenSupplier, m_winchAbsoluteEncoderSim,
         armParams);
@@ -176,3 +176,4 @@ public class ArmSystemSim extends ArmSystem {
     }
   }
 }
+

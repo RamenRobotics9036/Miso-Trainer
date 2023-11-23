@@ -373,7 +373,7 @@ public class ArmSimulationTest {
   public void createWithOffsetShouldSucceed() {
     double lengthStringExtended = m_defaultArmParams.m_heightFromWinchToPivotPoint - 0.35355;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
-    double offsetDegrees = UnitConversions.rotationToSignedDegrees(0.25);
+    double offsetRotations = 0.25;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
 
@@ -385,12 +385,11 @@ public class ArmSimulationTest {
     ArmSimulationParamsBuilder tempArmParamsBuilder = new ArmSimulationParamsBuilder(
         m_defaultArmParams);
 
-    tempArmParamsBuilder
-        .setTopSignedDegreesLimit(m_defaultArmParams.m_topSignedDegreesLimit + offsetDegrees)
-        .setBottomSignedDegreesLimit(m_defaultArmParams.m_bottomSignedDegreesLimit + offsetDegrees)
+    tempArmParamsBuilder.setTopSignedDegreesLimit(m_defaultArmParams.m_topSignedDegreesLimit)
+        .setBottomSignedDegreesLimit(m_defaultArmParams.m_bottomSignedDegreesLimit)
         .setGrabberBreaksIfOpenBelowThisSignedDegreesLimit(
-            m_defaultArmParams.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit + offsetDegrees)
-        .setEncoderDegreesOffset(offsetDegrees);
+            m_defaultArmParams.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit)
+        .setEncoderRotationsOffset(offsetRotations);
 
     ArmSimulation tempArmSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         m_winchAbsoluteEncoderSim, tempArmParamsBuilder.build());

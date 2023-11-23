@@ -57,8 +57,8 @@ public class ArmSimulationParamsBuilder {
     return this;
   }
 
-  public ArmSimulationParamsBuilder setEncoderDegreesOffset(double value) {
-    instance.m_encoderDegreesOffset = value;
+  public ArmSimulationParamsBuilder setEncoderRotationsOffset(double value) {
+    instance.m_encoderRotationsOffset = value;
     return this;
   }
 

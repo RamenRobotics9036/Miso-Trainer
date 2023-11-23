@@ -40,7 +40,7 @@ public class ArmSimulation {
     }
 
     if (!UnitConversions.isRotationValid(armParams.m_encoderRotationsOffset)) {
-      throw new IllegalArgumentException("encoderDegreesOffset must be between 0 and 1");
+      throw new IllegalArgumentException("encoderRotationsOffset must be between 0 and 1");
     }
 
     m_topSignedDegreesLimit = armParams.m_topSignedDegreesLimit

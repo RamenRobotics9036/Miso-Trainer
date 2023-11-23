@@ -403,44 +403,4 @@ public class ArmSimulationTest {
         expectedDegrees,
         UnitConversions.kAngleTolerance);
   }
-
-  @Test
-  public void offset0ArmRotationBy180DegreesShouldWork() {
-    double position = 0;
-    double offset = 0.5; // 180
-    double expectedResult = 0.5;
-
-    double actualResult = ArmSimulation.offsetArmRotationPosition(position, offset);
-    assertEquals(expectedResult, actualResult);
-  }
-
-  @Test
-  public void offset90ArmRotationBy180DegreesShouldWork() {
-    double position = 0.25;
-    double offset = 0.5; // 180
-    double expectedResult = 0.75;
-
-    double actualResult = ArmSimulation.offsetArmRotationPosition(position, offset);
-    assertEquals(expectedResult, actualResult);
-  }
-
-  @Test
-  public void offset216ArmRotationBy180DegreesShouldWork() {
-    double position = 0.6;
-    double offset = 0.5; // 180
-    double expectedResult = 0.1;
-
-    double actualResult = ArmSimulation.offsetArmRotationPosition(position, offset);
-    assertEquals(expectedResult, actualResult, UnitConversions.kAngleTolerance);
-  }
-
-  @Test
-  public void offset180ArmRotationByNegative90DegreesShouldWork() {
-    double position = 0.5;
-    double offset = -0.25; // 90
-    double expectedResult = 0.25;
-
-    double actualResult = ArmSimulation.offsetArmRotationPosition(position, offset);
-    assertEquals(expectedResult, actualResult);
-  }
 }

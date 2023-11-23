@@ -95,12 +95,7 @@ public class UnitConversions {
    * @param signedDegrees The angle in signed degrees to be converted.
    */
   public static double toUnsignedDegreesFromSignedDegrees(double signedDegrees) {
-    double unsignedDegrees = signedDegrees % 360;
-
-    if (unsignedDegrees < 0) {
-      unsignedDegrees += 360;
-    }
-    return unsignedDegrees;
+    return clampUnsignedDegrees(signedDegrees);
   }
 
   /**
@@ -143,6 +138,15 @@ public class UnitConversions {
     }
 
     return result;
+  }
+
+  public static double clampUnsignedDegrees(double unsignedDegrees) {
+    unsignedDegrees = unsignedDegrees % 360;
+
+    if (unsignedDegrees < 0) {
+      unsignedDegrees += 360;
+    }
+    return unsignedDegrees;
   }
 
   /**

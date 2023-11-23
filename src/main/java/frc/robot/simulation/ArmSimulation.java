@@ -45,15 +45,15 @@ public class ArmSimulation {
       throw new IllegalArgumentException("encoderRotationsOffset must be between 0 and 1");
     }
 
-    m_topSignedDegreesLimit = toNonOffsetSignedDegrees(
-        armParams.m_topRotationsLimit + armParams.m_deltaRotationsBeforeBroken,
-        armParams.m_encoderRotationsOffset);
-    m_bottomSignedDegreesLimit = toNonOffsetSignedDegrees(
-        armParams.m_bottomRotationsLimit - armParams.m_deltaRotationsBeforeBroken,
-        armParams.m_encoderRotationsOffset);
-    m_grabberBreaksIfOpenBelowSignedDegreesLimit = toNonOffsetSignedDegrees(
-        armParams.m_grabberBreaksIfOpenBelowThisLimit,
-        armParams.m_encoderRotationsOffset);
+    m_topSignedDegreesLimit = UnitConversions.rotationToSignedDegrees(armParams.m_topRotationsLimit
+        + armParams.m_deltaRotationsBeforeBroken - armParams.m_encoderRotationsOffset);
+
+    m_bottomSignedDegreesLimit = UnitConversions
+        .rotationToSignedDegrees(armParams.m_bottomRotationsLimit
+            - armParams.m_deltaRotationsBeforeBroken - armParams.m_encoderRotationsOffset);
+
+    m_grabberBreaksIfOpenBelowSignedDegreesLimit = UnitConversions.rotationToSignedDegrees(
+        armParams.m_grabberBreaksIfOpenBelowThisLimit - armParams.m_encoderRotationsOffset);
 
     if (!UnitConversions.isInRightHalfPlane(m_topSignedDegreesLimit)) {
       throw new IllegalArgumentException("m_topSignedDegreesLimit must be between -90 and 90");
@@ -94,20 +94,6 @@ public class ArmSimulation {
 
   public boolean getIsBroken() {
     return m_isBroken;
-  }
-
-  // $TODO This is ugly - probably don't need a method
-  public static double offsetArmRotationPosition(double position, double offset) {
-    double positionWithOffset = position + offset;
-    return positionWithOffset - Math.floor(positionWithOffset);
-  }
-
-  /**
-   * $TODO This can be removed.
-   */
-  public static double toNonOffsetSignedDegrees(double position, double offset) {
-    double positionWithoutOffset = offsetArmRotationPosition(position, -1 * offset);
-    return UnitConversions.rotationToSignedDegrees(positionWithoutOffset);
   }
 
   private boolean isInGrabberBreakRange(double positionSignedDegrees) {
@@ -174,13 +160,12 @@ public class ArmSimulation {
     m_currentSignedDegrees = newAbsoluteEncoderSignedDegrees;
     m_isCurrentSignedDegreesSet = true;
 
-    // $TODO cleanup
-    double newAbsoluteEncoderNonSignedDegrees = UnitConversions
-        .toUnsignedDegreesFromSignedDegrees(newAbsoluteEncoderSignedDegrees);
-    double newAbsoluteEncoderPosition = newAbsoluteEncoderNonSignedDegrees / 360.0;
+    double newAbsoluteEncoderPosition = UnitConversions
+        .signedDegreesToRotation(newAbsoluteEncoderSignedDegrees);
 
-    double newOffsetAbsoluteEncoderPosition = offsetArmRotationPosition(newAbsoluteEncoderPosition,
-        m_encoderRotationsOffset);
+    // Add arm offset position back
+    double newOffsetAbsoluteEncoderPosition = UnitConversions
+        .clampRotation(newAbsoluteEncoderPosition + m_encoderRotationsOffset);
 
     m_winchAbsoluteEncoderSim.set(newOffsetAbsoluteEncoderPosition);
   }

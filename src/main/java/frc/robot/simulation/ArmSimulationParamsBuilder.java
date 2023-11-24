@@ -21,24 +21,13 @@ public class ArmSimulationParamsBuilder {
     instance = new ArmSimulationParams(defaults);
   }
 
-  public ArmSimulationParamsBuilder setTopSignedDegreesLimit(double value) {
-    instance.topSignedDegreesLimit = value;
+  public ArmSimulationParamsBuilder setTopSignedDegreesBreak(double value) {
+    instance.topSignedDegreesBreak = value;
     return this;
   }
 
-  public ArmSimulationParamsBuilder setBottomSignedDegreesLimit(double value) {
-    instance.bottomSignedDegreesLimit = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setDeltaDegreesBeforeBroken(double value) {
-    instance.deltaDegreesBeforeBroken = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setGrabberBreaksIfOpenBelowThisSignedDegreesLimit(
-      double value) {
-    instance.grabberSignedDegreesLimit = value;
+  public ArmSimulationParamsBuilder setBottomSignedDegreesBreak(double value) {
+    instance.bottomSignedDegreesBreak = value;
     return this;
   }
 

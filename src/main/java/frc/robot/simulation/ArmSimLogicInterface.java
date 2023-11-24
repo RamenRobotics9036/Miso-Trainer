@@ -6,11 +6,9 @@ package frc.robot.simulation;
 public interface ArmSimLogicInterface {
   ResultPairArm checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen);
+      double newSignedDegrees);
 
   ResultPairArm checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen);
+      double newSignedDegrees);
 }

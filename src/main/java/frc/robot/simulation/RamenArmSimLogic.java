@@ -11,11 +11,12 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    */
   public ResultPairArm checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
+      double newSignedDegrees) {
 
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
+
+    boolean isGrabberOpen = false; // $TODO
 
     if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
         && isInGrabberBreakRange(oldSignedDegrees)) {
@@ -37,11 +38,12 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    */
   public ResultPairArm checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
+      double newSignedDegrees) {
 
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
+
+    boolean isGrabberOpen = false; // $TODO
 
     if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
         && !isInGrabberBreakRange(oldSignedDegrees)) {

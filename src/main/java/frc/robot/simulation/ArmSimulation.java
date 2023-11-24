@@ -15,11 +15,10 @@ public class ArmSimulation {
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
   private boolean m_isCurrentSignedDegreesSet = false;
-  private double m_topSignedDegreesLimitFinal;
-  private double m_bottomSignedDegreesLimitFinal;
-  private double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
+  private double m_topSignedDegreesBreak;
+  private double m_bottomSignedDegreesBreak;
   private double m_encoderRotationsOffset;
-  private BooleanSupplier m_grabberOpenSupplier = null;
+  private BooleanSupplier m_grabberOpenSupplier = null; // $TODO - Move this
   private boolean m_isBroken;
   private CalcArmAngleHelper m_calcArmAngleHelper;
 
@@ -51,43 +50,34 @@ public class ArmSimulation {
       throw new IllegalArgumentException("encoderRotationsOffset must be between 0 and 1");
     }
 
-    double topSignedDegreesLimitFinal = armParams.topSignedDegreesLimit
-        + armParams.deltaDegreesBeforeBroken;
-
-    double bottomSignedDegreesLimitFinal = armParams.bottomSignedDegreesLimit
-        - armParams.deltaDegreesBeforeBroken;
-
-    if (!UnitConversions.isInRightHalfPlane(topSignedDegreesLimitFinal)) {
-      throw new IllegalArgumentException("topSignedDegreesLimitFinal must be between -90 and 90");
+    if (!UnitConversions.isInRightHalfPlane(armParams.topSignedDegreesBreak)) {
+      throw new IllegalArgumentException("topSignedDegreesBreak must be between -90 and 90");
     }
 
-    if (!UnitConversions.isInRightHalfPlane(bottomSignedDegreesLimitFinal)) {
+    if (!UnitConversions.isInRightHalfPlane(armParams.bottomSignedDegreesBreak)) {
+      throw new IllegalArgumentException("bottomSignedDegreesBreak must be between -90 and 90");
+    }
+
+    // $TODO if (!UnitConversions.isInRightHalfPlane(armParams.grabberSignedDegreesLimit)) {
+    // throw new IllegalArgumentException(
+    // "grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
+    // }
+
+    if (armParams.topSignedDegreesBreak <= armParams.bottomSignedDegreesBreak) {
       throw new IllegalArgumentException(
-          "bottomSignedDegreesLimitFinal must be between -90 and 90");
+          "topSignedDegreesBreak must be > bottomSignedDegreesBreak");
     }
 
-    if (!UnitConversions.isInRightHalfPlane(armParams.grabberSignedDegreesLimit)) {
-      throw new IllegalArgumentException(
-          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
-    }
-
-    if (topSignedDegreesLimitFinal <= bottomSignedDegreesLimitFinal) {
-      throw new IllegalArgumentException(
-          "topSignedDegreesLimitFinal must be > bottomSignedDegreesLimitFinal");
-    }
-
-    double grabberLimit = armParams.grabberSignedDegreesLimit;
-    if (grabberLimit >= topSignedDegreesLimitFinal
-        || grabberLimit <= bottomSignedDegreesLimitFinal) {
-      throw new IllegalArgumentException(
-          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
-              + "topSignedDegreesLimit and bottomSignedDegreesLimit");
-    }
+    // $TODO double grabberLimit = armParams.grabberSignedDegreesLimit;
+    // if (grabberLimit >= topSignedDegreesBreak || grabberLimit <= bottomSignedDegreesBreak) {
+    // throw new IllegalArgumentException(
+    // "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
+    // + "topSignedDegreesBreak and bottomSignedBreak");
+    // }
 
     // Copy into member variables
-    m_grabberBreaksIfOpenBelowSignedDegreesLimit = grabberLimit;
-    m_topSignedDegreesLimitFinal = topSignedDegreesLimitFinal;
-    m_bottomSignedDegreesLimitFinal = bottomSignedDegreesLimitFinal;
+    m_topSignedDegreesBreak = armParams.topSignedDegreesBreak;
+    m_bottomSignedDegreesBreak = armParams.bottomSignedDegreesBreak;
     m_stringUnspooledLenSupplier = stringUnspooledLenSupplier;
     m_winchAbsoluteEncoderSim = winchAbsoluteEncoderSim;
     m_encoderRotationsOffset = armParams.encoderRotationsOffset;
@@ -105,8 +95,7 @@ public class ArmSimulation {
 
   private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
+      double newSignedDegrees) {
 
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
@@ -125,15 +114,15 @@ public class ArmSimulation {
      */
 
     // Now check general cases for arm broken
-    if (newSignedDegrees > m_topSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
-      resetPositionTo = m_topSignedDegreesLimitFinal;
+    if (newSignedDegrees > m_topSignedDegreesBreak) {
+      System.out.println("ARM: Angle is above top break limit of " + m_topSignedDegreesBreak);
+      resetPositionTo = m_topSignedDegreesBreak;
       isValid = false;
     }
 
-    if (newSignedDegrees < m_bottomSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
-      resetPositionTo = m_bottomSignedDegreesLimitFinal;
+    if (newSignedDegrees < m_bottomSignedDegreesBreak) {
+      System.out.println("ARM: Angle is below break limit of " + m_bottomSignedDegreesBreak);
+      resetPositionTo = m_bottomSignedDegreesBreak;
       isValid = false;
     }
 
@@ -142,8 +131,7 @@ public class ArmSimulation {
 
   private ResultPairArm checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
+      double newSignedDegrees) {
 
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
@@ -188,8 +176,7 @@ public class ArmSimulation {
 
     ResultPairArm resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
-        newAbsoluteEncoderSignedDegrees,
-        isGrabberOpen);
+        newAbsoluteEncoderSignedDegrees);
 
     if (resultPairStuck != null && !resultPairStuck.isValid) {
       newAbsoluteEncoderSignedDegrees = resultPairStuck.value;
@@ -197,8 +184,7 @@ public class ArmSimulation {
 
     ResultPairArm resultPairBroken = checkIfArmBroken(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
-        newAbsoluteEncoderSignedDegrees,
-        isGrabberOpen);
+        newAbsoluteEncoderSignedDegrees);
 
     if (resultPairBroken != null && !resultPairBroken.isValid) {
       m_isBroken = true;

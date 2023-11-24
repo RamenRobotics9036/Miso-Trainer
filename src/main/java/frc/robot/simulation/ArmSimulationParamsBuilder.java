@@ -22,43 +22,43 @@ public class ArmSimulationParamsBuilder {
   }
 
   public ArmSimulationParamsBuilder setTopSignedDegreesLimit(double value) {
-    instance.m_topSignedDegreesLimit = value;
+    instance.topSignedDegreesLimit = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setBottomSignedDegreesLimit(double value) {
-    instance.m_bottomSignedDegreesLimit = value;
+    instance.bottomSignedDegreesLimit = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setDeltaDegreesBeforeBroken(double value) {
-    instance.m_deltaDegreesBeforeBroken = value;
+    instance.deltaDegreesBeforeBroken = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setGrabberBreaksIfOpenBelowThisSignedDegreesLimit(
       double value) {
-    instance.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit = value;
+    instance.grabberSignedDegreesLimit = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setHeightFromWinchToPivotPoint(double value) {
-    instance.m_heightFromWinchToPivotPoint = value;
+    instance.heightFromWinchToPivotPoint = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivot(double value) {
-    instance.m_armLengthFromEdgeToPivot = value;
+    instance.armLengthFromEdgeToPivot = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivotMin(double value) {
-    instance.m_armLengthFromEdgeToPivotMin = value;
+    instance.armLengthFromEdgeToPivotMin = value;
     return this;
   }
 
   public ArmSimulationParamsBuilder setEncoderRotationsOffset(double value) {
-    instance.m_encoderRotationsOffset = value;
+    instance.encoderRotationsOffset = value;
     return this;
   }
 

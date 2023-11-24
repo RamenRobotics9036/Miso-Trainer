@@ -4,14 +4,29 @@ package frc.robot.simulation;
  * Class that holds paramaters for the arm simulation class.
  */
 public class ArmSimulationParams {
-  public double m_topSignedDegreesLimit;
-  public double m_bottomSignedDegreesLimit;
-  public double m_deltaDegreesBeforeBroken;
-  public double m_grabberBreaksIfOpenBelowThisSignedDegreesLimit;
-  public double m_heightFromWinchToPivotPoint;
-  public double m_armLengthFromEdgeToPivot;
-  public double m_armLengthFromEdgeToPivotMin;
-  public double m_encoderRotationsOffset;
+  @SuppressWarnings("checkstyle:MemberName")
+  public double topSignedDegreesLimit;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double bottomSignedDegreesLimit;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double deltaDegreesBeforeBroken;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double grabberSignedDegreesLimit;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double heightFromWinchToPivotPoint;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double armLengthFromEdgeToPivot;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double armLengthFromEdgeToPivotMin;
+
+  @SuppressWarnings("checkstyle:MemberName")
+  public double encoderRotationsOffset;
 
   /**
    * Constructor with 0 params.
@@ -22,36 +37,36 @@ public class ArmSimulationParams {
   /**
    * Constructor with all params.
    */
-  public ArmSimulationParams(double topSignedDegreesLimit,
-      double bottomSignedDegreesLimit,
-      double deltaDegreesBeforeBroken,
-      double grabberBreaksIfOpenBelowThisSignedDegreesLimit,
-      double heightFromWinchToPivotPoint,
-      double armLengthFromEdgeToPivot,
-      double armLengthFromEdgeToPivotMin,
-      double encoderRotationsOffset) {
+  public ArmSimulationParams(double topSignedDegreesLimitInput,
+      double bottomSignedDegreesLimitInput,
+      double deltaDegreesBeforeBrokenInput,
+      double grabberSignedDegreesLimitInput,
+      double heightFromWinchToPivotPointInput,
+      double armLengthFromEdgeToPivotInput,
+      double armLengthFromEdgeToPivotMinInput,
+      double encoderRotationsOffsetInput) {
 
-    m_topSignedDegreesLimit = topSignedDegreesLimit;
-    m_bottomSignedDegreesLimit = bottomSignedDegreesLimit;
-    m_deltaDegreesBeforeBroken = deltaDegreesBeforeBroken;
-    m_grabberBreaksIfOpenBelowThisSignedDegreesLimit = grabberBreaksIfOpenBelowThisSignedDegreesLimit;
-    m_heightFromWinchToPivotPoint = heightFromWinchToPivotPoint;
-    m_armLengthFromEdgeToPivot = armLengthFromEdgeToPivot;
-    m_armLengthFromEdgeToPivotMin = armLengthFromEdgeToPivotMin;
-    m_encoderRotationsOffset = encoderRotationsOffset;
+    topSignedDegreesLimit = topSignedDegreesLimitInput;
+    bottomSignedDegreesLimit = bottomSignedDegreesLimitInput;
+    deltaDegreesBeforeBroken = deltaDegreesBeforeBrokenInput;
+    grabberSignedDegreesLimit = grabberSignedDegreesLimitInput;
+    heightFromWinchToPivotPoint = heightFromWinchToPivotPointInput;
+    armLengthFromEdgeToPivot = armLengthFromEdgeToPivotInput;
+    armLengthFromEdgeToPivotMin = armLengthFromEdgeToPivotMinInput;
+    encoderRotationsOffset = encoderRotationsOffsetInput;
   }
 
   /**
    * Copy constructor.
    */
   public ArmSimulationParams(ArmSimulationParams other) {
-    m_topSignedDegreesLimit = other.m_topSignedDegreesLimit;
-    m_bottomSignedDegreesLimit = other.m_bottomSignedDegreesLimit;
-    m_deltaDegreesBeforeBroken = other.m_deltaDegreesBeforeBroken;
-    m_grabberBreaksIfOpenBelowThisSignedDegreesLimit = other.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit;
-    m_heightFromWinchToPivotPoint = other.m_heightFromWinchToPivotPoint;
-    m_armLengthFromEdgeToPivot = other.m_armLengthFromEdgeToPivot;
-    m_armLengthFromEdgeToPivotMin = other.m_armLengthFromEdgeToPivotMin;
-    m_encoderRotationsOffset = other.m_encoderRotationsOffset;
+    topSignedDegreesLimit = other.topSignedDegreesLimit;
+    bottomSignedDegreesLimit = other.bottomSignedDegreesLimit;
+    deltaDegreesBeforeBroken = other.deltaDegreesBeforeBroken;
+    grabberSignedDegreesLimit = other.grabberSignedDegreesLimit;
+    heightFromWinchToPivotPoint = other.heightFromWinchToPivotPoint;
+    armLengthFromEdgeToPivot = other.armLengthFromEdgeToPivot;
+    armLengthFromEdgeToPivotMin = other.armLengthFromEdgeToPivotMin;
+    encoderRotationsOffset = other.encoderRotationsOffset;
   }
 }

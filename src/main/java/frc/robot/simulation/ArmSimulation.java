@@ -15,8 +15,8 @@ public class ArmSimulation {
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
   private boolean m_isCurrentSignedDegreesSet = false;
-  private double m_topSignedDegreesLimit;
-  private double m_bottomSignedDegreesLimit;
+  private double m_topSignedDegreesLimitFinal;
+  private double m_bottomSignedDegreesLimitFinal;
   private double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
   private double m_encoderRotationsOffset;
   private BooleanSupplier m_grabberOpenSupplier = null;
@@ -34,55 +34,58 @@ public class ArmSimulation {
       throw new IllegalArgumentException("stringUnspooledLenSupplier");
     }
 
-    if (armParams.m_armLengthFromEdgeToPivot < armParams.m_armLengthFromEdgeToPivotMin) {
+    if (armParams.armLengthFromEdgeToPivot < armParams.armLengthFromEdgeToPivotMin) {
       throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
-          + armParams.m_armLengthFromEdgeToPivotMin + " meters, otherwise the arm cant be pivoted");
+          + armParams.armLengthFromEdgeToPivotMin + " meters, otherwise the arm cant be pivoted");
     }
 
-    if (!UnitConversions.isRotationValid(armParams.m_encoderRotationsOffset)) {
+    if (!UnitConversions.isRotationValid(armParams.encoderRotationsOffset)) {
       throw new IllegalArgumentException("encoderRotationsOffset must be between 0 and 1");
     }
 
-    m_topSignedDegreesLimit = armParams.m_topSignedDegreesLimit
-        + armParams.m_deltaDegreesBeforeBroken;
+    double topSignedDegreesLimitFinal = armParams.topSignedDegreesLimit
+        + armParams.deltaDegreesBeforeBroken;
 
-    m_bottomSignedDegreesLimit = armParams.m_bottomSignedDegreesLimit
-        - armParams.m_deltaDegreesBeforeBroken;
+    double bottomSignedDegreesLimitFinal = armParams.bottomSignedDegreesLimit
+        - armParams.deltaDegreesBeforeBroken;
 
-    m_grabberBreaksIfOpenBelowSignedDegreesLimit = armParams.m_grabberBreaksIfOpenBelowThisSignedDegreesLimit;
-
-    if (!UnitConversions.isInRightHalfPlane(m_topSignedDegreesLimit)) {
-      throw new IllegalArgumentException("m_topSignedDegreesLimit must be between -90 and 90");
+    if (!UnitConversions.isInRightHalfPlane(topSignedDegreesLimitFinal)) {
+      throw new IllegalArgumentException("topSignedDegreesLimitFinal must be between -90 and 90");
     }
 
-    if (!UnitConversions.isInRightHalfPlane(m_bottomSignedDegreesLimit)) {
-      throw new IllegalArgumentException("m_bottomSignedDegreesLimit must be between -90 and 90");
-    }
-
-    if (!UnitConversions.isInRightHalfPlane(m_grabberBreaksIfOpenBelowSignedDegreesLimit)) {
+    if (!UnitConversions.isInRightHalfPlane(bottomSignedDegreesLimitFinal)) {
       throw new IllegalArgumentException(
-          "m_grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
+          "bottomSignedDegreesLimitFinal must be between -90 and 90");
     }
 
-    if (m_topSignedDegreesLimit <= m_bottomSignedDegreesLimit) {
+    if (!UnitConversions.isInRightHalfPlane(armParams.grabberSignedDegreesLimit)) {
       throw new IllegalArgumentException(
-          "m_topSignedDegreesLimit must be > m_bottomSignedDegreesLimit");
+          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
     }
 
-    if (m_grabberBreaksIfOpenBelowSignedDegreesLimit >= m_topSignedDegreesLimit
-        || m_grabberBreaksIfOpenBelowSignedDegreesLimit <= m_bottomSignedDegreesLimit) {
+    if (topSignedDegreesLimitFinal <= bottomSignedDegreesLimitFinal) {
       throw new IllegalArgumentException(
-          "m_grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
-              + "m_topSignedDegreesLimit and m_bottomSignedDegreesLimit");
+          "topSignedDegreesLimitFinal must be > bottomSignedDegreesLimitFinal");
     }
 
+    double grabberLimit = armParams.grabberSignedDegreesLimit;
+    if (grabberLimit >= topSignedDegreesLimitFinal
+        || grabberLimit <= bottomSignedDegreesLimitFinal) {
+      throw new IllegalArgumentException(
+          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
+              + "topSignedDegreesLimit and bottomSignedDegreesLimit");
+    }
+
+    // Copy into member variables
+    m_grabberBreaksIfOpenBelowSignedDegreesLimit = grabberLimit;
+    m_topSignedDegreesLimitFinal = topSignedDegreesLimitFinal;
+    m_bottomSignedDegreesLimitFinal = bottomSignedDegreesLimitFinal;
     m_stringUnspooledLenSupplier = stringUnspooledLenSupplier;
     m_winchAbsoluteEncoderSim = winchAbsoluteEncoderSim;
-    m_encoderRotationsOffset = armParams.m_encoderRotationsOffset;
+    m_encoderRotationsOffset = armParams.encoderRotationsOffset;
     m_isBroken = false;
-
-    m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.m_heightFromWinchToPivotPoint,
-        armParams.m_armLengthFromEdgeToPivot);
+    m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.heightFromWinchToPivotPoint,
+        armParams.armLengthFromEdgeToPivot);
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
@@ -141,15 +144,15 @@ public class ArmSimulation {
       }
     }
 
-    if (newAbsoluteEncoderSignedDegrees > m_topSignedDegreesLimit) {
-      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimit);
-      newAbsoluteEncoderSignedDegrees = m_topSignedDegreesLimit;
+    if (newAbsoluteEncoderSignedDegrees > m_topSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
+      newAbsoluteEncoderSignedDegrees = m_topSignedDegreesLimitFinal;
       m_isBroken = true;
     }
 
-    if (newAbsoluteEncoderSignedDegrees < m_bottomSignedDegreesLimit) {
-      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimit);
-      newAbsoluteEncoderSignedDegrees = m_bottomSignedDegreesLimit;
+    if (newAbsoluteEncoderSignedDegrees < m_bottomSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
+      newAbsoluteEncoderSignedDegrees = m_bottomSignedDegreesLimitFinal;
       m_isBroken = true;
     }
 

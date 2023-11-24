@@ -47,6 +47,14 @@ public class ArmSimulation {
       throw new IllegalArgumentException("stringUnspooledLenSupplier");
     }
 
+    if (winchAbsoluteEncoderSim == null) {
+      throw new IllegalArgumentException("winchAbsoluteEncoderSim");
+    }
+
+    if (armParams == null) {
+      throw new IllegalArgumentException("armParams");
+    }
+
     if (armParams.armLengthFromEdgeToPivot < armParams.armLengthFromEdgeToPivotMin) {
       throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
           + armParams.armLengthFromEdgeToPivotMin + " meters, otherwise the arm cant be pivoted");

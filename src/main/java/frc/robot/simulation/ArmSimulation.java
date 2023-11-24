@@ -11,19 +11,6 @@ import java.util.function.DoubleSupplier;
  * is extended too far, it will break.
  */
 public class ArmSimulation {
-  // Internal class to return a pair of values: a boolean result and a double resetPosition
-  private class ResultPairArm {
-    @SuppressWarnings("checkstyle:MemberName")
-    public boolean isValid;
-    @SuppressWarnings("checkstyle:MemberName")
-    public double value;
-
-    public ResultPairArm(boolean isValidInput, double valueInput) {
-      isValid = isValidInput;
-      value = valueInput;
-    }
-  }
-
   private DoubleSupplier m_stringUnspooledLenSupplier;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;

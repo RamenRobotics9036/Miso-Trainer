@@ -103,56 +103,6 @@ public class ArmSimulation {
     return m_isBroken;
   }
 
-  private boolean isInGrabberBreakRange(double positionSignedDegrees) {
-    return UnitConversions.lessThanButNotEqualDouble(positionSignedDegrees,
-        m_grabberBreaksIfOpenBelowSignedDegreesLimit);
-  }
-
-  private ResultPairArm ramenCheckIfArmBroken(double oldSignedDegrees,
-      boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
-
-    boolean isValid = true;
-    double resetPositionTo = newSignedDegrees;
-
-    if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
-        && isInGrabberBreakRange(oldSignedDegrees)) {
-
-      // If the arm is ALREADY below a certain level, and grabber is open, arm is broken
-      System.out.println("ARM: Grabber is open while arm is in breakable range");
-      isValid = false;
-
-      // Note that we don't let the arm move from where it was
-      resetPositionTo = oldSignedDegrees;
-    }
-
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
-  }
-
-  private ResultPairArm ramenCheckIfArmStuck(double oldSignedDegrees,
-      boolean isOldSignedDegreesSet,
-      double newSignedDegrees,
-      boolean isGrabberOpen) {
-
-    boolean isValid = true;
-    double resetPositionTo = newSignedDegrees;
-
-    if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
-        && !isInGrabberBreakRange(oldSignedDegrees)) {
-
-      // If the arm is ABOUT to go into the breakable range with the grabber open, the arm gets
-      // stuck but doesn't break
-      System.out.println("ARM: Grabber is open while try to move arm to ground");
-      isValid = false;
-
-      // With grabber open, arm is STUCK and not able to go lower than a certain point
-      resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
-    }
-
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
-  }
-
   private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees,
@@ -161,15 +111,18 @@ public class ArmSimulation {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    // First, check robot-specific logic for arm broken
-    ResultPairArm tempResult = ramenCheckIfArmBroken(oldSignedDegrees,
-        isOldSignedDegreesSet,
-        newSignedDegrees,
-        isGrabberOpen);
-
-    if (tempResult != null && !tempResult.isValid) {
-      return tempResult;
-    }
+    /*
+     * $TODO
+     * // First, check robot-specific logic for arm broken
+     * ResultPairArm tempResult = ramenCheckIfArmBroken(oldSignedDegrees,
+     * isOldSignedDegreesSet,
+     * newSignedDegrees,
+     * isGrabberOpen);
+     * 
+     * if (tempResult != null && !tempResult.isValid) {
+     * return tempResult;
+     * }
+     */
 
     // Now check general cases for arm broken
     if (newSignedDegrees > m_topSignedDegreesLimitFinal) {
@@ -195,15 +148,18 @@ public class ArmSimulation {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    // First, check robot-specific logic for arm stuck
-    ResultPairArm tempResult = ramenCheckIfArmStuck(oldSignedDegrees,
-        isOldSignedDegreesSet,
-        newSignedDegrees,
-        isGrabberOpen);
-
-    if (tempResult != null && !tempResult.isValid) {
-      return tempResult;
-    }
+    /*
+     * $TODO
+     * // First, check robot-specific logic for arm stuck
+     * ResultPairArm tempResult = ramenCheckIfArmStuck(oldSignedDegrees,
+     * isOldSignedDegreesSet,
+     * newSignedDegrees,
+     * isGrabberOpen);
+     * 
+     * if (tempResult != null && !tempResult.isValid) {
+     * return tempResult;
+     * }
+     */
 
     // Now check general cases for arm stuck
 

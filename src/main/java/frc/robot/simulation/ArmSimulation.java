@@ -11,6 +11,19 @@ import java.util.function.DoubleSupplier;
  * is extended too far, it will break.
  */
 public class ArmSimulation {
+  // Internal class to return a pair of values: a boolean result and a double resetPosition
+  private class ResultPairArm {
+    @SuppressWarnings("checkstyle:MemberName")
+    public boolean isValid;
+    @SuppressWarnings("checkstyle:MemberName")
+    public double value;
+
+    public ResultPairArm(boolean isValidInput, double valueInput) {
+      isValid = isValidInput;
+      value = valueInput;
+    }
+  }
+
   private DoubleSupplier m_stringUnspooledLenSupplier;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
@@ -101,6 +114,63 @@ public class ArmSimulation {
         m_grabberBreaksIfOpenBelowSignedDegreesLimit);
   }
 
+  private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+      boolean isOldSignedDegreesSet,
+      double newSignedDegrees,
+      boolean isGrabberOpen) {
+
+    boolean isValid = true;
+    double resetPositionTo = newSignedDegrees;
+
+    if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
+        && isInGrabberBreakRange(oldSignedDegrees)) {
+
+      // If the arm is ALREADY below a certain level, and grabber is open, arm is broken
+      System.out.println("ARM: Grabber is open while arm is in breakable range");
+      isValid = false;
+
+      // Note that we don't let the arm move from where it was
+      resetPositionTo = oldSignedDegrees;
+    }
+
+    if (newSignedDegrees > m_topSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
+      resetPositionTo = m_topSignedDegreesLimitFinal;
+      isValid = false;
+    }
+
+    if (newSignedDegrees < m_bottomSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
+      resetPositionTo = m_bottomSignedDegreesLimitFinal;
+      isValid = false;
+    }
+
+    return new ResultPairArm(isValid, resetPositionTo);
+  }
+
+  private ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+      boolean isOldSignedDegreesSet,
+      double newSignedDegrees,
+      boolean isGrabberOpen) {
+
+    boolean isValid = true;
+    double resetPositionTo = newSignedDegrees;
+
+    if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
+        && !isInGrabberBreakRange(oldSignedDegrees)) {
+
+      // If the arm is ABOUT to go into the breakable range with the grabber open, the arm gets
+      // stuck but doesn't break
+      System.out.println("ARM: Grabber is open while try to move arm to ground");
+      isValid = false;
+
+      // With grabber open, arm is STUCK and not able to go lower than a certain point
+      resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
+    }
+
+    return new ResultPairArm(isValid, resetPositionTo);
+  }
+
   private void updateAbsoluteEncoderPosition() {
     // If the arm is broken, there's nothing to update
     if (m_isBroken) {
@@ -121,39 +191,23 @@ public class ArmSimulation {
 
     double newAbsoluteEncoderSignedDegrees = resultPair.m_value;
 
-    if (isGrabberOpen && m_isCurrentSignedDegreesSet
-        && isInGrabberBreakRange(newAbsoluteEncoderSignedDegrees)) {
+    ResultPairArm resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
+        m_isCurrentSignedDegreesSet,
+        newAbsoluteEncoderSignedDegrees,
+        isGrabberOpen);
 
-      if (!isInGrabberBreakRange(m_currentSignedDegrees)) {
-
-        // If the arm is ABOUT to go into the breakable range with the grabber open, the arm gets
-        // stuck but doesn't break
-        System.out.println("ARM: Grabber is open while try to move arm to ground");
-
-        // With grabber open, arm is STUCK and not able to go lower than a certain point
-        newAbsoluteEncoderSignedDegrees = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
-      }
-      else {
-
-        // If the arm is ALREADY below a certain level, and grabber is broken, arm is broken
-        System.out.println("ARM: Grabber is open while arm is in breakable range");
-        m_isBroken = true;
-
-        // Note that we don't let the arm move from where it was
-        newAbsoluteEncoderSignedDegrees = m_currentSignedDegrees;
-      }
+    if (resultPairStuck != null && !resultPairStuck.isValid) {
+      newAbsoluteEncoderSignedDegrees = resultPairStuck.value;
     }
 
-    if (newAbsoluteEncoderSignedDegrees > m_topSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
-      newAbsoluteEncoderSignedDegrees = m_topSignedDegreesLimitFinal;
-      m_isBroken = true;
-    }
+    ResultPairArm resultPairBroken = checkIfArmBroken(m_currentSignedDegrees,
+        m_isCurrentSignedDegreesSet,
+        newAbsoluteEncoderSignedDegrees,
+        isGrabberOpen);
 
-    if (newAbsoluteEncoderSignedDegrees < m_bottomSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
-      newAbsoluteEncoderSignedDegrees = m_bottomSignedDegreesLimitFinal;
+    if (resultPairBroken != null && !resultPairBroken.isValid) {
       m_isBroken = true;
+      newAbsoluteEncoderSignedDegrees = resultPairBroken.value;
     }
 
     // Update the current position

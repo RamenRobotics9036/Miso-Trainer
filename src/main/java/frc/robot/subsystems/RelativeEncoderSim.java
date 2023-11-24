@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * by setting it on the RelativeEncoderSim object. This way, the simulation never
  * directly touches the RelativeEncoder object, which is a bit cleaner.
  */
-// $TODOLATER - Is testmode even needed anymore?
+// $LATER - Is testmode even needed anymore?
 public class RelativeEncoderSim {
   private boolean m_testMode;
   private double m_testModePosition;

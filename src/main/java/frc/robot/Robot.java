@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
     m_verifyJoysticks = new VerifyJoysticks(VerifyJoysticks.getDefaultJoystickConfigs(),
         new DriverStationFunctions(), 1);
 
-    // $TODOLATER - This should be in init or update DashBoard?
+    // $LATER - This should be in init or update DashBoard?
     SmartDashboard.putBoolean("Get Cube", true);
   }
 
@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
 
     new RetractArmCommand(m_robotContainer.m_armSystem).schedule();
 
-    // $TODOLATER - This should be in init or update DashBoard?
+    // $LATER - This should be in init or update DashBoard?
     SmartDashboard.putNumber("Winch Encoder",
         m_robotContainer.m_armSystem.getWinchAbsoluteEncoder());
   }
@@ -86,13 +86,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     if (m_robotContainer.m_controller2.getLeftTriggerAxis() > 0.05) {
-      // $TODOLATER - This should be in init or update DashBoard?
+      // $LATER - This should be in init or update DashBoard?
       SmartDashboard.putBoolean("Get Cube", true);
 
       m_ledLights.setLedsYellow();
     }
     else if (m_robotContainer.m_controller2.getRightTriggerAxis() > 0.05) {
-      // $TODOLATER - This should be in init or update DashBoard?
+      // $LATER - This should be in init or update DashBoard?
       SmartDashboard.putBoolean("Get Cube", false);
 
       m_ledLights.setLedsMagenta();

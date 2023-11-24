@@ -261,7 +261,7 @@ public class VerifyJoysticks {
   }
 
   private void updateDashboard() {
-    // $TODOLATER - This should be in init or update DashBoard? THIS IS JUST FOR JOYSTICKS?
+    // $LATER - This should be in init or update DashBoard? THIS IS JUST FOR JOYSTICKS?
     SmartDashboard.putBoolean("Joystick health", m_lastResult);
   }
 

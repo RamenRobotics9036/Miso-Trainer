@@ -183,7 +183,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     addShuffleboardArmList();
 
     // Add Robot Arm widget
-    // $TODOLATER Don't hardcode name of the widget and location
+    // $LATER Don't hardcode name of the widget and location
     Shuffleboard.getTab("Simulation")
         .add("Happy",
             new SendableArmPosition(() -> getArmPercentRaised(),

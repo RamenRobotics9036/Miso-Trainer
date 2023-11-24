@@ -40,7 +40,7 @@ public class ArmSystem extends SubsystemBase {
     m_armWinch = new CANSparkMax(Constants.OperatorConstants.kArmWinchChannel,
         MotorType.kBrushless);
 
-    // $TODOLATER - For simulation, test that smart limits actually work when values
+    // $LATER - For simulation, test that smart limits actually work when values
     // are set on SmartMax
     m_armWinch.setSmartCurrentLimit(20);
     m_armExtender = new CANSparkMax(Constants.OperatorConstants.kArmExtenderChannel,
@@ -79,7 +79,7 @@ public class ArmSystem extends SubsystemBase {
 
   /**
    * Display sensor information on smart dashboard.
-   * $TODOLATER - Should this be in updateDashboard?
+   * $LATER - Should this be in updateDashboard?
    */
   public void putSensorOutputs() {
     SmartDashboard.putNumber("Winch Absolute Encoder Position",
@@ -105,7 +105,7 @@ public class ArmSystem extends SubsystemBase {
   public void periodic() {
     Double winchAbsoluteEncoder = Double.valueOf(getWinchAbsoluteEncoder());
 
-    // $TODOLATER - This should be in init or update DashBoard?
+    // $LATER - This should be in init or update DashBoard?
     SmartDashboard.putBoolean("Winch Absolute Encoder", !(winchAbsoluteEncoder == 0.0));
   }
 
@@ -164,7 +164,7 @@ public class ArmSystem extends SubsystemBase {
    * Set the soft limits for the arm extender.
    */
   public void setSoftLimit() {
-    // $TODOLATER - For simulation, test that smart limits actually work when I set a value on
+    // $LATER - For simulation, test that smart limits actually work when I set a value on
     // SparkMax
     m_armExtender.enableSoftLimit(SoftLimitDirection.kForward, false);
     m_armExtender.enableSoftLimit(SoftLimitDirection.kReverse, false);
@@ -198,7 +198,7 @@ public class ArmSystem extends SubsystemBase {
       setWinchSpeed(winchOutput * m_maxOutputWinch);
     }
 
-    // $TODOLATER - For simulation, test that smart limits actually work when I set a value on
+    // $LATER - For simulation, test that smart limits actually work when I set a value on
     // SparkMax
     if (getExtenderEncoder() <= Constants.OperatorConstants.kExtenderSoftLimitTurns
         && extenderOutput < 0) {

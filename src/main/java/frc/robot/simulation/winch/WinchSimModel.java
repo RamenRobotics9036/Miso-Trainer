@@ -90,7 +90,7 @@ public class WinchSimModel {
    *
    * @return the length of string that is currently unspooled, in meters
    */
-  // $TODO All these getters can go away
+  // $TODOLATER All these getters can go away
   public double getStringUnspooledLen() {
     return m_totalStringLenMeters - Math.abs(m_currentLenSpooled);
   }

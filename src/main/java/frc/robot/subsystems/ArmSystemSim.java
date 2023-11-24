@@ -143,7 +143,7 @@ public class ArmSystemSim extends ArmSystem {
         true);
   }
 
-  // $TODO Get rid of isRobotEnabled
+  // $TODOLATER Get rid of isRobotEnabled
   private boolean isRobotEnabled() {
     return RobotState.isEnabled();
   }

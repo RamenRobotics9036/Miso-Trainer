@@ -173,7 +173,7 @@ public class ArmSimulationTest {
 
     boolean initialIsGrabberOpen = true;
 
-    // $TODO - No need for this extra variable
+    // $TODOLATER - No need for this extra variable
     double breakLimitSignedDegrees = m_defaultArmParams.grabberSignedDegreesLimit;
 
     double initialPosSignedDegrees = breakLimitSignedDegrees + initialDegreesAboveBreakPoint;

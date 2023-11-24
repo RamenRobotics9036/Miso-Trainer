@@ -21,13 +21,15 @@ public class ArmSimulation {
   private BooleanSupplier m_grabberOpenSupplier = null; // $TODO - Move this
   private boolean m_isBroken;
   private CalcArmAngleHelper m_calcArmAngleHelper;
+  private ArmSimLogicInterface m_ramenArmLogic;
 
   /**
    * Constructor.
    */
   public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams) {
+      ArmSimulationParams armParams,
+      ArmSimLogicInterface ramenArmLogic) { // $TODO - Make optional another constructor
 
     if (stringUnspooledLenSupplier == null) {
       throw new IllegalArgumentException("stringUnspooledLenSupplier");
@@ -84,6 +86,7 @@ public class ArmSimulation {
     m_isBroken = false;
     m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.heightFromWinchToPivotPoint,
         armParams.armLengthFromEdgeToPivot);
+    m_ramenArmLogic = ramenArmLogic;
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();

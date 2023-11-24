@@ -7,9 +7,11 @@ import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.ArmSimLogicInterface;
 import frc.robot.simulation.ArmSimulation;
 import frc.robot.simulation.ArmSimulationParams;
 import frc.robot.simulation.ExtenderSimulation;
+import frc.robot.simulation.RamenArmSimLogic;
 import frc.robot.simulation.framework.SimManagerInterface;
 import frc.robot.simulation.motor.MotorSimManager;
 import frc.robot.simulation.motor.MotorSimOutput;
@@ -91,6 +93,10 @@ public class ArmSystemSim extends ArmSystem {
       return m_winchState.getStringUnspooledLen();
     };
 
+    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(UnitConversions
+        .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+            - Constants.SimConstants.karmEncoderRotationsOffset));
+
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
             - Constants.SimConstants.karmEncoderRotationsOffset
@@ -98,16 +104,13 @@ public class ArmSystemSim extends ArmSystem {
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderLowerLimit
             - Constants.SimConstants.karmEncoderRotationsOffset
             - Constants.SimConstants.kdeltaRotationsBeforeBroken),
-        // $TODO UnitConversions
-        // .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-        // - Constants.SimConstants.karmEncoderRotationsOffset),
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
         Constants.SimConstants.karmLengthFromEdgeToPivot,
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
         Constants.SimConstants.karmEncoderRotationsOffset);
 
     m_armSimulation = new ArmSimulation(stringUnspooledLenSupplier, m_winchAbsoluteEncoderSim,
-        armParams);
+        armParams, ramenArmLogic);
   }
 
   private void createWinchSimParts() {
@@ -143,7 +146,7 @@ public class ArmSystemSim extends ArmSystem {
         true);
   }
 
-  // $TODOLATER Get rid of isRobotEnabled
+  // $LATER Get rid of isRobotEnabled
   private boolean isRobotEnabled() {
     return RobotState.isEnabled();
   }

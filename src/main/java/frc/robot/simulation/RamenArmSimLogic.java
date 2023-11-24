@@ -6,6 +6,15 @@ import frc.robot.helpers.UnitConversions;
  * Robot-specific logic for the arm simulation.
  */
 public class RamenArmSimLogic implements ArmSimLogicInterface {
+  private final double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
+
+  /**
+   * Constructor.
+   */
+  public RamenArmSimLogic(double grabberBreaksIfOpenBelowSignedDegreesLimit) {
+    m_grabberBreaksIfOpenBelowSignedDegreesLimit = grabberBreaksIfOpenBelowSignedDegreesLimit;
+  }
+
   /**
    * Check robot-specific logic for whether arm is BROKEN.
    */
@@ -54,7 +63,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
       isValid = false;
 
       // With grabber open, arm is STUCK and not able to go lower than a certain point
-      resetPositionTo = 0; // $TODOm_grabberBreaksIfOpenBelowSignedDegreesLimit;
+      resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
     }
 
     return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
@@ -62,7 +71,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
   }
 
   private boolean isInGrabberBreakRange(double positionSignedDegrees) {
-    return UnitConversions.lessThanButNotEqualDouble(positionSignedDegrees, 0);
-    // $TODO m_grabberBreaksIfOpenBelowSignedDegreesLimit);
+    return UnitConversions.lessThanButNotEqualDouble(positionSignedDegrees,
+        m_grabberBreaksIfOpenBelowSignedDegreesLimit);
   }
 }

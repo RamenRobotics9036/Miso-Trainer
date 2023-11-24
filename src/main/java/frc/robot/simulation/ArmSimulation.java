@@ -110,7 +110,6 @@ public class ArmSimulation {
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
-
   }
 
   public boolean getIsBroken() {
@@ -122,7 +121,7 @@ public class ArmSimulation {
         m_grabberBreaksIfOpenBelowSignedDegreesLimit);
   }
 
-  private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+  private ResultPairArm ramenCheckIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees,
       boolean isGrabberOpen) {
@@ -141,22 +140,10 @@ public class ArmSimulation {
       resetPositionTo = oldSignedDegrees;
     }
 
-    if (newSignedDegrees > m_topSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
-      resetPositionTo = m_topSignedDegreesLimitFinal;
-      isValid = false;
-    }
-
-    if (newSignedDegrees < m_bottomSignedDegreesLimitFinal) {
-      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
-      resetPositionTo = m_bottomSignedDegreesLimitFinal;
-      isValid = false;
-    }
-
-    return new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
   }
 
-  private ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+  private ResultPairArm ramenCheckIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees,
       boolean isGrabberOpen) {
@@ -176,7 +163,64 @@ public class ArmSimulation {
       resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
     }
 
-    return new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+  }
+
+  private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+      boolean isOldSignedDegreesSet,
+      double newSignedDegrees,
+      boolean isGrabberOpen) {
+
+    boolean isValid = true;
+    double resetPositionTo = newSignedDegrees;
+
+    // First, check robot-specific logic for arm broken
+    ResultPairArm tempResult = ramenCheckIfArmBroken(oldSignedDegrees,
+        isOldSignedDegreesSet,
+        newSignedDegrees,
+        isGrabberOpen);
+
+    if (tempResult != null && !tempResult.isValid) {
+      return tempResult;
+    }
+
+    // Now check general cases for arm broken
+    if (newSignedDegrees > m_topSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is above top limit of " + m_topSignedDegreesLimitFinal);
+      resetPositionTo = m_topSignedDegreesLimitFinal;
+      isValid = false;
+    }
+
+    if (newSignedDegrees < m_bottomSignedDegreesLimitFinal) {
+      System.out.println("ARM: Angle is below limit of " + m_bottomSignedDegreesLimitFinal);
+      resetPositionTo = m_bottomSignedDegreesLimitFinal;
+      isValid = false;
+    }
+
+    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+  }
+
+  private ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+      boolean isOldSignedDegreesSet,
+      double newSignedDegrees,
+      boolean isGrabberOpen) {
+
+    boolean isValid = true;
+    double resetPositionTo = newSignedDegrees;
+
+    // First, check robot-specific logic for arm stuck
+    ResultPairArm tempResult = ramenCheckIfArmStuck(oldSignedDegrees,
+        isOldSignedDegreesSet,
+        newSignedDegrees,
+        isGrabberOpen);
+
+    if (tempResult != null && !tempResult.isValid) {
+      return tempResult;
+    }
+
+    // Now check general cases for arm stuck
+
+    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
   }
 
   private void updateAbsoluteEncoderPosition() {

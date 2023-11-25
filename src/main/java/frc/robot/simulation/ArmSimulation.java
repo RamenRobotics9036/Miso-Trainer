@@ -21,15 +21,14 @@ public class ArmSimulation {
   private BooleanSupplier m_grabberOpenSupplier = null; // $TODO - Move this
   private boolean m_isBroken;
   private CalcArmAngleHelper m_calcArmAngleHelper;
-  private ArmSimLogicInterface m_ramenArmLogic;
+  private ArmSimLogicInterface m_robotSpecificArmLogic = null;
 
   /**
    * Constructor.
    */
   public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams,
-      ArmSimLogicInterface ramenArmLogic) { // $TODO - Make optional another constructor
+      ArmSimulationParams armParams) {
 
     if (stringUnspooledLenSupplier == null) {
       throw new IllegalArgumentException("stringUnspooledLenSupplier");
@@ -75,7 +74,6 @@ public class ArmSimulation {
     // throw new IllegalArgumentException(
     // "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
     // + "topSignedDegreesBreak and bottomSignedBreak");
-    // }
 
     // Copy into member variables
     m_topSignedDegreesBreak = armParams.topSignedDegreesBreak;
@@ -86,10 +84,29 @@ public class ArmSimulation {
     m_isBroken = false;
     m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.heightFromWinchToPivotPoint,
         armParams.armLengthFromEdgeToPivot);
-    m_ramenArmLogic = ramenArmLogic;
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
+
+  }
+
+  /**
+   * Optional constructor that also takes ArmSimLogicInterface parameter,
+   * which allows for robot-specific logic to be used for arm broken/stuck.
+   */
+  public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+      DutyCycleEncoderSim winchAbsoluteEncoderSim,
+      ArmSimulationParams armParams,
+      ArmSimLogicInterface robotSpecificArmLogic) {
+
+    // Call default constructor first
+    this(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
+
+    if (robotSpecificArmLogic == null) {
+      throw new IllegalArgumentException("robotSpecificArmLogic");
+    }
+
+    m_robotSpecificArmLogic = robotSpecificArmLogic;
   }
 
   public boolean getIsBroken() {
@@ -163,7 +180,7 @@ public class ArmSimulation {
       return;
     }
 
-    boolean isGrabberOpen = getGrabberOpen();
+    boolean isGrabberOpen = getGrabberOpen(); // $TODO
 
     double newStringLen = m_stringUnspooledLenSupplier.getAsDouble();
     CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
@@ -205,10 +222,12 @@ public class ArmSimulation {
     m_winchAbsoluteEncoderSim.set(newAbsoluteEncoderPosition);
   }
 
+  // $TODO
   public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {
     m_grabberOpenSupplier = grabberOpenSupplier;
   }
 
+  // $TODO
   /**
    * Returns true if grabber is open.
    * Uses the booleanSupplier passed to armSimulation from grabber system.

@@ -1,10 +1,9 @@
 package frc.robot.simulation;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
+import java.util.function.DoubleSupplier;
 
 /**
  * Robot-specific logic for the arm simulation.

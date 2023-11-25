@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.ArmSimLogicInterface;
 import frc.robot.simulation.ArmSimulation;
 import frc.robot.simulation.ArmSimulationParams;
 import frc.robot.simulation.ExtenderSimulation;

@@ -86,8 +86,11 @@ public class ArmSimulationTest {
 
     double grabberLimitRotations = m_defaultGrabberBreaksRotations;
     double offsetRotations = 0;
-    ArmSimulation armSimulation = RamenArmSimLogic.createRamenArmSimulation(stringUnspooledLenSupplier,
-        m_winchAbsoluteEncoderSim, m_defaultArmParams, UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+    ArmSimulation armSimulation = RamenArmSimLogic.createRamenArmSimulation(
+        stringUnspooledLenSupplier,
+        m_winchAbsoluteEncoderSim,
+        m_defaultArmParams,
+        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
     // Set grabber
     BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
@@ -129,8 +132,10 @@ public class ArmSimulationTest {
 
       double grabberLimitRotations = m_defaultGrabberBreaksRotations;
       double offsetRotations = 0;
-      ArmSimulation tempArmSimulation = RamenArmSimLogic.createRamenArmSimulation(null, m_winchAbsoluteEncoderSim,
-          m_defaultArmParams, UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+      ArmSimulation tempArmSimulation = RamenArmSimLogic.createRamenArmSimulation(null,
+          m_winchAbsoluteEncoderSim,
+          m_defaultArmParams,
+          UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
       assertTrue(tempArmSimulation != null);
     });
   }
@@ -393,8 +398,11 @@ public class ArmSimulationTest {
         .setBottomSignedDegreesBreak(m_defaultArmParams.bottomSignedDegreesBreak)
         .setEncoderRotationsOffset(offsetRotations);
 
-    ArmSimulation tempArmSimulation = RamenArmSimLogic.createRamenArmSimulation(stringUnspooledLenSupplier,
-        m_winchAbsoluteEncoderSim, tempArmParamsBuilder.build(), UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+    ArmSimulation tempArmSimulation = RamenArmSimLogic.createRamenArmSimulation(
+        stringUnspooledLenSupplier,
+        m_winchAbsoluteEncoderSim,
+        tempArmParamsBuilder.build(),
+        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
     assertTrue(tempArmSimulation != null);
     assertTrue(!tempwinchSimulation.getIsBroken());

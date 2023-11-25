@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ArmSimulation;
 import frc.robot.simulation.ArmSimulationParams;
+import frc.robot.simulation.CreateArmResult;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.RamenArmSimLogic;
 import frc.robot.simulation.framework.SimManagerInterface;
@@ -104,12 +105,15 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    m_armSimulation = RamenArmSimLogic.createRamenArmSimulation(stringUnspooledLenSupplier,
+    CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(
+        stringUnspooledLenSupplier,
         m_winchAbsoluteEncoderSim,
         armParams,
         UnitConversions
             .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
                 - Constants.SimConstants.karmEncoderRotationsOffset));
+
+    m_armSimulation = createResult.armSimulation;
   }
 
   private void createWinchSimParts() {

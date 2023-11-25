@@ -24,19 +24,19 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    * Create ArmSimulation, but with additional robot-specific logic
    * from Ramen bot.
    */
-  public static ArmSimulation createRamenArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public static CreateArmResult createRamenArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
 
-    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(UnitConversions
+    RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(UnitConversions
         .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
             - Constants.SimConstants.karmEncoderRotationsOffset));
 
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         winchAbsoluteEncoderSim, armParams, ramenArmLogic);
 
-    return armSimulation;
+    return new CreateArmResult(armSimulation, ramenArmLogic);
   }
 
   /**

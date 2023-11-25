@@ -137,18 +137,15 @@ public class ArmSimulation {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    /*
-     * $TODO
-     * // First, check robot-specific logic for arm broken
-     * ResultPairArm tempResult = ramenCheckIfArmBroken(oldSignedDegrees,
-     * isOldSignedDegreesSet,
-     * newSignedDegrees,
-     * isGrabberOpen);
-     * 
-     * if (tempResult != null && !tempResult.isValid) {
-     * return tempResult;
-     * }
-     */
+    // First, check robot-specific logic for arm broken
+    if (m_robotSpecificArmLogic != null) {
+      ResultPairArm tempResult = m_robotSpecificArmLogic
+          .checkIfArmBroken(oldSignedDegrees, isOldSignedDegreesSet, newSignedDegrees);
+
+      if (tempResult != null && !tempResult.isValid) {
+        return tempResult;
+      }
+    }
 
     // Now check general cases for arm broken
     if (newSignedDegrees > m_topSignedDegreesBreak) {
@@ -173,18 +170,15 @@ public class ArmSimulation {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    /*
-     * $TODO
-     * // First, check robot-specific logic for arm stuck
-     * ResultPairArm tempResult = ramenCheckIfArmStuck(oldSignedDegrees,
-     * isOldSignedDegreesSet,
-     * newSignedDegrees,
-     * isGrabberOpen);
-     * 
-     * if (tempResult != null && !tempResult.isValid) {
-     * return tempResult;
-     * }
-     */
+    // First, check robot-specific logic for arm stuck
+    if (m_robotSpecificArmLogic != null) {
+      ResultPairArm tempResult = m_robotSpecificArmLogic
+          .checkIfArmStuck(oldSignedDegrees, isOldSignedDegreesSet, newSignedDegrees);
+
+      if (tempResult != null && !tempResult.isValid) {
+        return tempResult;
+      }
+    }
 
     // Now check general cases for arm stuck
 

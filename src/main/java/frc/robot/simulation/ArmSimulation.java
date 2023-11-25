@@ -23,10 +23,7 @@ public class ArmSimulation {
   private CalcArmAngleHelper m_calcArmAngleHelper;
   private ArmSimLogicInterface m_robotSpecificArmLogic = null;
 
-  /**
-   * Constructor.
-   */
-  public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  private void commonInitialization(DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams) {
 
@@ -84,6 +81,19 @@ public class ArmSimulation {
     m_isBroken = false;
     m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.heightFromWinchToPivotPoint,
         armParams.armLengthFromEdgeToPivot);
+  }
+
+  /**
+   * Constructor. Note that we call commoonInitialization() in all constructors,
+   * rather than calling a primary constructor. We do this because constructor
+   * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
+   * initialized.
+   */
+  public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+      DutyCycleEncoderSim winchAbsoluteEncoderSim,
+      ArmSimulationParams armParams) {
+
+    commonInitialization(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
@@ -93,20 +103,27 @@ public class ArmSimulation {
   /**
    * Optional constructor that also takes ArmSimLogicInterface parameter,
    * which allows for robot-specific logic to be used for arm broken/stuck.
+   * Note that we call commoonInitialization() in all constructors,
+   * rather than calling a primary constructor. We do this because constructor
+   * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
+   * initialized.
    */
   public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       ArmSimLogicInterface robotSpecificArmLogic) {
 
-    // Call default constructor first
-    this(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
+    // Instead of calling this(), we call commonInitialization() directly
+    commonInitialization(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
 
     if (robotSpecificArmLogic == null) {
       throw new IllegalArgumentException("robotSpecificArmLogic");
     }
 
     m_robotSpecificArmLogic = robotSpecificArmLogic;
+
+    // Forces the absolute encoder to show the correct position
+    updateAbsoluteEncoderPosition();
   }
 
   public boolean getIsBroken() {
@@ -178,6 +195,11 @@ public class ArmSimulation {
     // If the arm is broken, there's nothing to update
     if (m_isBroken) {
       return;
+    }
+
+    // $LATER - For now, we assume that robot specific object is always there
+    if (m_robotSpecificArmLogic == null) {
+      throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
     }
 
     boolean isGrabberOpen = getGrabberOpen(); // $TODO

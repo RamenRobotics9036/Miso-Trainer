@@ -135,10 +135,13 @@ public class ArmSimulationTest {
 
       double grabberLimitRotations = m_defaultGrabberBreaksRotations;
       double offsetRotations = 0;
-      ArmSimulation tempArmSimulation = RamenArmSimLogic.createRamenArmSimulation(null,
+
+      CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(null,
           m_winchAbsoluteEncoderSim,
           m_defaultArmParams,
           UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+
+      ArmSimulation tempArmSimulation = createResult.armSimulation;
       assertTrue(tempArmSimulation != null);
     });
   }

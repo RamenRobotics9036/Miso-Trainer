@@ -93,10 +93,6 @@ public class ArmSystemSim extends ArmSystem {
       return m_winchState.getStringUnspooledLen();
     };
 
-    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(UnitConversions
-        .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-            - Constants.SimConstants.karmEncoderRotationsOffset));
-
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
             - Constants.SimConstants.karmEncoderRotationsOffset
@@ -109,8 +105,12 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    m_armSimulation = new ArmSimulation(stringUnspooledLenSupplier, m_winchAbsoluteEncoderSim,
-        armParams, ramenArmLogic);
+    m_armSimulation = RamenArmSimLogic.createRamenArmSimulation(stringUnspooledLenSupplier,
+        m_winchAbsoluteEncoderSim,
+        armParams,
+        UnitConversions
+            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+                - Constants.SimConstants.karmEncoderRotationsOffset));
   }
 
   private void createWinchSimParts() {

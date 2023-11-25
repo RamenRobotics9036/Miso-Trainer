@@ -1,5 +1,9 @@
 package frc.robot.simulation;
 
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
+import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 
 /**
@@ -13,6 +17,25 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    */
   public RamenArmSimLogic(double grabberBreaksIfOpenBelowSignedDegreesLimit) {
     m_grabberBreaksIfOpenBelowSignedDegreesLimit = grabberBreaksIfOpenBelowSignedDegreesLimit;
+  }
+
+  /**
+   * Create ArmSimulation, but with additional robot-specific logic
+   * from Ramen bot.
+   */
+  public static ArmSimulation createRamenArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+      DutyCycleEncoderSim winchAbsoluteEncoderSim,
+      ArmSimulationParams armParams,
+      double grabberBreaksIfOpenBelowSignedDegreesLimit) {
+
+    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(UnitConversions
+        .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+            - Constants.SimConstants.karmEncoderRotationsOffset));
+
+    ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
+        winchAbsoluteEncoderSim, armParams, ramenArmLogic);
+
+    return armSimulation;
   }
 
   /**

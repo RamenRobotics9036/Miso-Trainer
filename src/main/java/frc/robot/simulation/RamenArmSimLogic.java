@@ -16,7 +16,21 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
   /**
    * Constructor.
    */
-  public RamenArmSimLogic(double grabberBreaksIfOpenBelowSignedDegreesLimit) {
+  public RamenArmSimLogic(double grabberBreaksIfOpenBelowSignedDegreesLimit,
+      ArmSimulationParams armParams) {
+
+    if (!UnitConversions.isInRightHalfPlane(grabberBreaksIfOpenBelowSignedDegreesLimit)) {
+      throw new IllegalArgumentException(
+          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
+    }
+
+    if (grabberBreaksIfOpenBelowSignedDegreesLimit >= armParams.topSignedDegreesBreak
+        || grabberBreaksIfOpenBelowSignedDegreesLimit <= armParams.bottomSignedDegreesBreak) {
+      throw new IllegalArgumentException(
+          "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
+              + "topSignedDegreesBreak and bottomSignedBreak");
+    }
+
     m_grabberBreaksIfOpenBelowSignedDegreesLimit = grabberBreaksIfOpenBelowSignedDegreesLimit;
   }
 
@@ -31,7 +45,8 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
 
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(UnitConversions
         .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-            - Constants.SimConstants.karmEncoderRotationsOffset));
+            - Constants.SimConstants.karmEncoderRotationsOffset),
+        armParams);
 
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         winchAbsoluteEncoderSim, armParams, ramenArmLogic);

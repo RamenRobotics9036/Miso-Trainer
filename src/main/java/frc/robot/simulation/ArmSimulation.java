@@ -54,21 +54,10 @@ public class ArmSimulation {
       throw new IllegalArgumentException("bottomSignedDegreesBreak must be between -90 and 90");
     }
 
-    // $TODO if (!UnitConversions.isInRightHalfPlane(armParams.grabberSignedDegreesLimit)) {
-    // throw new IllegalArgumentException(
-    // "grabberBreaksIfOpenBelowSignedDegreesLimit must be between -90 and 90");
-    // }
-
     if (armParams.topSignedDegreesBreak <= armParams.bottomSignedDegreesBreak) {
       throw new IllegalArgumentException(
           "topSignedDegreesBreak must be > bottomSignedDegreesBreak");
     }
-
-    // $TODO double grabberLimit = armParams.grabberSignedDegreesLimit;
-    // if (grabberLimit >= topSignedDegreesBreak || grabberLimit <= bottomSignedDegreesBreak) {
-    // throw new IllegalArgumentException(
-    // "grabberBreaksIfOpenBelowSignedDegreesLimit must be between "
-    // + "topSignedDegreesBreak and bottomSignedBreak");
 
     // Copy into member variables
     m_topSignedDegreesBreak = armParams.topSignedDegreesBreak;

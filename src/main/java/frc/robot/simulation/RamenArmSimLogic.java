@@ -3,6 +3,7 @@ package frc.robot.simulation;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -10,6 +11,7 @@ import java.util.function.DoubleSupplier;
  */
 public class RamenArmSimLogic implements ArmSimLogicInterface {
   private final double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
+  private BooleanSupplier m_grabberOpenSupplier = null;
 
   /**
    * Constructor.
@@ -47,7 +49,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    boolean isGrabberOpen = false; // $TODO
+    boolean isGrabberOpen = getGrabberOpen();
 
     if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
         && isInGrabberBreakRange(oldSignedDegrees)) {
@@ -61,7 +63,6 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
     }
 
     return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
-
   }
 
   /**
@@ -74,7 +75,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
     boolean isValid = true;
     double resetPositionTo = newSignedDegrees;
 
-    boolean isGrabberOpen = false; // $TODO
+    boolean isGrabberOpen = getGrabberOpen();
 
     if (isOldSignedDegreesSet && isGrabberOpen && isInGrabberBreakRange(newSignedDegrees)
         && !isInGrabberBreakRange(oldSignedDegrees)) {
@@ -89,7 +90,24 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
     }
 
     return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+  }
 
+  public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {
+    m_grabberOpenSupplier = grabberOpenSupplier;
+  }
+
+  /**
+   * Returns true if grabber is open.
+   * Uses the booleanSupplier passed to armSimulation from grabber system.
+   */
+  private boolean getGrabberOpen() {
+    boolean result = false;
+
+    if (m_grabberOpenSupplier != null) {
+      result = m_grabberOpenSupplier.getAsBoolean();
+    }
+
+    return result;
   }
 
   private boolean isInGrabberBreakRange(double positionSignedDegrees) {

@@ -18,7 +18,6 @@ public class ArmSimulation {
   private double m_topSignedDegreesBreak;
   private double m_bottomSignedDegreesBreak;
   private double m_encoderRotationsOffset;
-  private BooleanSupplier m_grabberOpenSupplier = null; // $TODO - Move this
   private boolean m_isBroken;
   private CalcArmAngleHelper m_calcArmAngleHelper;
   private ArmSimLogicInterface m_robotSpecificArmLogic = null;
@@ -196,8 +195,6 @@ public class ArmSimulation {
       throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
     }
 
-    boolean isGrabberOpen = getGrabberOpen(); // $TODO
-
     double newStringLen = m_stringUnspooledLenSupplier.getAsDouble();
     CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
         .calcSignedDegreesForStringLength(newStringLen);
@@ -236,26 +233,6 @@ public class ArmSimulation {
         + UnitConversions.signedDegreesToRotation(newAbsoluteEncoderSignedDegrees);
 
     m_winchAbsoluteEncoderSim.set(newAbsoluteEncoderPosition);
-  }
-
-  // $TODO
-  public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {
-    m_grabberOpenSupplier = grabberOpenSupplier;
-  }
-
-  // $TODO
-  /**
-   * Returns true if grabber is open.
-   * Uses the booleanSupplier passed to armSimulation from grabber system.
-   */
-  public boolean getGrabberOpen() {
-    boolean result = false;
-
-    if (m_grabberOpenSupplier != null) {
-      result = m_grabberOpenSupplier.getAsBoolean();
-    }
-
-    return result;
   }
 
   public void simulationPeriodic() {

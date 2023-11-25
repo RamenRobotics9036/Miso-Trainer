@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
  */
 public class ArmSimulationTest {
   private final ArmSimulationParams m_defaultArmParams;
+  private final double m_defaultGrabberBreaksRotations = 0.80;
   private CalcArmAngleHelper m_calcArmAngleHelper;
   private final double m_winchSpoolDiameterMeters = 0.01; // (1 centimeter)
   private final double m_winchTotalStringLenMeters = 5;
@@ -41,7 +42,6 @@ public class ArmSimulationTest {
   public ArmSimulationTest() {
     m_defaultArmParams = new ArmSimulationParams(UnitConversions.rotationToSignedDegrees(0.25),
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
-        // $TODO UnitConversions.rotationToSignedDegrees(0.80), // grabberBreaksIfOpenBelowThisLimit
         1, // heightFromWinchToPivotPoint
         0.5, // armLengthFromEdgeToPivot
         0.1, // armLengthFromEdgeToPivotMin
@@ -84,8 +84,13 @@ public class ArmSimulationTest {
       return winchSimulation.getStringUnspooledLen();
     };
 
+    double grabberLimitRotations = m_defaultGrabberBreaksRotations;
+    double offsetRotations = 0;
+    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(
+        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
-        m_winchAbsoluteEncoderSim, m_defaultArmParams);
+        m_winchAbsoluteEncoderSim, m_defaultArmParams, ramenArmLogic);
 
     // Set grabber
     BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
@@ -124,8 +129,13 @@ public class ArmSimulationTest {
   @Test
   public void nullWinchSimShouldThrowException() {
     assertThrows(IllegalArgumentException.class, () -> {
+      double grabberLimitRotations = m_defaultGrabberBreaksRotations;
+      double offsetRotations = 0;
+      ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(
+          UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+
       ArmSimulation tempArmSimulation = new ArmSimulation(null, m_winchAbsoluteEncoderSim,
-          m_defaultArmParams);
+          m_defaultArmParams, ramenArmLogic);
       assertTrue(tempArmSimulation != null);
     });
   }
@@ -163,217 +173,213 @@ public class ArmSimulationTest {
         UnitConversions.kAngleTolerance);
   }
 
-  // $TODO
-  // private void moveArmWithGrabberOpenHelper(double initialDegreesAboveBreakPoint,
-  // double targetDegreesAboveBreakPoint,
-  // double expectedFinalDegreesAboveBreakPoint,
-  // boolean expectedArmInitiallyBroken,
-  // boolean expectedWinchIsBroken,
-  // boolean expectedIsArmBroken) {
+  private void moveArmWithGrabberOpenHelper(double initialDegreesAboveBreakPoint,
+      double targetDegreesAboveBreakPoint,
+      double expectedFinalDegreesAboveBreakPoint,
+      boolean expectedArmInitiallyBroken,
+      boolean expectedWinchIsBroken,
+      boolean expectedIsArmBroken) {
 
-  // boolean initialIsGrabberOpen = true;
+    boolean initialIsGrabberOpen = true;
 
-  // // $LATER - No need for this extra variable
-  // double breakLimitSignedDegrees = m_defaultArmParams.grabberSignedDegreesLimit;
+    double initialPosSignedDegrees = m_defaultGrabberBreaksRotations
+        + initialDegreesAboveBreakPoint;
+    double winchInitialLenSpooled = m_winchTotalStringLenMeters
+        - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
-  // double initialPosSignedDegrees = breakLimitSignedDegrees + initialDegreesAboveBreakPoint;
-  // double winchInitialLenSpooled = m_winchTotalStringLenMeters
-  // - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
+    WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
+    ArmSimulation tempArmSimulation = createDefaultArmHelper(tempwinchSimulation,
+        initialIsGrabberOpen,
+        false);
 
-  // WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-  // ArmSimulation tempArmSimulation = createDefaultArmHelper(tempwinchSimulation,
-  // initialIsGrabberOpen,
-  // false);
+    // Initialize the number of rotations
+    double currentWinchRotations = 0;
+    tempwinchSimulation.updateNewLenSpooled(currentWinchRotations);
 
-  // // Initialize the number of rotations
-  // double currentWinchRotations = 0;
-  // tempwinchSimulation.updateNewLenSpooled(currentWinchRotations);
+    // Now that grabber is set open, need to simulate one cycle
+    tempArmSimulation.simulationPeriodic();
 
-  // // Now that grabber is set open, need to simulate one cycle
-  // tempArmSimulation.simulationPeriodic();
+    assertTrue(tempArmSimulation.getIsBroken() == expectedArmInitiallyBroken);
+    double expect = initialPosSignedDegrees;
+    double actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
+    assertEquals(expect, actual, UnitConversions.kAngleTolerance);
 
-  // assertTrue(tempArmSimulation.getIsBroken() == expectedArmInitiallyBroken);
-  // double expect = initialPosSignedDegrees;
-  // double actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
-  // assertEquals(expect, actual, UnitConversions.kAngleTolerance);
+    double targetPosSignedDegrees = m_defaultGrabberBreaksRotations + targetDegreesAboveBreakPoint;
+    double winchTargetLenSpooled = m_winchTotalStringLenMeters
+        - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(targetPosSignedDegrees);
 
-  // double targetPosSignedDegrees = breakLimitSignedDegrees + targetDegreesAboveBreakPoint;
-  // double winchTargetLenSpooled = m_winchTotalStringLenMeters
-  // - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(targetPosSignedDegrees);
+    // Now calculate how much to turn the winch motor to get it to the target position
+    double spoolCircumferenceMeters = Math.PI * m_winchSpoolDiameterMeters;
+    double deltaWinchRotations = (winchInitialLenSpooled - winchTargetLenSpooled)
+        / spoolCircumferenceMeters;
 
-  // // Now calculate how much to turn the winch motor to get it to the target position
-  // double spoolCircumferenceMeters = Math.PI * m_winchSpoolDiameterMeters;
-  // double deltaWinchRotations = (winchInitialLenSpooled - winchTargetLenSpooled)
-  // / spoolCircumferenceMeters;
+    // Simulate one cycle for winch, so that it updates
+    tempwinchSimulation.updateNewLenSpooled(deltaWinchRotations);
+    tempArmSimulation.simulationPeriodic();
 
-  // // Simulate one cycle for winch, so that it updates
-  // tempwinchSimulation.updateNewLenSpooled(deltaWinchRotations);
-  // tempArmSimulation.simulationPeriodic();
+    assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);
+    assertTrue(tempArmSimulation.getIsBroken() == expectedIsArmBroken);
 
-  // assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);
-  // assertTrue(tempArmSimulation.getIsBroken() == expectedIsArmBroken);
+    expect = m_defaultGrabberBreaksRotations + expectedFinalDegreesAboveBreakPoint;
+    actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
+    assertEquals(expect, actual, UnitConversions.kAngleTolerance);
+  }
 
-  // expect = breakLimitSignedDegrees + expectedFinalDegreesAboveBreakPoint;
-  // actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
-  // assertEquals(expect, actual, UnitConversions.kAngleTolerance);
-  // }
+  @Test
+  public void movingArmDownwardPastBreakLimitWithGrabberOpenShouldNotMoveArm() {
+    // We expect that the arm gets stuck at the break limit, instead of going all the way to the
+    // target degrees
+    double initialDegreesAboveBreakPoint = 4;
+    double targetDegreesAboveBreakPoint = -4;
+    double expectedFinalDegreesAboveBreakPoint = 0;
+    boolean expectedArmInitiallyBroken = false;
+    boolean expectedWinchIsBroken = false;
+    boolean expectedIsArmBroken = false;
 
-  // @Test
-  // public void movingArmDownwardPastBreakLimitWithGrabberOpenShouldNotMoveArm() {
-  // // We expect that the arm gets stuck at the break limit, instead of going all the way to the
-  // // target degrees
-  // double initialDegreesAboveBreakPoint = 4;
-  // double targetDegreesAboveBreakPoint = -4;
-  // double expectedFinalDegreesAboveBreakPoint = 0;
-  // boolean expectedArmInitiallyBroken = false;
-  // boolean expectedWinchIsBroken = false;
-  // boolean expectedIsArmBroken = false;
+    moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
+        targetDegreesAboveBreakPoint,
+        expectedFinalDegreesAboveBreakPoint,
+        expectedArmInitiallyBroken,
+        expectedWinchIsBroken,
+        expectedIsArmBroken);
+  }
 
-  // moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
-  // targetDegreesAboveBreakPoint,
-  // expectedFinalDegreesAboveBreakPoint,
-  // expectedArmInitiallyBroken,
-  // expectedWinchIsBroken,
-  // expectedIsArmBroken);
-  // }
+  @Test
+  public void movingArmWithGrabberOpenShouldSucceedIfArmIsTowardsTop() {
+    double initialDegreesAboveBreakPoint = 4;
+    double targetDegreesAboveBreakPoint = 8;
+    double expectedFinalDegreesAboveBreakPoint = 8;
+    boolean expectedArmInitiallyBroken = false;
+    boolean expectedWinchIsBroken = false;
+    boolean expectedIsArmBroken = false;
 
-  // @Test
-  // public void movingArmWithGrabberOpenShouldSucceedIfArmIsTowardsTop() {
-  // double initialDegreesAboveBreakPoint = 4;
-  // double targetDegreesAboveBreakPoint = 8;
-  // double expectedFinalDegreesAboveBreakPoint = 8;
-  // boolean expectedArmInitiallyBroken = false;
-  // boolean expectedWinchIsBroken = false;
-  // boolean expectedIsArmBroken = false;
+    moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
+        targetDegreesAboveBreakPoint,
+        expectedFinalDegreesAboveBreakPoint,
+        expectedArmInitiallyBroken,
+        expectedWinchIsBroken,
+        expectedIsArmBroken);
+  }
 
-  // moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
-  // targetDegreesAboveBreakPoint,
-  // expectedFinalDegreesAboveBreakPoint,
-  // expectedArmInitiallyBroken,
-  // expectedWinchIsBroken,
-  // expectedIsArmBroken);
-  // }
+  @Test
+  public void movingArmUpwardFromBreakLimitWithGrabberOpenShouldSucceed() {
+    double initialDegreesAboveBreakPoint = 0;
+    double targetDegreesAboveBreakPoint = 8;
+    double expectedFinalDegreesAboveBreakPoint = 8;
+    boolean expectedArmInitiallyBroken = false;
+    boolean expectedWinchIsBroken = false;
+    boolean expectedIsArmBroken = false;
 
-  // @Test
-  // public void movingArmUpwardFromBreakLimitWithGrabberOpenShouldSucceed() {
-  // double initialDegreesAboveBreakPoint = 0;
-  // double targetDegreesAboveBreakPoint = 8;
-  // double expectedFinalDegreesAboveBreakPoint = 8;
-  // boolean expectedArmInitiallyBroken = false;
-  // boolean expectedWinchIsBroken = false;
-  // boolean expectedIsArmBroken = false;
+    moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
+        targetDegreesAboveBreakPoint,
+        expectedFinalDegreesAboveBreakPoint,
+        expectedArmInitiallyBroken,
+        expectedWinchIsBroken,
+        expectedIsArmBroken);
+  }
 
-  // moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
-  // targetDegreesAboveBreakPoint,
-  // expectedFinalDegreesAboveBreakPoint,
-  // expectedArmInitiallyBroken,
-  // expectedWinchIsBroken,
-  // expectedIsArmBroken);
-  // }
+  @Test
+  public void movingAlreadyBrokenArmShouldNotMoveArm() {
+    double initialDegreesAboveBreakPoint = -4;
+    double targetDegreesAboveBreakPoint = 8;
+    double expectedFinalDegreesAboveBreakPoint = -4;
+    boolean expectedArmInitiallyBroken = true;
+    boolean expectedWinchIsBroken = false;
+    boolean expectedIsArmBroken = true;
 
-  // @Test
-  // public void movingAlreadyBrokenArmShouldNotMoveArm() {
-  // double initialDegreesAboveBreakPoint = -4;
-  // double targetDegreesAboveBreakPoint = 8;
-  // double expectedFinalDegreesAboveBreakPoint = -4;
-  // boolean expectedArmInitiallyBroken = true;
-  // boolean expectedWinchIsBroken = false;
-  // boolean expectedIsArmBroken = true;
+    moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
+        targetDegreesAboveBreakPoint,
+        expectedFinalDegreesAboveBreakPoint,
+        expectedArmInitiallyBroken,
+        expectedWinchIsBroken,
+        expectedIsArmBroken);
+  }
 
-  // moveArmWithGrabberOpenHelper(initialDegreesAboveBreakPoint,
-  // targetDegreesAboveBreakPoint,
-  // expectedFinalDegreesAboveBreakPoint,
-  // expectedArmInitiallyBroken,
-  // expectedWinchIsBroken,
-  // expectedIsArmBroken);
-  // }
+  private void createWithDegreeArmHelper(double backArmAbovePivot,
+      double expectedDegrees,
+      boolean expectArmBroken) {
+    double lengthStringExtended = m_defaultArmParams.heightFromWinchToPivotPoint
+        + backArmAbovePivot;
+    double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
-  // private void createWithDegreeArmHelper(double backArmAbovePivot,
-  // double expectedDegrees,
-  // boolean expectArmBroken) {
-  // double lengthStringExtended = m_defaultArmParams.heightFromWinchToPivotPoint
-  // + backArmAbovePivot;
-  // double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
+    WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
+    ArmSimulation tempArmSimulation = createDefaultArmHelper(tempwinchSimulation,
+        false,
+        expectArmBroken);
 
-  // WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-  // ArmSimulation tempArmSimulation = createDefaultArmHelper(tempwinchSimulation,
-  // false,
-  // expectArmBroken);
+    assertTrue(tempArmSimulation != null);
+    assertTrue(!tempwinchSimulation.getIsBroken());
 
-  // assertTrue(tempArmSimulation != null);
-  // assertTrue(!tempwinchSimulation.getIsBroken());
+    if (!expectArmBroken) {
+      assertEquals(m_winchAbsoluteEncoder.get() * 360,
+          expectedDegrees,
+          UnitConversions.kAngleTolerance);
+    }
+  }
 
-  // if (!expectArmBroken) {
-  // assertEquals(m_winchAbsoluteEncoder.get() * 360,
-  // expectedDegrees,
-  // UnitConversions.kAngleTolerance);
-  // }
-  // }
+  @Test
+  public void createWithLevelArmShouldSucceed() {
+    createWithDegreeArmHelper(0, 0, false);
+  }
 
-  // @Test
-  // public void createWithLevelArmShouldSucceed() {
-  // createWithDegreeArmHelper(0, 0, false);
-  // }
+  @Test
+  public void createWith45DegreeArmShouldSucceed() {
+    createWithDegreeArmHelper(-0.35355, 45, false);
+  }
 
-  // @Test
-  // public void createWith45DegreeArmShouldSucceed() {
-  // createWithDegreeArmHelper(-0.35355, 45, false);
-  // }
+  @Test
+  public void createWith30DegreeArmShouldSucceed() {
+    createWithDegreeArmHelper(-0.25, 30, false);
+  }
 
-  // @Test
-  // public void createWith30DegreeArmShouldSucceed() {
-  // createWithDegreeArmHelper(-0.25, 30, false);
-  // }
+  @Test
+  public void createWith90DegreeArmShouldSucceed() {
+    createWithDegreeArmHelper(-0.5, 90, false);
+  }
 
-  // @Test
-  // public void createWith90DegreeArmShouldSucceed() {
-  // createWithDegreeArmHelper(-0.5, 90, false);
-  // }
+  @Test
+  public void createWithNegative90DegreeArmShouldSucceed() {
+    createWithDegreeArmHelper(0.5, 360 - 90, false);
+  }
 
-  // @Test
-  // public void createWithNegative90DegreeArmShouldSucceed() {
-  // createWithDegreeArmHelper(0.5, 360 - 90, false);
-  // }
+  @Test
+  public void createWith91DegreeArmShouldFail() {
+    double amountBeyondLimit = 0.0001;
 
-  // @Test
-  // public void createWith91DegreeArmShouldFail() {
-  // double amountBeyondLimit = 0.0001;
+    createWithDegreeArmHelper(-0.5 - amountBeyondLimit, 90, true);
+  }
 
-  // createWithDegreeArmHelper(-0.5 - amountBeyondLimit, 90, true);
-  // }
+  @Test
+  public void createWithNegative91DegreeArmShouldNotBreakArm() {
+    double amountBeyondLimit = 0.0001;
 
-  // @Test
-  // public void createWithNegative91DegreeArmShouldNotBreakArm() {
-  // double amountBeyondLimit = 0.0001;
+    createWithDegreeArmHelper(0.5 + amountBeyondLimit, 360 - 90, false);
+  }
 
-  // createWithDegreeArmHelper(0.5 + amountBeyondLimit, 360 - 90, false);
-  // }
+  @Test
+  public void createWith98DegreeArmShouldFail() {
+    double amountBeyondLimit = 0.1;
 
-  // @Test
-  // public void createWith98DegreeArmShouldFail() {
-  // double amountBeyondLimit = 0.1;
+    createWithDegreeArmHelper(-0.5 - amountBeyondLimit, 90, true);
+  }
 
-  // createWithDegreeArmHelper(-0.5 - amountBeyondLimit, 90, true);
-  // }
+  @Test
+  public void createWithNegative98DegreeArmShouldNotBreakArm() {
+    double amountBeyondLimit = 0.1;
 
-  // @Test
-  // public void createWithNegative98DegreeArmShouldNotBreakArm() {
-  // double amountBeyondLimit = 0.1;
+    createWithDegreeArmHelper(0.5 + amountBeyondLimit, 360 - 90, false);
+  }
 
-  // createWithDegreeArmHelper(0.5 + amountBeyondLimit, 360 - 90, false);
-  // }
-
-  // @Test
-  // public void createWithNegative45DegreeArmShouldSucceed() {
-  // createWithDegreeArmHelper(0.35355, 360 - 45, false);
-  // }
+  @Test
+  public void createWithNegative45DegreeArmShouldSucceed() {
+    createWithDegreeArmHelper(0.35355, 360 - 45, false);
+  }
 
   // Sometimes, the absolute encoder is offset, and 0 isn't level
   @Test
   public void createWithOffsetShouldSucceed() {
     double lengthStringExtended = m_defaultArmParams.heightFromWinchToPivotPoint - 0.35355;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
-    double offsetRotations = 0.25;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
 
@@ -382,20 +388,20 @@ public class ArmSimulationTest {
       return tempwinchSimulation.getStringUnspooledLen();
     };
 
+    double grabberLimitRotations = m_defaultGrabberBreaksRotations;
+    double offsetRotations = 0.25;
+    ArmSimLogicInterface ramenArmLogic = new RamenArmSimLogic(
+        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+
     ArmSimulationParamsBuilder tempArmParamsBuilder = new ArmSimulationParamsBuilder(
         m_defaultArmParams);
 
     tempArmParamsBuilder.setTopSignedDegreesBreak(m_defaultArmParams.topSignedDegreesBreak)
         .setBottomSignedDegreesBreak(m_defaultArmParams.bottomSignedDegreesBreak)
-        /*
-         * $TODO
-         * .setGrabberBreaksIfOpenBelowThisSignedDegreesLimit(
-         * m_defaultArmParams.grabberSignedDegreesLimit)
-         */
         .setEncoderRotationsOffset(offsetRotations);
 
     ArmSimulation tempArmSimulation = new ArmSimulation(stringUnspooledLenSupplier,
-        m_winchAbsoluteEncoderSim, tempArmParamsBuilder.build());
+        m_winchAbsoluteEncoderSim, tempArmParamsBuilder.build(), ramenArmLogic);
 
     assertTrue(tempArmSimulation != null);
     assertTrue(!tempwinchSimulation.getIsBroken());

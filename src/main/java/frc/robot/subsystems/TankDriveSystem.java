@@ -162,7 +162,7 @@ public class TankDriveSystem extends SubsystemBase {
       m_turboLimiter2.reset(slewLimit2);
     }
 
-    // $TODO - This should be in init or update DashBoard?
+    // $LATER - This should be in init or update DashBoard?
     SmartDashboard.putNumber("Left Motor", m_leftMotors.get());
     SmartDashboard.putNumber("Right Motor", m_rightMotors.get());
   }

@@ -9,7 +9,9 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ArmSimulation;
 import frc.robot.simulation.ArmSimulationParams;
+import frc.robot.simulation.CreateArmResult;
 import frc.robot.simulation.ExtenderSimulation;
+import frc.robot.simulation.RamenArmSimLogic;
 import frc.robot.simulation.framework.SimManagerInterface;
 import frc.robot.simulation.motor.MotorSimManager;
 import frc.robot.simulation.motor.MotorSimOutput;
@@ -41,6 +43,7 @@ public class ArmSystemSim extends ArmSystem {
   protected DIOSim m_sensorSim;
 
   protected ArmSimulation m_armSimulation;
+  protected RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
    * Creates an instance of the ArmSystem or ArmSystemSim class.
@@ -93,21 +96,26 @@ public class ArmSystemSim extends ArmSystem {
 
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
-            - Constants.SimConstants.karmEncoderRotationsOffset),
+            - Constants.SimConstants.karmEncoderRotationsOffset
+            + Constants.SimConstants.kdeltaRotationsBeforeBroken),
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderLowerLimit
-            - Constants.SimConstants.karmEncoderRotationsOffset),
-        UnitConversions
-            .rotationToUnsignedDegrees(Constants.SimConstants.kdeltaRotationsBeforeBroken),
-        UnitConversions
-            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-                - Constants.SimConstants.karmEncoderRotationsOffset),
+            - Constants.SimConstants.karmEncoderRotationsOffset
+            - Constants.SimConstants.kdeltaRotationsBeforeBroken),
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
         Constants.SimConstants.karmLengthFromEdgeToPivot,
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min,
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    m_armSimulation = new ArmSimulation(stringUnspooledLenSupplier, m_winchAbsoluteEncoderSim,
-        armParams);
+    CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(
+        stringUnspooledLenSupplier,
+        m_winchAbsoluteEncoderSim,
+        armParams,
+        UnitConversions
+            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+                - Constants.SimConstants.karmEncoderRotationsOffset));
+
+    m_armSimulation = createResult.armSimulation;
+    m_ramenArmSimLogic = createResult.ramenArmSimLogic;
   }
 
   private void createWinchSimParts() {
@@ -143,13 +151,13 @@ public class ArmSystemSim extends ArmSystem {
         true);
   }
 
-  // $TODO Get rid of isRobotEnabled
+  // $LATER Get rid of isRobotEnabled
   private boolean isRobotEnabled() {
     return RobotState.isEnabled();
   }
 
   public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {
-    m_armSimulation.setGrabberOpenSupplier(grabberOpenSupplier);
+    m_ramenArmSimLogic.setGrabberOpenSupplier(grabberOpenSupplier);
   }
 
   @Override

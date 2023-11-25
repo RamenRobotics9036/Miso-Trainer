@@ -43,10 +43,8 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
       ArmSimulationParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
 
-    RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(UnitConversions
-        .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-            - Constants.SimConstants.karmEncoderRotationsOffset),
-        armParams);
+    RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(
+        grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         winchAbsoluteEncoderSim, armParams, ramenArmLogic);

@@ -84,8 +84,8 @@ public class ArmSimulationTest {
       return winchSimulation.getStringUnspooledLen();
     };
 
-    double grabberLimitRotations = m_defaultGrabberBreaksRotations;
     double offsetRotations = 0;
+    double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
     CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(
         stringUnspooledLenSupplier,
@@ -134,8 +134,8 @@ public class ArmSimulationTest {
   public void nullWinchSimShouldThrowException() {
     assertThrows(IllegalArgumentException.class, () -> {
 
-      double grabberLimitRotations = m_defaultGrabberBreaksRotations;
       double offsetRotations = 0;
+      double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
       CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(null,
           m_winchAbsoluteEncoderSim,
@@ -189,8 +189,8 @@ public class ArmSimulationTest {
 
     boolean initialIsGrabberOpen = true;
 
-    double initialPosSignedDegrees = m_defaultGrabberBreaksRotations
-        + initialDegreesAboveBreakPoint;
+    double initialPosSignedDegrees = UnitConversions
+        .rotationToSignedDegrees(m_defaultGrabberBreaksRotations) + initialDegreesAboveBreakPoint;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
@@ -211,7 +211,8 @@ public class ArmSimulationTest {
     double actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
     assertEquals(expect, actual, UnitConversions.kAngleTolerance);
 
-    double targetPosSignedDegrees = m_defaultGrabberBreaksRotations + targetDegreesAboveBreakPoint;
+    double targetPosSignedDegrees = UnitConversions
+        .rotationToSignedDegrees(m_defaultGrabberBreaksRotations) + targetDegreesAboveBreakPoint;
     double winchTargetLenSpooled = m_winchTotalStringLenMeters
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(targetPosSignedDegrees);
 
@@ -227,7 +228,8 @@ public class ArmSimulationTest {
     assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);
     assertTrue(tempArmSimulation.getIsBroken() == expectedIsArmBroken);
 
-    expect = m_defaultGrabberBreaksRotations + expectedFinalDegreesAboveBreakPoint;
+    expect = UnitConversions.rotationToSignedDegrees(m_defaultGrabberBreaksRotations)
+        + expectedFinalDegreesAboveBreakPoint;
     actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
     assertEquals(expect, actual, UnitConversions.kAngleTolerance);
   }
@@ -395,8 +397,8 @@ public class ArmSimulationTest {
       return tempwinchSimulation.getStringUnspooledLen();
     };
 
-    double grabberLimitRotations = m_defaultGrabberBreaksRotations;
     double offsetRotations = 0.25;
+    double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
     ArmSimulationParamsBuilder tempArmParamsBuilder = new ArmSimulationParamsBuilder(
         m_defaultArmParams);

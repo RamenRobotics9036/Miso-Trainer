@@ -94,10 +94,11 @@ public class ArmSimulationTest {
         UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
     ArmSimulation armSimulation = createResult.armSimulation;
+    RamenArmSimLogic ramenArmSimLogic = createResult.ramenArmSimLogic;
 
     // Set grabber
     BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
-    armSimulation.setGrabberOpenSupplier(isGrabberOpen);
+    ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
 
     assertTrue(armSimulation != null);
     assertTrue(!winchSimulation.getIsBroken());

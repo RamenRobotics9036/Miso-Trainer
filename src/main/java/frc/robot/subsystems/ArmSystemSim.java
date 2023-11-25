@@ -43,6 +43,7 @@ public class ArmSystemSim extends ArmSystem {
   protected DIOSim m_sensorSim;
 
   protected ArmSimulation m_armSimulation;
+  protected RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
    * Creates an instance of the ArmSystem or ArmSystemSim class.
@@ -114,6 +115,7 @@ public class ArmSystemSim extends ArmSystem {
                 - Constants.SimConstants.karmEncoderRotationsOffset));
 
     m_armSimulation = createResult.armSimulation;
+    m_ramenArmSimLogic = createResult.ramenArmSimLogic;
   }
 
   private void createWinchSimParts() {
@@ -155,7 +157,7 @@ public class ArmSystemSim extends ArmSystem {
   }
 
   public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {
-    m_armSimulation.setGrabberOpenSupplier(grabberOpenSupplier);
+    m_ramenArmSimLogic.setGrabberOpenSupplier(grabberOpenSupplier);
   }
 
   @Override

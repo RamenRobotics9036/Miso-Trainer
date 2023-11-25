@@ -100,7 +100,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    * Returns true if grabber is open.
    * Uses the booleanSupplier passed to armSimulation from grabber system.
    */
-  private boolean getGrabberOpen() {
+  public boolean getGrabberOpen() {
     boolean result = false;
 
     if (m_grabberOpenSupplier != null) {

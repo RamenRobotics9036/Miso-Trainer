@@ -3,7 +3,6 @@ package frc.robot.simulation;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.CalcArmAngleHelper;
 import frc.robot.helpers.UnitConversions;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**

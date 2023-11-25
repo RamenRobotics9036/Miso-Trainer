@@ -188,7 +188,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .add("Happy",
             new SendableArmPosition(() -> getArmPercentRaised(),
                 () -> m_extenderSimulation.getExtendedPercent(),
-                () -> m_armSimulation.getGrabberOpen()))
+                () -> m_ramenArmSimLogic.getGrabberOpen()))
         .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
   }
 

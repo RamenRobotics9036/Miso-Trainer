@@ -41,6 +41,9 @@ public class StringAngleSimulation {
     m_calcArmAngleHelper = new CalcArmAngleHelper(heightFromWinchToPivotPoint,
         armLengthFromEdgeToPivot);
     m_isBroken = false;
+
+    // Forces the output to be set during initialization
+    updateStringAngle();
   }
 
   public boolean getIsBroken() {

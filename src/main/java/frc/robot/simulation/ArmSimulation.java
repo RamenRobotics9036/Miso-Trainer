@@ -75,7 +75,6 @@ public class ArmSimulation {
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
-
   }
 
   /**

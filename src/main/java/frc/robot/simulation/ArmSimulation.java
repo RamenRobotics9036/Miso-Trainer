@@ -174,17 +174,7 @@ public class ArmSimulation {
       throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
     }
 
-    double newStringLen = m_desiredArmAngleSupplier.getAsDouble();
-    CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
-        .calcSignedDegreesForStringLength(newStringLen);
-
-    // Check if we got back that string length was invalid
-    if (!resultPair.m_isValid) {
-      System.out.println("ARM: Angle is out of bounds, needs to be in right half plane");
-      m_isBroken = true;
-    }
-
-    double newAbsoluteEncoderSignedDegrees = resultPair.m_value;
+    double newAbsoluteEncoderSignedDegrees = m_desiredArmAngleSupplier.getAsDouble();
 
     ResultPairArm resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,

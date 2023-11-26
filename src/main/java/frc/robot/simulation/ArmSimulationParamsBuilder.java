@@ -31,21 +31,6 @@ public class ArmSimulationParamsBuilder {
     return this;
   }
 
-  public ArmSimulationParamsBuilder setHeightFromWinchToPivotPoint(double value) {
-    instance.heightFromWinchToPivotPoint = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivot(double value) {
-    instance.armLengthFromEdgeToPivot = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivotMin(double value) {
-    instance.armLengthFromEdgeToPivotMin = value;
-    return this;
-  }
-
   public ArmSimulationParamsBuilder setEncoderRotationsOffset(double value) {
     instance.encoderRotationsOffset = value;
     return this;

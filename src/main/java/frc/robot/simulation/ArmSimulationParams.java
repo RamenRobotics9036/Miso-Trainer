@@ -11,15 +11,6 @@ public class ArmSimulationParams {
   public double bottomSignedDegreesBreak;
 
   @SuppressWarnings("checkstyle:MemberName")
-  public double heightFromWinchToPivotPoint;
-
-  @SuppressWarnings("checkstyle:MemberName")
-  public double armLengthFromEdgeToPivot;
-
-  @SuppressWarnings("checkstyle:MemberName")
-  public double armLengthFromEdgeToPivotMin;
-
-  @SuppressWarnings("checkstyle:MemberName")
   public double encoderRotationsOffset;
 
   /**
@@ -33,16 +24,10 @@ public class ArmSimulationParams {
    */
   public ArmSimulationParams(double topSignedDegreesBreakInput,
       double bottomSignedDegreesBreakInput,
-      double heightFromWinchToPivotPointInput,
-      double armLengthFromEdgeToPivotInput,
-      double armLengthFromEdgeToPivotMinInput,
       double encoderRotationsOffsetInput) {
 
     topSignedDegreesBreak = topSignedDegreesBreakInput;
     bottomSignedDegreesBreak = bottomSignedDegreesBreakInput;
-    heightFromWinchToPivotPoint = heightFromWinchToPivotPointInput;
-    armLengthFromEdgeToPivot = armLengthFromEdgeToPivotInput;
-    armLengthFromEdgeToPivotMin = armLengthFromEdgeToPivotMinInput;
     encoderRotationsOffset = encoderRotationsOffsetInput;
   }
 
@@ -52,9 +37,6 @@ public class ArmSimulationParams {
   public ArmSimulationParams(ArmSimulationParams other) {
     topSignedDegreesBreak = other.topSignedDegreesBreak;
     bottomSignedDegreesBreak = other.bottomSignedDegreesBreak;
-    heightFromWinchToPivotPoint = other.heightFromWinchToPivotPoint;
-    armLengthFromEdgeToPivot = other.armLengthFromEdgeToPivot;
-    armLengthFromEdgeToPivotMin = other.armLengthFromEdgeToPivotMin;
     encoderRotationsOffset = other.encoderRotationsOffset;
   }
 }

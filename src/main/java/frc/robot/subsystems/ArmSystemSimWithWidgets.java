@@ -118,8 +118,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
   private void addShuffleboardArmList() {
     // Arm functional display
     Widget pos = m_defaultLayout.getWidgetPosition("Arm Functional");
-    Shuffleboard.getTab("Simulation")
-        .addBoolean("Arm Functional", () -> !m_armSimulation.getIsBroken())
+    Shuffleboard.getTab("Simulation").addBoolean("Arm Functional", () -> !getIsStringOrArmBroken())
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

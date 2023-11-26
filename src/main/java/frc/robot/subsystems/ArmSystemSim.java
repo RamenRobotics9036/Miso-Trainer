@@ -175,6 +175,19 @@ public class ArmSystemSim extends ArmSystem {
     m_ramenArmSimLogic.setGrabberOpenSupplier(grabberOpenSupplier);
   }
 
+  // $LATER - This is temporary until we combine string and arm simulation
+  protected boolean getIsStringOrArmBroken() {
+    return m_angleSimulation.getIsBroken() || m_armSimulation.getIsBroken();
+  }
+
+  // $LATER - This is temporary until we combine string and arm simulation
+  private void simulatePeriodicStringAndArm(StringAngleSimulation angleSimulation,
+      ArmSimulation armSimulation) {
+
+    angleSimulation.simulationPeriodic();
+    armSimulation.simulationPeriodic();
+  }
+
   @Override
   public void periodic() {
     super.periodic();
@@ -192,8 +205,7 @@ public class ArmSystemSim extends ArmSystem {
       m_winchSimManager.simulationPeriodic();
 
       m_extenderSimulation.simulationPeriodic();
-      m_angleSimulation.simulationPeriodic();
-      m_armSimulation.simulationPeriodic();
+      simulatePeriodicStringAndArm(m_angleSimulation, m_armSimulation);
 
       boolean isExtenderSensorOn = m_extenderSimulation
           .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;

@@ -459,6 +459,7 @@ public class ArmSimulationTest {
       return tempwinchSimulation.getStringUnspooledLen();
     };
 
+    @SuppressWarnings("VariableDeclarationUsageDistance")
     StringAngleSimulation angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier,
         m_armAngleConsumer, m_defaultHeightFromWinchToPivotPoint, m_defaultArmLengthFromEdgeToPivot,
         m_defaultArmLengthFromEdgeToPivotMin);

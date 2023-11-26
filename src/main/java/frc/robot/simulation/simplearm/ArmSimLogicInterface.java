@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 /**
  * Interface for robot-specific logic for the arm simulation.

@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.armangle;
 
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;

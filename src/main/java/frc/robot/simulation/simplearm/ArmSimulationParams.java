@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 /**
  * Class that holds paramaters for the arm simulation class.

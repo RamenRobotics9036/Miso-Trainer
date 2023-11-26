@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.armangle;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;

@@ -1,8 +1,8 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
-import frc.robot.helpers.CalcArmAngleHelper;
 import frc.robot.helpers.UnitConversions;
+
 import java.util.function.DoubleSupplier;
 
 /**
@@ -10,7 +10,7 @@ import java.util.function.DoubleSupplier;
  * is extended too far, it will break.
  */
 public class ArmSimulation {
-  private DoubleSupplier m_stringUnspooledLenSupplier;
+  private DoubleSupplier m_desiredArmAngleSupplier;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
   private boolean m_isCurrentSignedDegreesSet = false;
@@ -18,15 +18,14 @@ public class ArmSimulation {
   private double m_bottomSignedDegreesBreak;
   private double m_encoderRotationsOffset;
   private boolean m_isBroken;
-  private CalcArmAngleHelper m_calcArmAngleHelper;
   private ArmSimLogicInterface m_robotSpecificArmLogic = null;
 
-  private void commonInitialization(DoubleSupplier stringUnspooledLenSupplier,
+  private void commonInitialization(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams) {
 
-    if (stringUnspooledLenSupplier == null) {
-      throw new IllegalArgumentException("stringUnspooledLenSupplier");
+    if (desiredArmAngleSupplier == null) {
+      throw new IllegalArgumentException("desiredArmAngleSupplier");
     }
 
     if (winchAbsoluteEncoderSim == null) {
@@ -35,11 +34,6 @@ public class ArmSimulation {
 
     if (armParams == null) {
       throw new IllegalArgumentException("armParams");
-    }
-
-    if (armParams.armLengthFromEdgeToPivot < armParams.armLengthFromEdgeToPivotMin) {
-      throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
-          + armParams.armLengthFromEdgeToPivotMin + " meters, otherwise the arm cant be pivoted");
     }
 
     if (!UnitConversions.isRotationValid(armParams.encoderRotationsOffset)) {
@@ -62,12 +56,10 @@ public class ArmSimulation {
     // Copy into member variables
     m_topSignedDegreesBreak = armParams.topSignedDegreesBreak;
     m_bottomSignedDegreesBreak = armParams.bottomSignedDegreesBreak;
-    m_stringUnspooledLenSupplier = stringUnspooledLenSupplier;
+    m_desiredArmAngleSupplier = desiredArmAngleSupplier;
     m_winchAbsoluteEncoderSim = winchAbsoluteEncoderSim;
     m_encoderRotationsOffset = armParams.encoderRotationsOffset;
     m_isBroken = false;
-    m_calcArmAngleHelper = new CalcArmAngleHelper(armParams.heightFromWinchToPivotPoint,
-        armParams.armLengthFromEdgeToPivot);
   }
 
   /**
@@ -76,15 +68,14 @@ public class ArmSimulation {
    * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
    * initialized.
    */
-  public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams) {
 
-    commonInitialization(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
+    commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
 
     // Forces the absolute encoder to show the correct position
     updateAbsoluteEncoderPosition();
-
   }
 
   /**
@@ -95,13 +86,13 @@ public class ArmSimulation {
    * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
    * initialized.
    */
-  public ArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       ArmSimLogicInterface robotSpecificArmLogic) {
 
     // Instead of calling this(), we call commonInitialization() directly
-    commonInitialization(stringUnspooledLenSupplier, winchAbsoluteEncoderSim, armParams);
+    commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
 
     if (robotSpecificArmLogic == null) {
       throw new IllegalArgumentException("robotSpecificArmLogic");
@@ -183,17 +174,7 @@ public class ArmSimulation {
       throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
     }
 
-    double newStringLen = m_stringUnspooledLenSupplier.getAsDouble();
-    CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
-        .calcSignedDegreesForStringLength(newStringLen);
-
-    // Check if we got back that string length was invalid
-    if (!resultPair.m_isValid) {
-      System.out.println("ARM: Angle is out of bounds, needs to be in right half plane");
-      m_isBroken = true;
-    }
-
-    double newAbsoluteEncoderSignedDegrees = resultPair.m_value;
+    double newAbsoluteEncoderSignedDegrees = m_desiredArmAngleSupplier.getAsDouble();
 
     ResultPairArm resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,

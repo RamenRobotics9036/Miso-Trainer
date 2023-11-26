@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 /**
  * Builder class pattern for ArmSimulationParams.
@@ -28,21 +28,6 @@ public class ArmSimulationParamsBuilder {
 
   public ArmSimulationParamsBuilder setBottomSignedDegreesBreak(double value) {
     instance.bottomSignedDegreesBreak = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setHeightFromWinchToPivotPoint(double value) {
-    instance.heightFromWinchToPivotPoint = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivot(double value) {
-    instance.armLengthFromEdgeToPivot = value;
-    return this;
-  }
-
-  public ArmSimulationParamsBuilder setArmLengthFromEdgeToPivotMin(double value) {
-    instance.armLengthFromEdgeToPivotMin = value;
     return this;
   }
 

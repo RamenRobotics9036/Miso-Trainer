@@ -1,4 +1,6 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
+
+import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 
 /**
  * Return value from createArmSimulation.

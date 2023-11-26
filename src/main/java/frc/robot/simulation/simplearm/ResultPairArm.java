@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 /**
  * Returns a pair of values for arm simulation.

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.CalcArmAngleHelper;
 import frc.robot.simulation.armangle.StringAngleSimulation;
 import frc.robot.simulation.simplearm.ArmSimulation;
@@ -62,7 +63,6 @@ public class ArmSimulationTest {
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
         UnitConversions.rotationToUnsignedDegrees(0)); // encoderRotationsOffset
 
-    // $TODO - Is this still needed?
     m_calcArmAngleHelper = new CalcArmAngleHelper(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot);
 
@@ -130,10 +130,12 @@ public class ArmSimulationTest {
       return winchSimulation.getStringUnspooledLen();
     };
 
+    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
+        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+
     @SuppressWarnings("VariableDeclarationUsageDistance")
     StringAngleSimulation angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier,
-        m_armAngleConsumer, m_defaultHeightFromWinchToPivotPoint, m_defaultArmLengthFromEdgeToPivot,
-        m_defaultArmLengthFromEdgeToPivotMin);
+        m_armAngleConsumer, armAngleParams);
 
     double offsetRotations = 0;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
@@ -466,10 +468,12 @@ public class ArmSimulationTest {
       return tempwinchSimulation.getStringUnspooledLen();
     };
 
+    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
+        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+
     @SuppressWarnings("VariableDeclarationUsageDistance")
     StringAngleSimulation angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier,
-        m_armAngleConsumer, m_defaultHeightFromWinchToPivotPoint, m_defaultArmLengthFromEdgeToPivot,
-        m_defaultArmLengthFromEdgeToPivotMin);
+        m_armAngleConsumer, armAngleParams);
 
     double offsetRotations = 0.25;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;

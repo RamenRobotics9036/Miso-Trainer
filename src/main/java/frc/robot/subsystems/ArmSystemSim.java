@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
+import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.StringAngleSimulation;
 import frc.robot.simulation.framework.SimManagerInterface;
 import frc.robot.simulation.motor.MotorSimManager;
@@ -108,10 +109,13 @@ public class ArmSystemSim extends ArmSystem {
       return m_armAngleDegrees;
     };
 
-    m_angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier, armAngleConsumer,
+    ArmAngleParams armAngleParams = new ArmAngleParams(
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
         Constants.SimConstants.karmLengthFromEdgeToPivot,
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
+
+    m_angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier, armAngleConsumer,
+        armAngleParams);
 
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit

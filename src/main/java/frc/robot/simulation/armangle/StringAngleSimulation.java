@@ -16,12 +16,9 @@ public class StringAngleSimulation {
   /**
    * Constructor.
    */
-  // $TODO - Move these into a builder like in ArmSimulationParams
   public StringAngleSimulation(DoubleSupplier stringUnspooledLenSupplier,
       DoubleConsumer armAngleConsumer,
-      double heightFromWinchToPivotPoint,
-      double armLengthFromEdgeToPivot,
-      double armLengthFromEdgeToPivotMin) {
+      ArmAngleParams armAngleParams) {
 
     if (stringUnspooledLenSupplier == null) {
       throw new IllegalArgumentException("stringUnspooledLenSupplier");
@@ -31,15 +28,16 @@ public class StringAngleSimulation {
       throw new IllegalArgumentException("armAngleConsumer");
     }
 
-    if (armLengthFromEdgeToPivot < armLengthFromEdgeToPivotMin) {
+    if (armAngleParams.armLengthFromEdgeToPivot < armAngleParams.armLengthFromEdgeToPivotMin) {
       throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
-          + armLengthFromEdgeToPivotMin + " meters, otherwise the arm cant be pivoted");
+          + armAngleParams.armLengthFromEdgeToPivotMin
+          + " meters, otherwise the arm cant be pivoted");
     }
 
     m_stringUnspooledLenSupplier = stringUnspooledLenSupplier;
     m_armAngleConsumer = armAngleConsumer;
-    m_calcArmAngleHelper = new CalcArmAngleHelper(heightFromWinchToPivotPoint,
-        armLengthFromEdgeToPivot);
+    m_calcArmAngleHelper = new CalcArmAngleHelper(armAngleParams.heightFromWinchToPivotPoint,
+        armAngleParams.armLengthFromEdgeToPivot);
     m_isBroken = false;
 
     // Forces the output to be set during initialization

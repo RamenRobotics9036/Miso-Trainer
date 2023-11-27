@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.simplearm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,10 +13,6 @@ import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.CalcArmAngleHelper;
 import frc.robot.simulation.armangle.StringAngleSimulation;
-import frc.robot.simulation.simplearm.ArmSimulation;
-import frc.robot.simulation.simplearm.ArmSimulationParams;
-import frc.robot.simulation.simplearm.ArmSimulationParamsBuilder;
-import frc.robot.simulation.simplearm.CreateArmResult;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;

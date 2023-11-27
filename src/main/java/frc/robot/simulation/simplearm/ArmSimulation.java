@@ -2,7 +2,6 @@ package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
-
 import java.util.function.DoubleSupplier;
 
 /**

@@ -5,6 +5,7 @@ import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 /**
  * Return value from createArmSimulation.
  */
+// $TODO - Remove this file, use a Pair instead
 public class CreateArmResult {
   @SuppressWarnings("MemberName")
   public ArmSimulation armSimulation;

@@ -9,10 +9,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.simulation.REVPHSim;
 import frc.robot.Constants;
-import frc.robot.DefaultLayout;
-import frc.robot.DefaultLayout.Widget;
 import frc.robot.commands.CloseGrabberCommand;
 import frc.robot.commands.GrabberOpenCommand;
+import frc.robot.helpers.DefaultLayout;
+import frc.robot.helpers.DefaultLayout.Widget;
+
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 

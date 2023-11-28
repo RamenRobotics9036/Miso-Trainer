@@ -1,7 +1,6 @@
 package frc.robot.simulation.armangle;
 
 import frc.robot.simulation.framework.SimManagerBase;
-import java.util.function.Supplier;
 
 /**
  * Simulation manager for a simple motor, AND an encoder that reads that motor position.
@@ -19,7 +18,13 @@ public class ArmAngleSimManager extends SimManagerBase<Double, ArmAngleState> {
   }
 
   @Override
-  protected Double doSimulation(Double stringLength) {
-    return m_model.updateTotal(stringLength);
+  protected ArmAngleState doSimulation(Double stringLength) {
+    m_model.updateArmAngle(stringLength);
+
+    ArmAngleState result = new ArmAngleState();
+    result.setAngleSignedDegrees(m_model.getAngleSignedDegrees());
+    result.setIsBroken(m_model.getIsBroken());
+
+    return result;
   }
 }

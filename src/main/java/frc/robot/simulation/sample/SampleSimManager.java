@@ -11,7 +11,9 @@ public class SampleSimManager extends SimManagerBase<Integer, Integer> {
 
   /**
    * Constructor requires the user to specify a custom function to
-   * determine if the robot is enabled.
+   * determine if the robot is enabled. This is so that unit-testing
+   * for this SAMPLE can be done with and without the robot enabled
+   * in simulation.
    */
   public SampleSimManager(int ratio, Supplier<Boolean> isRobotEnabled) {
     super(isRobotEnabled);

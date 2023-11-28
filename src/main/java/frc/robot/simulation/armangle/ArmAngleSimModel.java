@@ -7,7 +7,7 @@ import java.util.function.DoubleSupplier;
  * Given a string connected to the back of an arm, this class will calculate
  * the ANGLE of the arm.
  */
-public class StringAngleSimulation {
+public class ArmAngleSimModel {
   private DoubleSupplier m_stringUnspooledLenSupplier;
   private DoubleConsumer m_armAngleConsumer;
   private CalcArmAngleHelper m_calcArmAngleHelper;
@@ -16,7 +16,7 @@ public class StringAngleSimulation {
   /**
    * Constructor.
    */
-  public StringAngleSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public ArmAngleSimModel(DoubleSupplier stringUnspooledLenSupplier,
       DoubleConsumer armAngleConsumer,
       ArmAngleParams armAngleParams) {
 

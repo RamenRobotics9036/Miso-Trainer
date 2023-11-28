@@ -9,7 +9,7 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleParams;
-import frc.robot.simulation.armangle.StringAngleSimulation;
+import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.framework.SimManagerInterface;
 import frc.robot.simulation.motor.MotorSimManager;
 import frc.robot.simulation.motor.MotorSimOutput;
@@ -48,7 +48,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected ArmSimulation m_armSimulation;
   protected RamenArmSimLogic m_ramenArmSimLogic;
-  private StringAngleSimulation m_angleSimulation;
+  private ArmAngleSimModel m_angleSimulation;
 
   /**
    * Creates an instance of the ArmSystem or ArmSystemSim class.
@@ -114,7 +114,7 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.karmLengthFromEdgeToPivot,
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
 
-    m_angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier, armAngleConsumer,
+    m_angleSimulation = new ArmAngleSimModel(stringUnspooledLenSupplier, armAngleConsumer,
         armAngleParams);
 
     ArmSimulationParams armParams = new ArmSimulationParams(
@@ -185,7 +185,7 @@ public class ArmSystemSim extends ArmSystem {
   }
 
   // $LATER - This is temporary until we combine string and arm simulation
-  private void simulatePeriodicStringAndArm(StringAngleSimulation angleSimulation,
+  private void simulatePeriodicStringAndArm(ArmAngleSimModel angleSimulation,
       ArmSimulation armSimulation) {
 
     angleSimulation.simulationPeriodic();

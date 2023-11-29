@@ -1,27 +1,27 @@
 package frc.robot.simulation.armangle;
 
 import frc.robot.simulation.framework.SimOutputInterface;
-import java.util.function.Consumer;
 
 /**
  * Helper class to implement output interface.
  */
-public class ArmAngleSimOutput implements SimOutputInterface<Double> {
-  private Consumer<Double> m_armAngleConsumer;
+public class ArmAngleSimOutput implements SimOutputInterface<ArmAngleState> {
+  private ArmAngleState m_targetArmAngleState;
 
   /**
    * Constructor.
    */
-  public ArmAngleSimOutput(Consumer<Double> armAngleConsumer) {
-    if (armAngleConsumer == null) {
-      throw new IllegalArgumentException("armAngleConsumer cannot be null");
+  public ArmAngleSimOutput(ArmAngleState targetArmAngleState) {
+    if (targetArmAngleState == null) {
+      throw new IllegalArgumentException("targetArmAngleState cannot be null");
     }
 
-    m_armAngleConsumer = armAngleConsumer;
+    m_targetArmAngleState = targetArmAngleState;
   }
 
   @Override
-  public void setOutput(Double numOutput) {
-    m_armAngleConsumer.accept(numOutput);
+  public void setOutput(ArmAngleState newArmAngleState) {
+    // Copy from output to target.
+    m_targetArmAngleState.copyFrom(newArmAngleState);
   }
 }

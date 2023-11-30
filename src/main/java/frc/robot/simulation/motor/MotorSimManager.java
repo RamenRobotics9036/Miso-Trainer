@@ -11,8 +11,8 @@ public class MotorSimManager extends SimManagerBase<Double, Double> {
   /**
    * Constructor.
    */
-  public MotorSimManager(double gearRatio) {
-    super();
+  public MotorSimManager(boolean enableTestMode, double gearRatio) {
+    super(enableTestMode);
 
     m_model = new MotorSimModel(gearRatio);
   }

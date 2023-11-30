@@ -11,8 +11,8 @@ public class ArmAngleSimManager extends SimManagerBase<Double, ArmAngleState> {
   /**
    * Constructor.
    */
-  public ArmAngleSimManager(ArmAngleParams armAngleParams) {
-    super();
+  public ArmAngleSimManager(boolean enableTestMode, ArmAngleParams armAngleParams) {
+    super(enableTestMode);
 
     m_model = new ArmAngleSimModel(armAngleParams);
   }

@@ -13,13 +13,14 @@ public class WinchSimManager extends SimManagerBase<Double, WinchState> {
   /**
    * Constructor.
    */
-  public WinchSimManager(double spoolDiameterMeters,
+  public WinchSimManager(boolean enableTestMode,
+      double spoolDiameterMeters,
       double totalStringLenMeters,
       double initialLenSpooled,
       WindingOrientation initialWindingOrientation,
       boolean invertMotor) {
 
-    super();
+    super(enableTestMode);
 
     m_model = new WinchSimModel(spoolDiameterMeters, totalStringLenMeters, initialLenSpooled,
         initialWindingOrientation, invertMotor);

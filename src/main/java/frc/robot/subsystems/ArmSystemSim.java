@@ -137,7 +137,7 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.karmLengthFromEdgeToPivot,
         Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
 
-    m_angleSimManager = new ArmAngleSimManager(armAngleParams);
+    m_angleSimManager = new ArmAngleSimManager(false, armAngleParams);
     m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     m_angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
   }
@@ -149,13 +149,14 @@ public class ArmSystemSim extends ArmSystem {
     m_winchState = new WinchState(Constants.SimConstants.kTotalStringLenMeters);
 
     // Create the motor simulation for the winch motor
-    m_winchMotorSimManager = new MotorSimManager(Constants.SimConstants.kwinchSimGearRatio);
+    m_winchMotorSimManager = new MotorSimManager(false, Constants.SimConstants.kwinchSimGearRatio);
     m_winchMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armWinch));
     m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
 
     // Create the winch simulation
-    m_winchSimManager = new WinchSimManager(0.0254, Constants.SimConstants.kTotalStringLenMeters,
-        Constants.SimConstants.kCurrentLenSpooled, WindingOrientation.BackOfRobot, true);
+    m_winchSimManager = new WinchSimManager(false, 0.0254,
+        Constants.SimConstants.kTotalStringLenMeters, Constants.SimConstants.kCurrentLenSpooled,
+        WindingOrientation.BackOfRobot, true);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new WinchSimOutput(m_winchState));
   }
@@ -165,7 +166,8 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderEncoderSim = new RelativeEncoderSim(m_extenderEncoder);
 
     // Create the motor simulation for the extender motor
-    m_extenderMotorSimManager = new MotorSimManager(Constants.SimConstants.kextenderSimGearRatio);
+    m_extenderMotorSimManager = new MotorSimManager(false,
+        Constants.SimConstants.kextenderSimGearRatio);
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 

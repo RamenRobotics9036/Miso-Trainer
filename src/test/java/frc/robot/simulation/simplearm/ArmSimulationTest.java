@@ -126,7 +126,7 @@ public class ArmSimulationTest {
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
 
-    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(armAngleParams);
+    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(true, armAngleParams);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new ArmAngleSimOutput(armAngleState));
 
@@ -461,7 +461,7 @@ public class ArmSimulationTest {
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
 
-    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(armAngleParams);
+    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(true, armAngleParams);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
 

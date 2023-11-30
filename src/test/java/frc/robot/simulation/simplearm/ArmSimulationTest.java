@@ -11,15 +11,18 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.armangle.ArmAngleParams;
+import frc.robot.simulation.armangle.ArmAngleSimInput;
+import frc.robot.simulation.armangle.ArmAngleSimManager;
+import frc.robot.simulation.armangle.ArmAngleSimOutput;
+import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.CalcArmAngleHelper;
-import frc.robot.simulation.armangle.StringAngleSimulation;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.subsystems.DutyCycleEncoderSim2;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,8 +44,7 @@ public class ArmSimulationTest {
   private final boolean m_winchinvertMotor = false;
 
   private WinchSimModel m_winchSimulation;
-  private double m_armAngleDegrees = 0;
-  DoubleConsumer m_armAngleConsumer;
+  private ArmAngleState m_armAngleState;
   DoubleSupplier m_armAngleSupplier;
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim = null;
@@ -62,14 +64,9 @@ public class ArmSimulationTest {
     m_calcArmAngleHelper = new CalcArmAngleHelper(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot);
 
-    // Create a Consumer that sets the value of m_armAngleDegrees
-    m_armAngleConsumer = (double armAngleDegrees) -> {
-      m_armAngleDegrees = armAngleDegrees;
-    };
-
     // Create a Producer that gets the value of m_armAngleDegrees
     m_armAngleSupplier = () -> {
-      return m_armAngleDegrees;
+      return m_armAngleState.getAngleSignedDegrees();
     };
   }
 
@@ -83,7 +80,7 @@ public class ArmSimulationTest {
     m_winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters, m_winchTotalStringLenMeters,
         m_winchInitialLenSpooled, m_winchInitialStringOrientation, m_winchinvertMotor);
 
-    m_armAngleDegrees = 0;
+    m_armAngleState = new ArmAngleState();
 
     m_winchAbsoluteEncoder = new DutyCycleEncoder(
         Constants.OperatorConstants.kAbsoluteEncoderWinchChannel);
@@ -101,37 +98,37 @@ public class ArmSimulationTest {
 
   // $LATER - This is temporary. Once we place the string angle simulation plus the arm
   // simulation into a single simulation class, we can get rid of this.
-  private boolean getIsStringOrArmBroken(StringAngleSimulation angleSimulation,
-      ArmSimulation armSimulation) {
+  private boolean getIsStringOrArmBroken(ArmAngleState armAngleState, ArmSimulation armSimulation) {
 
-    return angleSimulation.getIsBroken() || armSimulation.getIsBroken();
+    return armAngleState.getIsBroken() || armSimulation.getIsBroken();
   }
 
   // $LATER - This is temporary until we place the string angle simulation plus the arm
   // simulation into a single simulation class.
-  private void simulatePeriodicStringAndArm(StringAngleSimulation angleSimulation,
+  private void simulatePeriodicStringAndArm(ArmAngleSimManager angleSimManager,
       ArmSimulation armSimulation) {
 
-    angleSimulation.simulationPeriodic();
+    angleSimManager.simulationPeriodic();
     armSimulation.simulationPeriodic();
   }
 
-  private Pair<ArmSimulation, StringAngleSimulation> createDefaultArmHelper(
+  private Pair<ArmSimulation, ArmAngleSimManager> createDefaultArmHelper(
       WinchSimModel winchSimulation,
+      ArmAngleState armAngleState,
       boolean initialIsGrabberOpen,
       boolean expectArmBroken) {
 
     // Create a DoubleSupplier that gets the value getStringUnspooledLen()
-    DoubleSupplier stringUnspooledLenSupplier = () -> {
+    Supplier<Double> stringUnspooledLenSupplier = () -> {
       return winchSimulation.getStringUnspooledLen();
     };
 
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
 
-    @SuppressWarnings("VariableDeclarationUsageDistance")
-    StringAngleSimulation angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier,
-        m_armAngleConsumer, armAngleParams);
+    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(true, armAngleParams);
+    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    angleSimManager.setOutputHandler(new ArmAngleSimOutput(armAngleState));
 
     double offsetRotations = 0;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
@@ -150,13 +147,13 @@ public class ArmSimulationTest {
 
     assertTrue(armSimulation != null);
     assertTrue(!winchSimulation.getIsBroken());
-    assertTrue(getIsStringOrArmBroken(angleSimulation, armSimulation) == expectArmBroken);
+    assertTrue(getIsStringOrArmBroken(armAngleState, armSimulation) == expectArmBroken);
 
-    return new Pair<ArmSimulation, StringAngleSimulation>(armSimulation, angleSimulation);
+    return new Pair<ArmSimulation, ArmAngleSimManager>(armSimulation, angleSimManager);
   }
 
-  private Pair<ArmSimulation, StringAngleSimulation> createDefaultArm() {
-    return createDefaultArmHelper(m_winchSimulation, false, false);
+  private Pair<ArmSimulation, ArmAngleSimManager> createDefaultArm(ArmAngleState armAngleState) {
+    return createDefaultArmHelper(m_winchSimulation, armAngleState, false, false);
   }
 
   private WinchSimModel createWinchSimulation(double winchInitialLenSpooled) {
@@ -172,12 +169,11 @@ public class ArmSimulationTest {
 
   @Test
   public void createArmSimulationShouldSucceed() {
-    Pair<ArmSimulation, StringAngleSimulation> resultPair = createDefaultArm();
+    Pair<ArmSimulation, ArmAngleSimManager> resultPair = createDefaultArm(m_armAngleState);
     ArmSimulation tempArmSimulation = resultPair.getFirst();
-    StringAngleSimulation tempAngleSimulation = resultPair.getSecond();
 
     assertTrue(tempArmSimulation != null);
-    assertTrue(!getIsStringOrArmBroken(tempAngleSimulation, tempArmSimulation)
+    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation)
         && !m_winchSimulation.getIsBroken());
   }
 
@@ -204,16 +200,15 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, StringAngleSimulation> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<ArmSimulation, ArmAngleSimManager> resultPair = createDefaultArmHelper(tempwinchSimulation,
+        m_armAngleState,
         true,
         false);
     ArmSimulation tempArmSimulation = resultPair.getFirst();
-    StringAngleSimulation tempAngleSimulation = resultPair.getSecond();
 
     assertTrue(tempArmSimulation != null);
     assertTrue(!tempwinchSimulation.getIsBroken());
-    assertTrue(!getIsStringOrArmBroken(tempAngleSimulation, tempArmSimulation));
+    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
     assertEquals(90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),
         UnitConversions.kAngleTolerance);
@@ -225,17 +220,17 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, StringAngleSimulation> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<ArmSimulation, ArmAngleSimManager> resultPair = createDefaultArmHelper(tempwinchSimulation,
+        m_armAngleState,
         true,
         false);
     ArmSimulation tempArmSimulation = resultPair.getFirst();
-    StringAngleSimulation tempAngleSimulation = resultPair.getSecond();
+    ArmAngleSimManager tempAngleSimManager = resultPair.getSecond();
 
     // Now that grabber is set open, need to simulate one cycle
-    simulatePeriodicStringAndArm(tempAngleSimulation, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
 
-    assertTrue(getIsStringOrArmBroken(tempAngleSimulation, tempArmSimulation));
+    assertTrue(getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
     assertEquals(-90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),
         UnitConversions.kAngleTolerance);
@@ -256,22 +251,22 @@ public class ArmSimulationTest {
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, StringAngleSimulation> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<ArmSimulation, ArmAngleSimManager> resultPair = createDefaultArmHelper(tempwinchSimulation,
+        m_armAngleState,
         initialIsGrabberOpen,
         false);
     ArmSimulation tempArmSimulation = resultPair.getFirst();
-    StringAngleSimulation tempAngleSimulation = resultPair.getSecond();
+    ArmAngleSimManager tempAngleSimManager = resultPair.getSecond();
 
     // Initialize the number of rotations
     double currentWinchRotations = 0;
     tempwinchSimulation.updateNewLenSpooled(currentWinchRotations);
 
     // Now that grabber is set open, need to simulate one cycle
-    simulatePeriodicStringAndArm(tempAngleSimulation, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
 
-    assertTrue(getIsStringOrArmBroken(tempAngleSimulation,
-        tempArmSimulation) == expectedArmInitiallyBroken);
+    assertTrue(
+        getIsStringOrArmBroken(m_armAngleState, tempArmSimulation) == expectedArmInitiallyBroken);
     double expect = initialPosSignedDegrees;
     double actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
     assertEquals(expect, actual, UnitConversions.kAngleTolerance);
@@ -288,11 +283,10 @@ public class ArmSimulationTest {
 
     // Simulate one cycle for winch, so that it updates
     tempwinchSimulation.updateNewLenSpooled(deltaWinchRotations);
-    simulatePeriodicStringAndArm(tempAngleSimulation, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
 
     assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);
-    assertTrue(
-        getIsStringOrArmBroken(tempAngleSimulation, tempArmSimulation) == expectedIsArmBroken);
+    assertTrue(getIsStringOrArmBroken(m_armAngleState, tempArmSimulation) == expectedIsArmBroken);
 
     expect = UnitConversions.rotationToSignedDegrees(m_defaultGrabberBreaksRotations)
         + expectedFinalDegreesAboveBreakPoint;
@@ -377,8 +371,8 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, StringAngleSimulation> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<ArmSimulation, ArmAngleSimManager> resultPair = createDefaultArmHelper(tempwinchSimulation,
+        m_armAngleState,
         false,
         expectArmBroken);
     ArmSimulation tempArmSimulation = resultPair.getFirst();
@@ -460,16 +454,16 @@ public class ArmSimulationTest {
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
 
     // Create a DoubleSupplier that gets the value getStringUnspooledLen()
-    DoubleSupplier stringUnspooledLenSupplier = () -> {
+    Supplier<Double> stringUnspooledLenSupplier = () -> {
       return tempwinchSimulation.getStringUnspooledLen();
     };
 
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
 
-    @SuppressWarnings("VariableDeclarationUsageDistance")
-    StringAngleSimulation angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier,
-        m_armAngleConsumer, armAngleParams);
+    ArmAngleSimManager angleSimManager = new ArmAngleSimManager(true, armAngleParams);
+    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
 
     double offsetRotations = 0.25;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
@@ -490,7 +484,7 @@ public class ArmSimulationTest {
 
     assertTrue(tempArmSimulation != null);
     assertTrue(!tempwinchSimulation.getIsBroken());
-    assertTrue(!getIsStringOrArmBroken(angleSimulation, tempArmSimulation));
+    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
 
     double expectedDegrees = 45 + 90;
     assertEquals(expectedDegrees,

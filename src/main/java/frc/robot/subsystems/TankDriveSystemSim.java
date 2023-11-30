@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
-import frc.robot.DefaultLayout;
-import frc.robot.DefaultLayout.Widget;
+import frc.robot.helpers.DefaultLayout;
+import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.simulation.DriveSimulation;
 import java.util.Map;
 

@@ -9,7 +9,10 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleParams;
-import frc.robot.simulation.armangle.StringAngleSimulation;
+import frc.robot.simulation.armangle.ArmAngleSimInput;
+import frc.robot.simulation.armangle.ArmAngleSimManager;
+import frc.robot.simulation.armangle.ArmAngleSimOutput;
+import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.framework.SimManagerInterface;
 import frc.robot.simulation.motor.MotorSimManager;
 import frc.robot.simulation.motor.MotorSimOutput;
@@ -24,8 +27,8 @@ import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchSimOutput;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * Subclass of ArmSystem that is used for simulation. Note that this code isn't run if
@@ -37,8 +40,10 @@ public class ArmSystemSim extends ArmSystem {
   private RelativeEncoderSim m_winchEncoderSim;
   private SimManagerInterface<Double, Double> m_winchMotorSimManager;
   private SimManagerInterface<Double, WinchState> m_winchSimManager;
+  private SimManagerInterface<Double, ArmAngleState> m_angleSimManager;
+
   protected WinchState m_winchState;
-  private double m_armAngleDegrees = 0;
+  private ArmAngleState m_armAngleState;
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManagerInterface<Double, Double> m_extenderMotorSimManager;
@@ -48,7 +53,6 @@ public class ArmSystemSim extends ArmSystem {
 
   protected ArmSimulation m_armSimulation;
   protected RamenArmSimLogic m_ramenArmSimLogic;
-  private StringAngleSimulation m_angleSimulation;
 
   /**
    * Creates an instance of the ArmSystem or ArmSystemSim class.
@@ -88,34 +92,17 @@ public class ArmSystemSim extends ArmSystem {
 
     createWinchSimParts();
     createExtenderSimParts();
+    createArmAngleSimParts();
 
     m_sensorSim = new DIOSim(m_sensor);
 
     // Create simulated absolute encoder
     m_winchAbsoluteEncoderSim = new DutyCycleEncoderSim2(m_winchAbsoluteEncoder);
 
-    // Create a DoubleSupplier that gets the value m_winchState.getStringUnspooledLen()
-    DoubleSupplier stringUnspooledLenSupplier = () -> {
-      return m_winchState.getStringUnspooledLen();
-    };
-
-    // Create a Consumer that sets the value of m_armAngleDegrees
-    DoubleConsumer armAngleConsumer = (double armAngleDegrees) -> {
-      m_armAngleDegrees = armAngleDegrees;
-    };
-
-    // Create a Producer that gets the value of m_armAngleDegrees
+    // Create a DoubleSupplier that gets the angle
     DoubleSupplier armAngleSupplier = () -> {
-      return m_armAngleDegrees;
+      return m_armAngleState.getAngleSignedDegrees();
     };
-
-    ArmAngleParams armAngleParams = new ArmAngleParams(
-        Constants.SimConstants.karmHeightFromWinchToPivotPoint,
-        Constants.SimConstants.karmLengthFromEdgeToPivot,
-        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
-
-    m_angleSimulation = new StringAngleSimulation(stringUnspooledLenSupplier, armAngleConsumer,
-        armAngleParams);
 
     ArmSimulationParams armParams = new ArmSimulationParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
@@ -137,6 +124,24 @@ public class ArmSystemSim extends ArmSystem {
     m_ramenArmSimLogic = createResult.ramenArmSimLogic;
   }
 
+  private void createArmAngleSimParts() {
+    // Create a DoubleSupplier that gets the value m_winchState.getStringUnspooledLen()
+    Supplier<Double> stringUnspooledLenSupplier = () -> {
+      return m_winchState.getStringUnspooledLen();
+    };
+
+    m_armAngleState = new ArmAngleState();
+
+    ArmAngleParams armAngleParams = new ArmAngleParams(
+        Constants.SimConstants.karmHeightFromWinchToPivotPoint,
+        Constants.SimConstants.karmLengthFromEdgeToPivot,
+        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
+
+    m_angleSimManager = new ArmAngleSimManager(false, armAngleParams);
+    m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    m_angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
+  }
+
   private void createWinchSimParts() {
     // Create winch simulated encoder
     m_winchEncoderSim = new RelativeEncoderSim(m_winchEncoder);
@@ -144,13 +149,14 @@ public class ArmSystemSim extends ArmSystem {
     m_winchState = new WinchState(Constants.SimConstants.kTotalStringLenMeters);
 
     // Create the motor simulation for the winch motor
-    m_winchMotorSimManager = new MotorSimManager(Constants.SimConstants.kwinchSimGearRatio);
+    m_winchMotorSimManager = new MotorSimManager(false, Constants.SimConstants.kwinchSimGearRatio);
     m_winchMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armWinch));
     m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
 
     // Create the winch simulation
-    m_winchSimManager = new WinchSimManager(0.0254, Constants.SimConstants.kTotalStringLenMeters,
-        Constants.SimConstants.kCurrentLenSpooled, WindingOrientation.BackOfRobot, true);
+    m_winchSimManager = new WinchSimManager(false, 0.0254,
+        Constants.SimConstants.kTotalStringLenMeters, Constants.SimConstants.kCurrentLenSpooled,
+        WindingOrientation.BackOfRobot, true);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new WinchSimOutput(m_winchState));
   }
@@ -160,7 +166,8 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderEncoderSim = new RelativeEncoderSim(m_extenderEncoder);
 
     // Create the motor simulation for the extender motor
-    m_extenderMotorSimManager = new MotorSimManager(Constants.SimConstants.kextenderSimGearRatio);
+    m_extenderMotorSimManager = new MotorSimManager(false,
+        Constants.SimConstants.kextenderSimGearRatio);
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 
@@ -181,11 +188,12 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   protected boolean getIsStringOrArmBroken() {
-    return m_angleSimulation.getIsBroken() || m_armSimulation.getIsBroken();
+    return m_armAngleState.getIsBroken() || m_armSimulation.getIsBroken();
   }
 
   // $LATER - This is temporary until we combine string and arm simulation
-  private void simulatePeriodicStringAndArm(StringAngleSimulation angleSimulation,
+  private void simulatePeriodicStringAndArm(
+      SimManagerInterface<Double, ArmAngleState> angleSimulation,
       ArmSimulation armSimulation) {
 
     angleSimulation.simulationPeriodic();
@@ -209,7 +217,7 @@ public class ArmSystemSim extends ArmSystem {
       m_winchSimManager.simulationPeriodic();
 
       m_extenderSimulation.simulationPeriodic();
-      simulatePeriodicStringAndArm(m_angleSimulation, m_armSimulation);
+      simulatePeriodicStringAndArm(m_angleSimManager, m_armSimulation);
 
       boolean isExtenderSensorOn = m_extenderSimulation
           .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;

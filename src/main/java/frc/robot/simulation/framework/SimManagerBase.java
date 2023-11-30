@@ -12,26 +12,33 @@ public abstract class SimManagerBase<InputT, OutputT>
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
-  private Supplier<Boolean> m_isRobotEnabled = () -> RobotState.isEnabled();
+  private Supplier<Boolean> m_isRobotEnabled;
 
   /**
    * Constructor.
    */
-  public SimManagerBase() {
+  public SimManagerBase(boolean enableTestMode) {
+    // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
+    // Otherwise, we'd get odd results when unit-testing.
+    if (enableTestMode) {
+      m_isRobotEnabled = () -> true;
+    }
+    else {
+      m_isRobotEnabled = () -> RobotState.isEnabled();
+    }
   }
 
   /**
    * Optional Constructor that allows the user to specify a custom function to
    * determine if the robot is enabled.
    */
-  public SimManagerBase(Supplier<Boolean> isRobotEnabled) {
-    // Call default constuctor first
-    this();
+  public SimManagerBase(Supplier<Boolean> isRobotEnabledFunc) {
+    this(true);
 
-    if (isRobotEnabled == null) {
-      throw new IllegalArgumentException("isRobotEnabled cannot be null");
+    if (isRobotEnabledFunc == null) {
+      throw new IllegalArgumentException("isRobotEnabledFunc cannot be null");
     }
-    m_isRobotEnabled = isRobotEnabled;
+    m_isRobotEnabled = isRobotEnabledFunc;
   }
 
   @Override

@@ -1,10 +1,12 @@
 package frc.robot.simulation.armangle;
 
+import frc.robot.simulation.framework.SimModelInterface;
+
 /**
  * Given a string connected to the back of an arm, this class will calculate
  * the ANGLE of the arm.
  */
-public class ArmAngleSimModel {
+public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState> {
   private CalcArmAngleHelper m_calcArmAngleHelper;
   private double m_angleSignedDegrees;
   private boolean m_isBroken;
@@ -31,21 +33,17 @@ public class ArmAngleSimModel {
     m_isBroken = false;
   }
 
-  public double getAngleSignedDegrees() {
-    return m_angleSignedDegrees;
-  }
-
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
   /**
    * Called every 20ms to calculate the new arm angle.
    */
-  public void updateArmAngle(double newStringLen) {
+  public ArmAngleState updateSimulation(Double newStringLen) {
+    ArmAngleState armAngleResult = new ArmAngleState();
+
     // If the arm-angle-calculator is broken, there's nothing to update
     if (m_isBroken) {
-      return;
+      armAngleResult.setAngleSignedDegrees(m_angleSignedDegrees);
+      armAngleResult.setIsBroken(true);
+      return armAngleResult;
     }
 
     CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
@@ -58,5 +56,9 @@ public class ArmAngleSimModel {
     }
 
     m_angleSignedDegrees = resultPair.m_value;
+    armAngleResult.setAngleSignedDegrees(m_angleSignedDegrees);
+    armAngleResult.setIsBroken(m_isBroken);
+
+    return armAngleResult;
   }
 }

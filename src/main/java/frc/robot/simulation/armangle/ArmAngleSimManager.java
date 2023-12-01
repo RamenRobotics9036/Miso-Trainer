@@ -19,12 +19,6 @@ public class ArmAngleSimManager extends SimManagerBase<Double, ArmAngleState> {
 
   @Override
   protected ArmAngleState doSimulation(Double stringLength) {
-    m_model.updateArmAngle(stringLength);
-
-    ArmAngleState result = new ArmAngleState();
-    result.setAngleSignedDegrees(m_model.getAngleSignedDegrees());
-    result.setIsBroken(m_model.getIsBroken());
-
-    return result;
+    return m_model.updateSimulation(stringLength);
   }
 }

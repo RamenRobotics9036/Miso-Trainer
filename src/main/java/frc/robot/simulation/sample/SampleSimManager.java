@@ -22,6 +22,6 @@ public class SampleSimManager extends SimManagerBase<Integer, Integer> {
 
   @Override
   protected Integer doSimulation(Integer numValue) {
-    return m_model.updateTotal(numValue);
+    return m_model.updateSimulation(numValue);
   }
 }

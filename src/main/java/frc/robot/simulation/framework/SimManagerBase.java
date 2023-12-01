@@ -69,6 +69,8 @@ public abstract class SimManagerBase<InputT, OutputT>
   }
 
   // Must be implemented by derived class
+  // $TODO - This should be changed so that doSimulation is impelemented HERE.
+  // It should just call a method from SimModelInterface that a MODEL class implements.
   protected abstract OutputT doSimulation(InputT input);
 
   private void doSimulationWrapper() {

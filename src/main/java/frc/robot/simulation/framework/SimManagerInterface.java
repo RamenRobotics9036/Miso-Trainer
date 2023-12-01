@@ -5,6 +5,7 @@ package frc.robot.simulation.framework;
  * query inputs to device, and calls the output Consumer to set the new state of the device.
  * It leverages a Model class to do the actual real-world simulation.
  */
+// $TODO - No need for this interface to exist.
 public interface SimManagerInterface<InputT, OutputT> {
   void setInputHandler(SimInputInterface<InputT> inputHandler);
 

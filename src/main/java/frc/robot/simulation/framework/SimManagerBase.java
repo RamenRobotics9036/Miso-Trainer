@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 /**
  * Partially implements SimManagerInterface.
  */
+// $TODO - No need for this to be an abstract class once all the derived classes have no code.
 public abstract class SimManagerBase<InputT, OutputT>
     implements SimManagerInterface<InputT, OutputT> {
 

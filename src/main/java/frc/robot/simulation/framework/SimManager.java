@@ -7,8 +7,7 @@ import java.util.function.Supplier;
  * Partially implements SimManagerInterface.
  */
 // $TODO - No need for this to be an abstract class once all the derived classes have no code.
-public abstract class SimManagerBase<InputT, OutputT>
-    implements SimManagerInterface<InputT, OutputT> {
+public abstract class SimManager<InputT, OutputT> implements SimManagerInterface<InputT, OutputT> {
 
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
@@ -18,7 +17,7 @@ public abstract class SimManagerBase<InputT, OutputT>
   /**
    * Constructor.
    */
-  public SimManagerBase(boolean enableTestMode) {
+  public SimManager(boolean enableTestMode) {
     // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
     // Otherwise, we'd get odd results when unit-testing.
     if (enableTestMode) {
@@ -33,7 +32,7 @@ public abstract class SimManagerBase<InputT, OutputT>
    * Optional Constructor that allows the user to specify a custom function to
    * determine if the robot is enabled.
    */
-  public SimManagerBase(Supplier<Boolean> isRobotEnabledFunc) {
+  public SimManager(Supplier<Boolean> isRobotEnabledFunc) {
     this(true);
 
     if (isRobotEnabledFunc == null) {

@@ -6,9 +6,9 @@ import java.util.function.Supplier;
 /**
  * Partially implements SimManagerInterface.
  */
-// $TODO - No need for this to be an abstract class once all the derived classes have no code.
-public abstract class SimManager<InputT, OutputT> implements SimManagerInterface<InputT, OutputT> {
+public class SimManager<InputT, OutputT> {
 
+  private SimModelInterface<InputT, OutputT> m_simModelFunc;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -17,7 +17,13 @@ public abstract class SimManager<InputT, OutputT> implements SimManagerInterface
   /**
    * Constructor.
    */
-  public SimManager(boolean enableTestMode) {
+  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc, boolean enableTestMode) {
+    if (simModelFunc == null) {
+      throw new IllegalArgumentException("simModelFunc cannot be null");
+    }
+
+    m_simModelFunc = simModelFunc;
+
     // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
     // Otherwise, we'd get odd results when unit-testing.
     if (enableTestMode) {
@@ -32,8 +38,9 @@ public abstract class SimManager<InputT, OutputT> implements SimManagerInterface
    * Optional Constructor that allows the user to specify a custom function to
    * determine if the robot is enabled.
    */
-  public SimManager(Supplier<Boolean> isRobotEnabledFunc) {
-    this(true);
+  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
+      Supplier<Boolean> isRobotEnabledFunc) {
+    this(simModelFunc, true);
 
     if (isRobotEnabledFunc == null) {
       throw new IllegalArgumentException("isRobotEnabledFunc cannot be null");
@@ -41,14 +48,12 @@ public abstract class SimManager<InputT, OutputT> implements SimManagerInterface
     m_isRobotEnabled = isRobotEnabledFunc;
   }
 
-  @Override
-  public final void setInputHandler(SimInputInterface<InputT> inputHandler) {
+  public void setInputHandler(SimInputInterface<InputT> inputHandler) {
     m_inputHandler = inputHandler;
     tryInitializeOutput();
   }
 
-  @Override
-  public final void setOutputHandler(SimOutputInterface<OutputT> outputHandler) {
+  public void setOutputHandler(SimOutputInterface<OutputT> outputHandler) {
     m_outputHandler = outputHandler;
     tryInitializeOutput();
   }
@@ -67,27 +72,23 @@ public abstract class SimManager<InputT, OutputT> implements SimManagerInterface
     }
   }
 
-  // Must be implemented by derived class
-  // $TODO - This should be changed so that doSimulation is impelemented HERE.
-  // It should just call a method from SimModelInterface that a MODEL class implements.
-  protected abstract OutputT doSimulation(InputT input);
-
   private void doSimulationWrapper() {
     if (m_inputHandler != null && m_outputHandler != null) {
       // Step 1: Get the input from the input handler
       InputT input = m_inputHandler.getInput();
 
       // Step 2: Do simulation
-      OutputT result = this.doSimulation(input);
+      OutputT result = m_simModelFunc.updateSimulation(input);
 
       // Step 3: Write the output to the output handler
       m_outputHandler.setOutput(result);
     }
   }
 
-  // The following method cannot be further overriden by derived class
-  @Override
-  public final void simulationPeriodic() {
+  /**
+   * Called every 20ms.
+   */
+  public void simulationPeriodic() {
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
       doSimulationWrapper();

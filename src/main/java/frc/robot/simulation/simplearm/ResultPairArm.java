@@ -3,7 +3,7 @@ package frc.robot.simulation.simplearm;
 /**
  * Returns a pair of values for arm simulation.
  */
-// $TODO - Remove this file, use a Pair instead
+// $LATER - Remove this file, use a Pair instead
 public class ResultPairArm {
   @SuppressWarnings("checkstyle:MemberName")
   public boolean isValid;

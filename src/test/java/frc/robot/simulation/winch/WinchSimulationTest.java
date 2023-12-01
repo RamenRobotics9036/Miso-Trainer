@@ -137,13 +137,13 @@ public class WinchSimulationTest {
         m_totalStringLenMeters, m_initialLenSpooled, stringOrientation, flipWinchPolarity);
 
     // Initialize the number of rotations
-    tempWinchSimulation.updateNewLenSpooled(0);
+    tempWinchSimulation.updateSimulation(0.0);
 
     // Rotate the motor such that string gets 0.5 meters longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = lenToGrowString / spoolCircumference;
 
-    tempWinchSimulation.updateNewLenSpooled(numRotations);
+    tempWinchSimulation.updateSimulation(numRotations);
     double result = tempWinchSimulation.getStringUnspooledLen();
 
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
@@ -210,16 +210,16 @@ public class WinchSimulationTest {
         m_totalStringLenMeters, m_initialLenSpooled, WindingOrientation.BackOfRobot, false);
 
     // Initialize the number of rotations
-    tempWinchSimulation.updateNewLenSpooled(0);
+    tempWinchSimulation.updateSimulation(0.0);
 
     // Rotate the motor such that string gets a bit longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateNewLenSpooled(numRotations);
+    tempWinchSimulation.updateSimulation(numRotations);
 
     // Rotate again
     numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateNewLenSpooled(numRotations * 2);
+    tempWinchSimulation.updateSimulation(numRotations * 2);
 
     double result = tempWinchSimulation.getStringUnspooledLen();
 

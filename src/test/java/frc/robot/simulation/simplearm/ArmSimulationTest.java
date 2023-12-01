@@ -260,7 +260,7 @@ public class ArmSimulationTest {
 
     // Initialize the number of rotations
     double currentWinchRotations = 0;
-    tempwinchSimulation.updateNewLenSpooled(currentWinchRotations);
+    tempwinchSimulation.updateSimulation(currentWinchRotations);
 
     // Now that grabber is set open, need to simulate one cycle
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
@@ -282,7 +282,7 @@ public class ArmSimulationTest {
         / spoolCircumferenceMeters;
 
     // Simulate one cycle for winch, so that it updates
-    tempwinchSimulation.updateNewLenSpooled(deltaWinchRotations);
+    tempwinchSimulation.updateSimulation(deltaWinchRotations);
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
 
     assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);

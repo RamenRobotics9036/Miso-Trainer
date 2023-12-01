@@ -28,13 +28,6 @@ public class WinchSimManager extends SimManagerBase<Double, WinchState> {
 
   @Override
   protected WinchState doSimulation(Double winchMotorEncoderRotations) {
-    m_model.updateNewLenSpooled(winchMotorEncoderRotations);
-
-    WinchState result = new WinchState(m_model.getTotalStringLenMeters());
-    result.setStringUnspooledLen(m_model.getStringUnspooledLen());
-    result.setWindingOrientation(m_model.getWindingOrientation());
-    result.setIsBroken(m_model.getIsBroken());
-
-    return result;
+    return m_model.updateSimulation(winchMotorEncoderRotations);
   }
 }

@@ -1,5 +1,7 @@
 package frc.robot.simulation.winch;
 
+import frc.robot.simulation.framework.SimModelInterface;
+
 /**
  * Simulates a winch with a spool and a string. The string can be extended and retracted,
  * and it can be positioned either at the front or the back of a robot.
@@ -17,7 +19,7 @@ package frc.robot.simulation.winch;
  * Winding orientation - Whether string is coming off the top of the spool or the bottom
  * </p>
  */
-public class WinchSimModel {
+public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
    * The WindingOrientation enum represents the orientation of the string.
    * If the string is towards the back of the robot, then we represent as BackOfRobot.
@@ -90,7 +92,8 @@ public class WinchSimModel {
    *
    * @return the length of string that is currently unspooled, in meters
    */
-  // $LATER All these getters can go away
+  // $LATER All these getters can go away. Instead, the test-code should just use the return value
+  // of updateSimulation().
   public double getStringUnspooledLen() {
     return m_totalStringLenMeters - Math.abs(m_currentLenSpooled);
   }
@@ -146,13 +149,17 @@ public class WinchSimModel {
    * Updates the current length of string spooled. This method is called periodically
    * during simulation to update the state of the winch.
    */
-  public void updateNewLenSpooled(double currentRotations) {
+  public WinchState updateSimulation(Double currentRotations) {
+    WinchState winchStateResult = new WinchState(m_totalStringLenMeters);
     double currentRotationsWithPolarity = currentRotations * m_motorPolarity;
     double deltaRotations;
 
     // If the winch is broken, there's nothing to update
     if (m_isBroken) {
-      return;
+      winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+      winchStateResult.setWindingOrientation(getWindingOrientation());
+      winchStateResult.setIsBroken(true);
+      return winchStateResult;
     }
 
     // How much has the motor turned since winch initialized?
@@ -173,5 +180,10 @@ public class WinchSimModel {
     }
 
     m_currentLenSpooled = newCurrentLenSpooled;
+    winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+    winchStateResult.setWindingOrientation(getWindingOrientation());
+    winchStateResult.setIsBroken(m_isBroken);
+
+    return winchStateResult;
   }
 }

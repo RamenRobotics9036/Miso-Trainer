@@ -19,6 +19,6 @@ public class MotorSimManager extends SimManagerBase<Double, Double> {
 
   @Override
   protected Double doSimulation(Double motorPowerPercentage) {
-    return m_model.updateMotorPosition(motorPowerPercentage);
+    return m_model.updateSimulation(motorPowerPercentage);
   }
 }

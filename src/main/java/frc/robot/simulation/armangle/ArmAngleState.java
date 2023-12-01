@@ -33,7 +33,7 @@ public class ArmAngleState {
   }
 
   /**
-   * Copy to another instance of WinchState.
+   * Copy to another instance of ArmAngleState.
    */
   public void copyFrom(ArmAngleState other) {
     if (other == null) {

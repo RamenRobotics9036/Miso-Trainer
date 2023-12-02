@@ -1,9 +1,11 @@
 package frc.robot.simulation.sample;
 
+import frc.robot.simulation.framework.SimModelInterface;
+
 /**
  * Does the real-world simulation for the sample (which just accumulates integer values as a sum).
  */
-public class SampleSimModel {
+public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   private int m_accumulator;
   private final int m_ratio;
 
@@ -15,7 +17,7 @@ public class SampleSimModel {
     m_accumulator = 0;
   }
 
-  public int updateTotal(int numValue) {
+  public Integer updateSimulation(Integer numValue) {
     m_accumulator += (numValue * m_ratio);
     return m_accumulator;
   }

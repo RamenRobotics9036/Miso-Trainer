@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import frc.robot.simulation.framework.SimManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,8 @@ public class SampleSimManagerTest {
 
     // Note: Many of these tests run with isRobotEnabled = () -> true. This is because
     // we want all the testing to concretely run the simulation, and not skip it.
-    SampleSimManager sampleSimManager = new SampleSimManager(ratio, () -> true);
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), () -> true);
     assertTrue(sampleSimManager != null);
   }
 
@@ -54,11 +56,12 @@ public class SampleSimManagerTest {
       int ratio = 2;
 
       @SuppressWarnings("unused")
-      SampleSimManager sampleSimManager = new SampleSimManager(ratio, null);
+      SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+          new SampleSimModel(ratio), null);
     });
   }
 
-  private void runSimulationTenTimes(SampleSimManager sampleSimManager) {
+  private void runSimulationTenTimes(SimManager<Integer, Integer> sampleSimManager) {
     if (sampleSimManager == null) {
       throw new IllegalArgumentException("sampleSimManager cannot be null");
     }
@@ -71,7 +74,8 @@ public class SampleSimManagerTest {
   @Test
   public void creatingSimManagerWithNoInputOutputsAndRunningPeriodicShouldSucceed() {
     int ratio = 2;
-    SampleSimManager sampleSimManager = new SampleSimManager(ratio, () -> true);
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), () -> true);
 
     runSimulationTenTimes(sampleSimManager);
   }
@@ -84,7 +88,8 @@ public class SampleSimManagerTest {
     };
     int expectedVallue = outputVariable[0];
 
-    SampleSimManager sampleSimManager = new SampleSimManager(ratio, () -> true);
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), () -> true);
     sampleSimManager.setOutputHandler(new SampleSimOutput((numOutput) -> {
       outputVariable[0] = numOutput;
     }));
@@ -113,7 +118,8 @@ public class SampleSimManagerTest {
         isEnabledDuringInit
     };
 
-    SampleSimManager sampleSimManager = new SampleSimManager(ratio, () -> isRobotEnabled[0]);
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), () -> isRobotEnabled[0]);
 
     sampleSimManager.setInputHandler(new SampleSimInput(() -> {
       return inputVariable[0];

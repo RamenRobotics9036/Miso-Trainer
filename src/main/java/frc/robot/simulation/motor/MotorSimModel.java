@@ -2,11 +2,12 @@ package frc.robot.simulation.motor;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.simulation.framework.SimModelInterface;
 
 /**
  * Does the real-world simulation for the motor.
  */
-public class MotorSimModel {
+public class MotorSimModel implements SimModelInterface<Double, Double> {
   private final DCMotor m_realMotorModel;
   private final DCMotorSim m_realMotorSim;
   private final double m_gearRatio;
@@ -29,7 +30,7 @@ public class MotorSimModel {
   /**
    * Runs 20ms simulation of the motor, and then returns the new encoder position (in Rotations).
    */
-  public double updateMotorPosition(double motorPowerPercentage) {
+  public Double updateSimulation(Double motorPowerPercentage) {
     // Calculate the input voltage for the motor
     double inputVoltageVolts = motorPowerPercentage * 12.0;
 

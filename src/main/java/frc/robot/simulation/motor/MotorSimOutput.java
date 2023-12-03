@@ -1,7 +1,7 @@
 package frc.robot.simulation.motor;
 
+import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.simulation.framework.SimOutputInterface;
-import frc.robot.subsystems.RelativeEncoderSim;
 
 /**
  * Helper class to implement OutputDoubleInterface.

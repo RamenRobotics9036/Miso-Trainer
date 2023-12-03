@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.helpers;
 
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.RobotBase;

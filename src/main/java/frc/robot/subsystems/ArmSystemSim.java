@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
+import frc.robot.helpers.DutyCycleEncoderSim2;
+import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleParams;

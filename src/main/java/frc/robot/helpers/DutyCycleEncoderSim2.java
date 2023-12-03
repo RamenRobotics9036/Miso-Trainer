@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.helpers;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;

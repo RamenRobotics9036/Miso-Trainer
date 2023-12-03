@@ -1,7 +1,7 @@
 package frc.robot.simulation.winch;
 
+import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.simulation.framework.SimInputInterface;
-import frc.robot.subsystems.RelativeEncoderSim;
 
 /**
  * Winch input is the number of rotations on winch motor encoder.

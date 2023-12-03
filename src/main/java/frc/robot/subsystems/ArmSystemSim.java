@@ -6,14 +6,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
+import frc.robot.helpers.DutyCycleEncoderSim2;
+import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
-import frc.robot.simulation.armangle.ArmAngleSimOutput;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
@@ -24,7 +26,6 @@ import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
-import frc.robot.simulation.winch.WinchSimOutput;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -140,7 +141,7 @@ public class ArmSystemSim extends ArmSystem {
     m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(armAngleParams),
         false);
     m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
-    m_angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
+    m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
   }
 
   private void createWinchSimParts() {
@@ -161,7 +162,7 @@ public class ArmSystemSim extends ArmSystem {
             Constants.SimConstants.kCurrentLenSpooled, WindingOrientation.BackOfRobot, true),
         false);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
-    m_winchSimManager.setOutputHandler(new WinchSimOutput(m_winchState));
+    m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }
 
   private void createExtenderSimParts() {

@@ -1,9 +1,11 @@
 package frc.robot.simulation.armangle;
 
+import frc.robot.simulation.framework.inputoutputs.Copyable;
+
 /**
  * Holds the angle that arm is currently positioned.
  */
-public class ArmAngleState {
+public class ArmAngleState implements Copyable<ArmAngleState> {
   private double m_angleSignedDegrees;
   private boolean m_isBroken;
 

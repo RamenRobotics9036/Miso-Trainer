@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +39,7 @@ public class SampleSimManagerTest {
     assertThrows(IllegalArgumentException.class, () -> {
 
       @SuppressWarnings("unused")
-      SampleSimInput sampleSimInput = new SampleSimInput(null);
+      LambdaSimInput<Integer> sampleSimInput = new LambdaSimInput<Integer>(null);
     });
   }
 
@@ -46,7 +48,7 @@ public class SampleSimManagerTest {
     assertThrows(IllegalArgumentException.class, () -> {
 
       @SuppressWarnings("unused")
-      SampleSimOutput sampleSimOutput = new SampleSimOutput(null);
+      LambdaSimOutput<Integer> sampleSimOutput = new LambdaSimOutput<Integer>(null);
     });
   }
 
@@ -90,7 +92,7 @@ public class SampleSimManagerTest {
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
         new SampleSimModel(ratio), () -> true);
-    sampleSimManager.setOutputHandler(new SampleSimOutput((numOutput) -> {
+    sampleSimManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
       outputVariable[0] = numOutput;
     }));
 
@@ -121,11 +123,11 @@ public class SampleSimManagerTest {
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
         new SampleSimModel(ratio), () -> isRobotEnabled[0]);
 
-    sampleSimManager.setInputHandler(new SampleSimInput(() -> {
+    sampleSimManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
       return inputVariable[0];
     }));
 
-    sampleSimManager.setOutputHandler(new SampleSimOutput((numOutput) -> {
+    sampleSimManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
       outputVariable[0] = numOutput;
     }));
 

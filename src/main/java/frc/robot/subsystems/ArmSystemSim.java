@@ -14,6 +14,7 @@ import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleSimOutput;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
@@ -24,7 +25,6 @@ import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
-import frc.robot.simulation.winch.WinchSimOutput;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -161,7 +161,7 @@ public class ArmSystemSim extends ArmSystem {
             Constants.SimConstants.kCurrentLenSpooled, WindingOrientation.BackOfRobot, true),
         false);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
-    m_winchSimManager.setOutputHandler(new WinchSimOutput(m_winchState));
+    m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }
 
   private void createExtenderSimParts() {

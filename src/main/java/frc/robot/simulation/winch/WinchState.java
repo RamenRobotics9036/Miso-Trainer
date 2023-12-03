@@ -1,11 +1,12 @@
 package frc.robot.simulation.winch;
 
+import frc.robot.simulation.framework.inputoutputs.Copyable;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 
 /**
  * Holds the outputed state of the winch.
  */
-public class WinchState {
+public class WinchState implements Copyable<WinchState> {
   private final double m_totalStringLenMeters;
   private double m_stringUnspooledLen;
   private WindingOrientation m_windingOrientation;

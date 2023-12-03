@@ -13,10 +13,10 @@ import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
-import frc.robot.simulation.armangle.ArmAngleSimOutput;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.CalcArmAngleHelper;
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
@@ -130,7 +130,7 @@ public class ArmSimulationTest {
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
         new ArmAngleSimModel(armAngleParams), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
-    angleSimManager.setOutputHandler(new ArmAngleSimOutput(armAngleState));
+    angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
 
     double offsetRotations = 0;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
@@ -473,7 +473,7 @@ public class ArmSimulationTest {
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
         new ArmAngleSimModel(armAngleParams), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
-    angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
+    angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
 
     double offsetRotations = 0.25;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;

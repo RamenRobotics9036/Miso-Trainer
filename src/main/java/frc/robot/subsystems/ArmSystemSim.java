@@ -11,7 +11,6 @@ import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
-import frc.robot.simulation.armangle.ArmAngleSimOutput;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
@@ -140,7 +139,7 @@ public class ArmSystemSim extends ArmSystem {
     m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(armAngleParams),
         false);
     m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
-    m_angleSimManager.setOutputHandler(new ArmAngleSimOutput(m_armAngleState));
+    m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
   }
 
   private void createWinchSimParts() {

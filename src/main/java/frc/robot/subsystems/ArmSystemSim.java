@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,7 +22,6 @@ import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
-import frc.robot.simulation.simplearm.CreateArmResult;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
@@ -114,15 +114,16 @@ public class ArmSystemSim extends ArmSystem {
             - Constants.SimConstants.kdeltaRotationsBeforeBroken),
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(armAngleSupplier,
+    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
+        armAngleSupplier,
         m_winchAbsoluteEncoderSim,
         armParams,
         UnitConversions
             .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
                 - Constants.SimConstants.karmEncoderRotationsOffset));
 
-    m_armSimulation = createResult.armSimulation;
-    m_ramenArmSimLogic = createResult.ramenArmSimLogic;
+    m_armSimulation = createResult.getFirst();
+    m_ramenArmSimLogic = createResult.getSecond();
   }
 
   private void createArmAngleSimParts() {

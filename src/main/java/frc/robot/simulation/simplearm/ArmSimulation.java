@@ -1,5 +1,6 @@
 package frc.robot.simulation.simplearm;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import java.util.function.DoubleSupplier;
@@ -17,7 +18,7 @@ public class ArmSimulation {
   private double m_bottomSignedDegreesBreak;
   private double m_encoderRotationsOffset;
   private boolean m_isBroken;
-  private ArmSimLogicInterface m_robotSpecificArmLogic = null;
+  private ExtendArmInterface m_robotSpecificArmLogic = null;
 
   private void commonInitialization(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
@@ -88,7 +89,7 @@ public class ArmSimulation {
   public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
-      ArmSimLogicInterface robotSpecificArmLogic) {
+      ExtendArmInterface robotSpecificArmLogic) {
 
     // Instead of calling this(), we call commonInitialization() directly
     commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
@@ -107,7 +108,7 @@ public class ArmSimulation {
     return m_isBroken;
   }
 
-  private ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+  private Pair<Boolean, Double> checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -116,10 +117,10 @@ public class ArmSimulation {
 
     // First, check robot-specific logic for arm broken
     if (m_robotSpecificArmLogic != null) {
-      ResultPairArm tempResult = m_robotSpecificArmLogic
+      Pair<Boolean, Double> tempResult = m_robotSpecificArmLogic
           .checkIfArmBroken(oldSignedDegrees, isOldSignedDegreesSet, newSignedDegrees);
 
-      if (tempResult != null && !tempResult.isValid) {
+      if (tempResult != null && !tempResult.getFirst()) {
         return tempResult;
       }
     }
@@ -137,10 +138,10 @@ public class ArmSimulation {
       isValid = false;
     }
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
-  private ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+  private Pair<Boolean, Double> checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -149,17 +150,17 @@ public class ArmSimulation {
 
     // First, check robot-specific logic for arm stuck
     if (m_robotSpecificArmLogic != null) {
-      ResultPairArm tempResult = m_robotSpecificArmLogic
+      Pair<Boolean, Double> tempResult = m_robotSpecificArmLogic
           .checkIfArmStuck(oldSignedDegrees, isOldSignedDegreesSet, newSignedDegrees);
 
-      if (tempResult != null && !tempResult.isValid) {
+      if (tempResult != null && !tempResult.getFirst()) {
         return tempResult;
       }
     }
 
     // Now check general cases for arm stuck
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
   private void updateAbsoluteEncoderPosition() {
@@ -175,21 +176,21 @@ public class ArmSimulation {
 
     double newAbsoluteEncoderSignedDegrees = m_desiredArmAngleSupplier.getAsDouble();
 
-    ResultPairArm resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
+    Pair<Boolean, Double> resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
         newAbsoluteEncoderSignedDegrees);
 
-    if (resultPairStuck != null && !resultPairStuck.isValid) {
-      newAbsoluteEncoderSignedDegrees = resultPairStuck.value;
+    if (resultPairStuck != null && !resultPairStuck.getFirst()) {
+      newAbsoluteEncoderSignedDegrees = resultPairStuck.getSecond();
     }
 
-    ResultPairArm resultPairBroken = checkIfArmBroken(m_currentSignedDegrees,
+    Pair<Boolean, Double> resultPairBroken = checkIfArmBroken(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
         newAbsoluteEncoderSignedDegrees);
 
-    if (resultPairBroken != null && !resultPairBroken.isValid) {
+    if (resultPairBroken != null && !resultPairBroken.getFirst()) {
       m_isBroken = true;
-      newAbsoluteEncoderSignedDegrees = resultPairBroken.value;
+      newAbsoluteEncoderSignedDegrees = resultPairBroken.getSecond();
     }
 
     // Update the current position

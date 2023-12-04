@@ -1,14 +1,16 @@
 package frc.robot.simulation.simplearm;
 
+import edu.wpi.first.math.Pair;
+
 /**
  * Interface for robot-specific logic for the arm simulation.
  */
-public interface ArmSimLogicInterface {
-  ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+public interface ExtendArmInterface {
+  Pair<Boolean, Double> checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees);
 
-  ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+  Pair<Boolean, Double> checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees);
 }

@@ -21,7 +21,6 @@ import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -136,13 +135,14 @@ public class ArmSimulationTest {
     double offsetRotations = 0;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-    CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(m_armAngleSupplier,
+    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
+        m_armAngleSupplier,
         m_winchAbsoluteEncoderSim,
         m_defaultArmParams,
         UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
-    ArmSimulation armSimulation = createResult.armSimulation;
-    RamenArmSimLogic ramenArmSimLogic = createResult.ramenArmSimLogic;
+    ArmSimulation armSimulation = createResult.getFirst();
+    RamenArmSimLogic ramenArmSimLogic = createResult.getSecond();
 
     // Set grabber
     BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
@@ -190,12 +190,13 @@ public class ArmSimulationTest {
       double offsetRotations = 0;
       double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-      CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(null,
-          m_winchAbsoluteEncoderSim,
-          m_defaultArmParams,
-          UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+      Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic
+          .createRamenArmSimulation(null,
+              m_winchAbsoluteEncoderSim,
+              m_defaultArmParams,
+              UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
-      ArmSimulation tempArmSimulation = createResult.armSimulation;
+      ArmSimulation tempArmSimulation = createResult.getFirst();
       assertTrue(tempArmSimulation != null);
     });
   }
@@ -486,12 +487,13 @@ public class ArmSimulationTest {
         .setBottomSignedDegreesBreak(m_defaultArmParams.bottomSignedDegreesBreak)
         .setEncoderRotationsOffset(offsetRotations);
 
-    CreateArmResult createResult = RamenArmSimLogic.createRamenArmSimulation(m_armAngleSupplier,
+    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
+        m_armAngleSupplier,
         m_winchAbsoluteEncoderSim,
         tempArmParamsBuilder.build(),
         UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
 
-    ArmSimulation tempArmSimulation = createResult.armSimulation;
+    ArmSimulation tempArmSimulation = createResult.getFirst();
 
     assertTrue(tempArmSimulation != null);
     assertTrue(!tempwinchSimulation.getIsBroken());

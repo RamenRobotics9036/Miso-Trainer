@@ -1,19 +1,18 @@
 package frc.robot.simulation.simplearm.ramenarmlogic;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.simplearm.ArmSimLogicInterface;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
-import frc.robot.simulation.simplearm.CreateArmResult;
-import frc.robot.simulation.simplearm.ResultPairArm;
+import frc.robot.simulation.simplearm.ExtendArmInterface;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
  * Robot-specific logic for the arm simulation.
  */
-public class RamenArmSimLogic implements ArmSimLogicInterface {
+public class RamenArmSimLogic implements ExtendArmInterface {
   private final double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
   private BooleanSupplier m_grabberOpenSupplier = null;
 
@@ -42,7 +41,8 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
    * Create ArmSimulation, but with additional robot-specific logic
    * from Ramen bot.
    */
-  public static CreateArmResult createRamenArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public static Pair<ArmSimulation, RamenArmSimLogic> createRamenArmSimulation(
+      DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
@@ -53,13 +53,13 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         winchAbsoluteEncoderSim, armParams, ramenArmLogic);
 
-    return new CreateArmResult(armSimulation, ramenArmLogic);
+    return new Pair<ArmSimulation, RamenArmSimLogic>(armSimulation, ramenArmLogic);
   }
 
   /**
    * Check robot-specific logic for whether arm is BROKEN.
    */
-  public ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+  public Pair<Boolean, Double> checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -79,13 +79,13 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
       resetPositionTo = oldSignedDegrees;
     }
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
   /**
    * Check robot-specific logic for whether arm is STUCK.
    */
-  public ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+  public Pair<Boolean, Double> checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -106,7 +106,7 @@ public class RamenArmSimLogic implements ArmSimLogicInterface {
       resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
     }
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
   public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {

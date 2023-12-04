@@ -6,7 +6,6 @@ import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
-import frc.robot.simulation.simplearm.ResultPairArm;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -60,7 +59,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
   /**
    * Check robot-specific logic for whether arm is BROKEN.
    */
-  public ResultPairArm checkIfArmBroken(double oldSignedDegrees,
+  public Pair<Boolean, Double> checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -80,13 +79,13 @@ public class RamenArmSimLogic implements ExtendArmInterface {
       resetPositionTo = oldSignedDegrees;
     }
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
   /**
    * Check robot-specific logic for whether arm is STUCK.
    */
-  public ResultPairArm checkIfArmStuck(double oldSignedDegrees,
+  public Pair<Boolean, Double> checkIfArmStuck(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
 
@@ -107,7 +106,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
       resetPositionTo = m_grabberBreaksIfOpenBelowSignedDegreesLimit;
     }
 
-    return isValid ? null : new ResultPairArm(isValid, resetPositionTo);
+    return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
   public void setGrabberOpenSupplier(BooleanSupplier grabberOpenSupplier) {

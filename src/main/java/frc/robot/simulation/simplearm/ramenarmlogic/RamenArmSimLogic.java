@@ -2,7 +2,7 @@ package frc.robot.simulation.simplearm.ramenarmlogic;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.simplearm.ArmSimLogicInterface;
+import frc.robot.simulation.simplearm.ExtendArmInterface;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
 import frc.robot.simulation.simplearm.CreateArmResult;
@@ -13,7 +13,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Robot-specific logic for the arm simulation.
  */
-public class RamenArmSimLogic implements ArmSimLogicInterface {
+public class RamenArmSimLogic implements ExtendArmInterface {
   private final double m_grabberBreaksIfOpenBelowSignedDegreesLimit;
   private BooleanSupplier m_grabberOpenSupplier = null;
 

@@ -17,7 +17,7 @@ public class ArmSimulation {
   private double m_bottomSignedDegreesBreak;
   private double m_encoderRotationsOffset;
   private boolean m_isBroken;
-  private ArmSimLogicInterface m_robotSpecificArmLogic = null;
+  private ExtendArmInterface m_robotSpecificArmLogic = null;
 
   private void commonInitialization(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
@@ -88,7 +88,7 @@ public class ArmSimulation {
   public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
-      ArmSimLogicInterface robotSpecificArmLogic) {
+      ExtendArmInterface robotSpecificArmLogic) {
 
     // Instead of calling this(), we call commonInitialization() directly
     commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);

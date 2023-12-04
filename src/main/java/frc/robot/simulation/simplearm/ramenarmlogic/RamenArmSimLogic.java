@@ -1,10 +1,10 @@
 package frc.robot.simulation.simplearm.ramenarmlogic;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
-import frc.robot.simulation.simplearm.CreateArmResult;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
 import frc.robot.simulation.simplearm.ResultPairArm;
 import java.util.function.BooleanSupplier;
@@ -42,7 +42,8 @@ public class RamenArmSimLogic implements ExtendArmInterface {
    * Create ArmSimulation, but with additional robot-specific logic
    * from Ramen bot.
    */
-  public static CreateArmResult createRamenArmSimulation(DoubleSupplier stringUnspooledLenSupplier,
+  public static Pair<ArmSimulation, RamenArmSimLogic> createRamenArmSimulation(
+      DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
@@ -53,7 +54,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
     ArmSimulation armSimulation = new ArmSimulation(stringUnspooledLenSupplier,
         winchAbsoluteEncoderSim, armParams, ramenArmLogic);
 
-    return new CreateArmResult(armSimulation, ramenArmLogic);
+    return new Pair<ArmSimulation, RamenArmSimLogic>(armSimulation, ramenArmLogic);
   }
 
   /**

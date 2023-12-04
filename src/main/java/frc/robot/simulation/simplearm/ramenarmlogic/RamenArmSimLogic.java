@@ -2,10 +2,10 @@ package frc.robot.simulation.simplearm.ramenarmlogic;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.simplearm.ExtendArmInterface;
 import frc.robot.simulation.simplearm.ArmSimulation;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
 import frc.robot.simulation.simplearm.CreateArmResult;
+import frc.robot.simulation.simplearm.ExtendArmInterface;
 import frc.robot.simulation.simplearm.ResultPairArm;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;

@@ -9,7 +9,7 @@ import java.util.function.DoubleSupplier;
  * Simulates the arm as-if it were a real-world object. E.g. if the arm
  * is extended too far, it will break.
  */
-public class ArmSimulation {
+public class ArmSimModel {
   private DoubleSupplier m_desiredArmAngleSupplier;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
@@ -68,7 +68,7 @@ public class ArmSimulation {
    * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
    * initialized.
    */
-  public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
+  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams) {
 
@@ -86,7 +86,7 @@ public class ArmSimulation {
    * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
    * initialized.
    */
-  public ArmSimulation(DoubleSupplier desiredArmAngleSupplier,
+  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimulationParams armParams,
       ExtendArmInterface robotSpecificArmLogic) {

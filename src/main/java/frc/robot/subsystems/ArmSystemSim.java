@@ -20,7 +20,7 @@ import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
-import frc.robot.simulation.simplearm.ArmSimulation;
+import frc.robot.simulation.simplearm.ArmSimModel;
 import frc.robot.simulation.simplearm.ArmSimulationParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
@@ -52,7 +52,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected DIOSim m_sensorSim;
 
-  protected ArmSimulation m_armSimulation;
+  protected ArmSimModel m_armSimulation;
   protected RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
@@ -114,7 +114,7 @@ public class ArmSystemSim extends ArmSystem {
             - Constants.SimConstants.kdeltaRotationsBeforeBroken),
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
+    Pair<ArmSimModel, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
         armAngleSupplier,
         m_winchAbsoluteEncoderSim,
         armParams,
@@ -198,7 +198,7 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimulation,
-      ArmSimulation armSimulation) {
+      ArmSimModel armSimulation) {
 
     angleSimulation.simulationPeriodic();
     armSimulation.simulationPeriodic();

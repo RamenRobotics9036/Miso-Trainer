@@ -114,6 +114,7 @@ public class ArmSystemSim extends ArmSystem {
             - Constants.SimConstants.kdeltaRotationsBeforeBroken),
         Constants.SimConstants.karmEncoderRotationsOffset);
 
+    // $TODO - Note we pass in double supplier, and output goes to AbsoluteEncoderSim
     Pair<ArmSimModel, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
         armAngleSupplier,
         m_winchAbsoluteEncoderSim,

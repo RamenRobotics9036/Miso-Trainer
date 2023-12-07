@@ -3,7 +3,7 @@ package frc.robot.simulation.simplearm;
 /**
  * Class that holds paramaters for the arm simulation class.
  */
-public class ArmSimulationParams {
+public class ArmSimParams {
   @SuppressWarnings("checkstyle:MemberName")
   public double topSignedDegreesBreak;
 
@@ -16,13 +16,13 @@ public class ArmSimulationParams {
   /**
    * Constructor with 0 params.
    */
-  public ArmSimulationParams() {
+  public ArmSimParams() {
   }
 
   /**
    * Constructor with all params.
    */
-  public ArmSimulationParams(double topSignedDegreesBreakInput,
+  public ArmSimParams(double topSignedDegreesBreakInput,
       double bottomSignedDegreesBreakInput,
       double encoderRotationsOffsetInput) {
 
@@ -34,7 +34,7 @@ public class ArmSimulationParams {
   /**
    * Copy constructor.
    */
-  public ArmSimulationParams(ArmSimulationParams other) {
+  public ArmSimParams(ArmSimParams other) {
     topSignedDegreesBreak = other.topSignedDegreesBreak;
     bottomSignedDegreesBreak = other.bottomSignedDegreesBreak;
     encoderRotationsOffset = other.encoderRotationsOffset;

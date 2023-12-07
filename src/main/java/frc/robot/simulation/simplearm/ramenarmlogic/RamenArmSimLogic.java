@@ -4,7 +4,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.simplearm.ArmSimModel;
-import frc.robot.simulation.simplearm.ArmSimulationParams;
+import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -20,7 +20,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
    * Constructor.
    */
   public RamenArmSimLogic(double grabberBreaksIfOpenBelowSignedDegreesLimit,
-      ArmSimulationParams armParams) {
+      ArmSimParams armParams) {
 
     if (!UnitConversions.isInRightHalfPlane(grabberBreaksIfOpenBelowSignedDegreesLimit)) {
       throw new IllegalArgumentException(
@@ -44,7 +44,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
   public static Pair<ArmSimModel, RamenArmSimLogic> createRamenArmSimulation(
       DoubleSupplier stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams,
+      ArmSimParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
 
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(

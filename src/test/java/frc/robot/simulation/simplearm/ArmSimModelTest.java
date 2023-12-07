@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
  * Tests the ArmSimulation class.
  */
 public class ArmSimModelTest {
-  private final ArmSimulationParams m_defaultArmParams;
+  private final ArmSimParams m_defaultArmParams;
   private final double m_defaultHeightFromWinchToPivotPoint;
   private final double m_defaultArmLengthFromEdgeToPivot;
   private final double m_defaultArmLengthFromEdgeToPivotMin;
@@ -58,7 +58,7 @@ public class ArmSimModelTest {
     m_defaultArmLengthFromEdgeToPivot = 0.5;
     m_defaultArmLengthFromEdgeToPivotMin = 0.1;
 
-    m_defaultArmParams = new ArmSimulationParams(UnitConversions.rotationToSignedDegrees(0.25),
+    m_defaultArmParams = new ArmSimParams(UnitConversions.rotationToSignedDegrees(0.25),
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
         UnitConversions.rotationToUnsignedDegrees(0)); // encoderRotationsOffset
 
@@ -479,8 +479,7 @@ public class ArmSimModelTest {
     double offsetRotations = 0.25;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-    ArmSimulationParamsBuilder tempArmParamsBuilder = new ArmSimulationParamsBuilder(
-        m_defaultArmParams);
+    ArmSimParamsBuilder tempArmParamsBuilder = new ArmSimParamsBuilder(m_defaultArmParams);
 
     tempArmParamsBuilder.setTopSignedDegreesBreak(m_defaultArmParams.topSignedDegreesBreak)
         .setBottomSignedDegreesBreak(m_defaultArmParams.bottomSignedDegreesBreak)

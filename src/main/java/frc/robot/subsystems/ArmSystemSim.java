@@ -21,7 +21,7 @@ import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimModel;
-import frc.robot.simulation.simplearm.ArmSimulationParams;
+import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
@@ -105,7 +105,7 @@ public class ArmSystemSim extends ArmSystem {
       return m_armAngleState.getAngleSignedDegrees();
     };
 
-    ArmSimulationParams armParams = new ArmSimulationParams(
+    ArmSimParams armParams = new ArmSimParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
             - Constants.SimConstants.karmEncoderRotationsOffset
             + Constants.SimConstants.kdeltaRotationsBeforeBroken),

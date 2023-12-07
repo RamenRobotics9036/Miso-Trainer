@@ -22,7 +22,7 @@ public class ArmSimModel {
 
   private void commonInitialization(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams) {
+      ArmSimParams armParams) {
 
     if (desiredArmAngleSupplier == null) {
       throw new IllegalArgumentException("desiredArmAngleSupplier");
@@ -70,7 +70,7 @@ public class ArmSimModel {
    */
   public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams) {
+      ArmSimParams armParams) {
 
     commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
 
@@ -88,7 +88,7 @@ public class ArmSimModel {
    */
   public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimulationParams armParams,
+      ArmSimParams armParams,
       ExtendArmInterface robotSpecificArmLogic) {
 
     // Instead of calling this(), we call commonInitialization() directly

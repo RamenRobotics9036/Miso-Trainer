@@ -107,10 +107,10 @@ public class ArmSimModelTest {
   // $LATER - This is temporary until we place the string angle simulation plus the arm
   // simulation into a single simulation class.
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimManager,
-      ArmSimModel armSimulation) {
+      SimManager<Double, Double> armSimManager) {
 
     angleSimManager.simulationPeriodic();
-    armSimulation.simulationPeriodic();
+    armSimManager.simulationPeriodic();
   }
 
   private Pair<ArmSimModel, SimManager<Double, ArmAngleState>> createDefaultArmHelper(

@@ -52,7 +52,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected DIOSim m_sensorSim;
 
-  protected ArmSimModel m_armSimulation;
+  protected SimManager<Double, Double> m_armSimManager;
   protected RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
@@ -101,7 +101,7 @@ public class ArmSystemSim extends ArmSystem {
     m_winchAbsoluteEncoderSim = new DutyCycleEncoderSim2(m_winchAbsoluteEncoder);
 
     // Create a DoubleSupplier that gets the angle
-    DoubleSupplier armAngleSupplier = () -> {
+    Supplier<Double> armAngleSupplier = () -> {
       return m_armAngleState.getAngleSignedDegrees();
     };
 
@@ -115,15 +115,15 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.karmEncoderRotationsOffset);
 
     // $TODO - Note we pass in double supplier, and output goes to AbsoluteEncoderSim
-    Pair<ArmSimModel, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
-        armAngleSupplier,
-        m_winchAbsoluteEncoderSim,
-        armParams,
-        UnitConversions
-            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-                - Constants.SimConstants.karmEncoderRotationsOffset));
+    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
+        .createRamenArmSimulation(armAngleSupplier,
+            m_winchAbsoluteEncoderSim,
+            armParams,
+            UnitConversions
+                .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+                    - Constants.SimConstants.karmEncoderRotationsOffset));
 
-    m_armSimulation = createResult.getFirst();
+    m_armSimManager = createResult.getFirst();
     m_ramenArmSimLogic = createResult.getSecond();
   }
 
@@ -194,15 +194,15 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   protected boolean getIsStringOrArmBroken() {
-    return m_armAngleState.getIsBroken() || m_armSimulation.getIsBroken();
+    return m_armAngleState.getIsBroken() || m_armSimManager.getIsBroken();
   }
 
   // $LATER - This is temporary until we combine string and arm simulation
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimulation,
-      ArmSimModel armSimulation) {
+      SimManager<Double, Double> armSimManager) {
 
     angleSimulation.simulationPeriodic();
-    armSimulation.simulationPeriodic();
+    armSimManager.simulationPeriodic();
   }
 
   @Override
@@ -222,7 +222,7 @@ public class ArmSystemSim extends ArmSystem {
       m_winchSimManager.simulationPeriodic();
 
       m_extenderSimulation.simulationPeriodic();
-      simulatePeriodicStringAndArm(m_angleSimManager, m_armSimulation);
+      simulatePeriodicStringAndArm(m_angleSimManager, m_armSimManager);
 
       boolean isExtenderSensorOn = m_extenderSimulation
           .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;

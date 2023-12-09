@@ -56,10 +56,7 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
    * Optional constructor that also takes ArmSimLogicInterface parameter,
    * which allows for robot-specific logic to be used for arm broken/stuck.
    */
-  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
-      DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimParams armParams,
-      ExtendArmInterface robotSpecificArmLogic) {
+  public ArmSimModel(ArmSimParams armParams, ExtendArmInterface robotSpecificArmLogic) {
 
     this(armParams);
 

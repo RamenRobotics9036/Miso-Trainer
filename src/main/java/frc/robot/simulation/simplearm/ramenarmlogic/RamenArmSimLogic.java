@@ -3,11 +3,17 @@ package frc.robot.simulation.simplearm.ramenarmlogic;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.motor.MotorSimOutput;
+import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimModel;
+import frc.robot.simulation.simplearm.ArmSimOutput;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * Robot-specific logic for the arm simulation.
@@ -41,8 +47,8 @@ public class RamenArmSimLogic implements ExtendArmInterface {
    * Create ArmSimulation, but with additional robot-specific logic
    * from Ramen bot.
    */
-  public static Pair<ArmSimModel, RamenArmSimLogic> createRamenArmSimulation(
-      DoubleSupplier stringUnspooledLenSupplier,
+  public static Pair<SimManager<Double, Double>, RamenArmSimLogic> createRamenArmSimulation(
+      Supplier<Double> stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit) {
@@ -50,11 +56,14 @@ public class RamenArmSimLogic implements ExtendArmInterface {
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(
         grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
-    // $TODO - We're creating the Arm Model DIRECTLY here; instead, must create SimManager
-    ArmSimModel armSimulation = new ArmSimModel(stringUnspooledLenSupplier, winchAbsoluteEncoderSim,
-        armParams, ramenArmLogic);
+    // $TODO - Since this function is used both for simulation AND for unit tests, enableTestMode
+    // needs to be a parameter
+    SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
+        new ArmSimModel(armParams, ramenArmLogic), false);
+    armSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
+    armSimManager.setOutputHandler(new ArmSimOutput(winchAbsoluteEncoderSim));
 
-    return new Pair<ArmSimModel, RamenArmSimLogic>(armSimulation, ramenArmLogic);
+    return new Pair<SimManager<Double, Double>, RamenArmSimLogic>(armSimManager, ramenArmLogic);
   }
 
   /**

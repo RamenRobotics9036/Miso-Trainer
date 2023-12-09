@@ -1,7 +1,6 @@
 package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
-import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.simulation.framework.SimOutputInterface;
 
 /**

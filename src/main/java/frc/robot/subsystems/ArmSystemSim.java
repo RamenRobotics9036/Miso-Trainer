@@ -192,8 +192,8 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   protected boolean getIsStringOrArmBroken() {
-    return m_armAngleState.getIsBroken(); // $TODO - Were ignoring broken for now ||
-                                          // m_armSimManager.getIsBroken();
+    // $TODO - Were ignoring broken for now || // m_armSimManager.getIsBroken();
+    return m_armAngleState.getIsBroken();
   }
 
   // $LATER - This is temporary until we combine string and arm simulation

@@ -17,6 +17,7 @@ public class DutyCycleEncoderSim2 extends DutyCycleEncoderSim {
   /**
    * Constructor.
    */
+  // $TODO - Seriously, do I still need this?
   public DutyCycleEncoderSim2(DutyCycleEncoder encoder) {
     // FIRST, we call superclass
     super(encoder);

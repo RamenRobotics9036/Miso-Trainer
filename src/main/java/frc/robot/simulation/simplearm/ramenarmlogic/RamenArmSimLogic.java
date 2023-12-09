@@ -5,14 +5,11 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
-import frc.robot.simulation.motor.MotorSimOutput;
-import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimModel;
 import frc.robot.simulation.simplearm.ArmSimOutput;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**

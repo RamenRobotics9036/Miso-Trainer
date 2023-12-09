@@ -1,10 +1,8 @@
 package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.framework.SimModelInterface;
-import java.util.function.DoubleSupplier;
 
 /**
  * Simulates the arm as-if it were a real-world object. E.g. if the arm

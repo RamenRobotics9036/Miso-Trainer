@@ -20,7 +20,6 @@ import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
-import frc.robot.simulation.simplearm.ArmSimModel;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
@@ -28,7 +27,6 @@ import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -194,7 +192,8 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   protected boolean getIsStringOrArmBroken() {
-    return m_armAngleState.getIsBroken() || m_armSimManager.getIsBroken();
+    return m_armAngleState.getIsBroken(); // $TODO - Were ignoring broken for now ||
+                                          // m_armSimManager.getIsBroken();
   }
 
   // $LATER - This is temporary until we combine string and arm simulation

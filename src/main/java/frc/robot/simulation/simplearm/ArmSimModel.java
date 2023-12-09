@@ -4,7 +4,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.framework.SimModelInterface;
-
 import java.util.function.DoubleSupplier;
 
 /**
@@ -12,8 +11,6 @@ import java.util.function.DoubleSupplier;
  * is extended too far, it will break.
  */
 public class ArmSimModel implements SimModelInterface<Double, Double> {
-  private DoubleSupplier m_desiredArmAngleSupplier;
-  private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
   private boolean m_isCurrentSignedDegreesSet = false;
   private double m_topSignedDegreesBreak;
@@ -25,17 +22,7 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
   /**
    * Constructor.
    */
-  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
-      DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimParams armParams) {
-
-    if (desiredArmAngleSupplier == null) {
-      throw new IllegalArgumentException("desiredArmAngleSupplier");
-    }
-
-    if (winchAbsoluteEncoderSim == null) {
-      throw new IllegalArgumentException("winchAbsoluteEncoderSim");
-    }
+  public ArmSimModel(ArmSimParams armParams) {
 
     if (armParams == null) {
       throw new IllegalArgumentException("armParams");
@@ -61,8 +48,6 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     // Copy into member variables
     m_topSignedDegreesBreak = armParams.topSignedDegreesBreak;
     m_bottomSignedDegreesBreak = armParams.bottomSignedDegreesBreak;
-    m_desiredArmAngleSupplier = desiredArmAngleSupplier;
-    m_winchAbsoluteEncoderSim = winchAbsoluteEncoderSim;
     m_encoderRotationsOffset = armParams.encoderRotationsOffset;
     m_isBroken = false;
   }
@@ -76,7 +61,7 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
       ArmSimParams armParams,
       ExtendArmInterface robotSpecificArmLogic) {
 
-    this(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
+    this(armParams);
 
     if (robotSpecificArmLogic == null) {
       throw new IllegalArgumentException("robotSpecificArmLogic");
@@ -144,18 +129,19 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
-  private void updateAbsoluteEncoderPosition() {
+  /**
+   * Called every 20ms.
+   */
+  public Double updateSimulation(Double newAbsoluteEncoderSignedDegrees) {
     // If the arm is broken, there's nothing to update
     if (m_isBroken) {
-      return;
+      return m_currentSignedDegrees;
     }
 
     // $LATER - For now, we assume that robot specific object is always there
     if (m_robotSpecificArmLogic == null) {
       throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
     }
-
-    double newAbsoluteEncoderSignedDegrees = m_desiredArmAngleSupplier.getAsDouble();
 
     Pair<Boolean, Double> resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
@@ -182,10 +168,6 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     double newAbsoluteEncoderPosition = m_encoderRotationsOffset
         + UnitConversions.signedDegreesToRotation(newAbsoluteEncoderSignedDegrees);
 
-    m_winchAbsoluteEncoderSim.set(newAbsoluteEncoderPosition);
-  }
-
-  public void simulationPeriodic() {
-    updateAbsoluteEncoderPosition();
+    return newAbsoluteEncoderPosition;
   }
 }

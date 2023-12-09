@@ -3,13 +3,15 @@ package frc.robot.simulation.simplearm;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.framework.SimModelInterface;
+
 import java.util.function.DoubleSupplier;
 
 /**
  * Simulates the arm as-if it were a real-world object. E.g. if the arm
  * is extended too far, it will break.
  */
-public class ArmSimModel {
+public class ArmSimModel implements SimModelInterface<Double, Double> {
   private DoubleSupplier m_desiredArmAngleSupplier;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim;
   private double m_currentSignedDegrees;
@@ -20,7 +22,10 @@ public class ArmSimModel {
   private boolean m_isBroken;
   private ExtendArmInterface m_robotSpecificArmLogic = null;
 
-  private void commonInitialization(DoubleSupplier desiredArmAngleSupplier,
+  /**
+   * Constructor.
+   */
+  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams) {
 
@@ -63,45 +68,21 @@ public class ArmSimModel {
   }
 
   /**
-   * Constructor. Note that we call commoonInitialization() in all constructors,
-   * rather than calling a primary constructor. We do this because constructor
-   * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
-   * initialized.
-   */
-  public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
-      DutyCycleEncoderSim winchAbsoluteEncoderSim,
-      ArmSimParams armParams) {
-
-    commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
-
-    // Forces the absolute encoder to show the correct position
-    updateAbsoluteEncoderPosition();
-  }
-
-  /**
    * Optional constructor that also takes ArmSimLogicInterface parameter,
    * which allows for robot-specific logic to be used for arm broken/stuck.
-   * Note that we call commoonInitialization() in all constructors,
-   * rather than calling a primary constructor. We do this because constructor
-   * calls updateAbsoluteEncoderPosition(), which assumes the object is fully
-   * initialized.
    */
   public ArmSimModel(DoubleSupplier desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams,
       ExtendArmInterface robotSpecificArmLogic) {
 
-    // Instead of calling this(), we call commonInitialization() directly
-    commonInitialization(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
+    this(desiredArmAngleSupplier, winchAbsoluteEncoderSim, armParams);
 
     if (robotSpecificArmLogic == null) {
       throw new IllegalArgumentException("robotSpecificArmLogic");
     }
 
     m_robotSpecificArmLogic = robotSpecificArmLogic;
-
-    // Forces the absolute encoder to show the correct position
-    updateAbsoluteEncoderPosition();
   }
 
   public boolean getIsBroken() {

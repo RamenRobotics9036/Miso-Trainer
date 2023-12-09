@@ -50,6 +50,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(
         grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
+    // $TODO - We're creating the Arm Model DIRECTLY here; instead, must create SimManager
     ArmSimModel armSimulation = new ArmSimModel(stringUnspooledLenSupplier, winchAbsoluteEncoderSim,
         armParams, ramenArmLogic);
 

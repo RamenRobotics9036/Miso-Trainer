@@ -6,5 +6,5 @@ package frc.robot.simulation.framework;
 public interface SimModelInterface<InputT, OutputT> {
   OutputT updateSimulation(InputT input);
 
-  boolean isBroken();
+  boolean isModelBroken();
 }

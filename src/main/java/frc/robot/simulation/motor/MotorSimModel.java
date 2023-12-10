@@ -27,7 +27,7 @@ public class MotorSimModel implements SimModelInterface<Double, Double> {
     m_realMotorSim = new DCMotorSim(m_realMotorModel, m_gearRatio, motorMomentInertia);
   }
 
-  public boolean isBroken() {
+  public boolean isModelBroken() {
     // Motor doesn't break in this simulation
     return false;
   }

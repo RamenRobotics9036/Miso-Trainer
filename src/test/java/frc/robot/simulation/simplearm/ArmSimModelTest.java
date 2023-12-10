@@ -151,7 +151,7 @@ public class ArmSimModelTest {
     ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
 
     assertTrue(armSimManager != null);
-    assertTrue(!winchSimulation.isBroken());
+    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
     assertTrue(getIsStringOrArmBroken(angleSimManager, armSimManager) == expectArmBroken);
 
     return new Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>>(armSimManager,
@@ -169,7 +169,7 @@ public class ArmSimModelTest {
         m_winchinvertMotor);
 
     assertTrue(winchSimulation != null);
-    assertTrue(!winchSimulation.isBroken());
+    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
 
     return winchSimulation;
   }
@@ -185,7 +185,7 @@ public class ArmSimModelTest {
     // winchSimMANAGER to see if it is broken.
     assertTrue(tempArmSimManager != null);
     assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager)
-        && !m_winchSimulation.isBroken());
+        && !m_winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
   }
 
   @Test
@@ -219,7 +219,8 @@ public class ArmSimModelTest {
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
     assertTrue(tempArmSimManager != null);
-    assertTrue(!tempwinchSimulation.isBroken());
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
     assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager));
     assertEquals(90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),
@@ -296,7 +297,8 @@ public class ArmSimModelTest {
     tempwinchSimulation.updateSimulation(deltaWinchRotations);
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
-    assertTrue(tempwinchSimulation.isBroken() == expectedWinchIsBroken);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(tempwinchSimulation.isModelBroken() == expectedWinchIsBroken);
     assertTrue(
         getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager) == expectedIsArmBroken);
 
@@ -391,7 +393,8 @@ public class ArmSimModelTest {
     SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
 
     assertTrue(tempArmSimManager != null);
-    assertTrue(!tempwinchSimulation.isBroken());
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
 
     if (!expectArmBroken) {
       assertEquals(expectedDegrees,
@@ -498,7 +501,8 @@ public class ArmSimModelTest {
     SimManager<Double, Double> tempArmSimManager = createResult.getFirst();
 
     assertTrue(tempArmSimManager != null);
-    assertTrue(!tempwinchSimulation.isBroken());
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
     assertTrue(!getIsStringOrArmBroken(angleSimManager, tempArmSimManager));
 
     double expectedDegrees = 45 + 90;

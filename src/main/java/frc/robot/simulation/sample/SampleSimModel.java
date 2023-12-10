@@ -17,7 +17,7 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
     m_accumulator = 0;
   }
 
-  public boolean isBroken() {
+  public boolean isModelBroken() {
     // Sample doesn't break in this simulation
     return false;
   }

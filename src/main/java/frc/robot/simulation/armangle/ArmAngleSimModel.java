@@ -33,7 +33,7 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
     m_isBroken = false;
   }
 
-  public boolean isBroken() {
+  public boolean isModelBroken() {
     return m_isBroken;
   }
 

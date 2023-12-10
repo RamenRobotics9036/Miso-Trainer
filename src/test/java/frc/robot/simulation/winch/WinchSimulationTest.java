@@ -147,7 +147,8 @@ public class WinchSimulationTest {
     double result = tempWinchSimulation.getStringUnspooledLen();
 
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    assertTrue(tempWinchSimulation.isBroken() == expectIsBroken);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(tempWinchSimulation.isModelBroken() == expectIsBroken);
   }
 
   @Test
@@ -225,7 +226,8 @@ public class WinchSimulationTest {
 
     double expectedResult = 4.4;
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    assertTrue(!tempWinchSimulation.isBroken());
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempWinchSimulation.isModelBroken());
 
   }
 }

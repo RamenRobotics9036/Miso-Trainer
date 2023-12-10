@@ -87,7 +87,7 @@ public class SimManager<InputT, OutputT> {
 
   // This returns the isBroken state from the SimModel
   public boolean isBroken() {
-    return m_simModelFunc.isBroken();
+    return m_simModelFunc.isModelBroken();
   }
 
   /**

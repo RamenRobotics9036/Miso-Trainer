@@ -136,7 +136,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     return currentRotationsWithPolarity - m_initialMotorRotations;
   }
 
-  public boolean isBroken() {
+  public boolean isModelBroken() {
     return m_isBroken;
   }
 

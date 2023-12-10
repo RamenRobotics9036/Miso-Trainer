@@ -120,7 +120,7 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
   }
 
-  public boolean isBroken() {
+  public boolean isModelBroken() {
     return m_isBroken;
   }
 

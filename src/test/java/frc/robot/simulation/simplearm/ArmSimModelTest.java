@@ -181,7 +181,8 @@ public class ArmSimModelTest {
     SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
-    // $TODO - I should not be saving the winchSimulation!
+    // $TODO - I should not be saving the winchSimulation! Instead, I should be checking
+    // winchSimMANAGER to see if it is broken.
     assertTrue(tempArmSimManager != null);
     assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager)
         && !m_winchSimulation.isBroken());
@@ -498,7 +499,7 @@ public class ArmSimModelTest {
 
     assertTrue(tempArmSimManager != null);
     assertTrue(!tempwinchSimulation.isBroken());
-    // $TODO Fix this assertTrue(!getIsStringOrArmBroken(m_angle, tempArmSimManager));
+    assertTrue(!getIsStringOrArmBroken(angleSimManager, tempArmSimManager));
 
     double expectedDegrees = 45 + 90;
     assertEquals(expectedDegrees,

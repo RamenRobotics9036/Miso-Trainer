@@ -2,7 +2,7 @@ package frc.robot.simulation.armangle;
 
 import frc.robot.simulation.framework.inputoutputs.Copyable;
 
-// $TODO - Note that we're now only returning a single DOUBLE, so no point in all this complexity
+// $LATER - Note that we're now only returning a single DOUBLE, so no point in all this complexity
 /**
  * Holds the angle that arm is currently positioned.
  */

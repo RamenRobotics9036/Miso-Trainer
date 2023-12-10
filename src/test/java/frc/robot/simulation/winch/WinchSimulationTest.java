@@ -147,7 +147,7 @@ public class WinchSimulationTest {
     double result = tempWinchSimulation.getStringUnspooledLen();
 
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    assertTrue(tempWinchSimulation.getIsBroken() == expectIsBroken);
+    assertTrue(tempWinchSimulation.isBroken() == expectIsBroken);
   }
 
   @Test
@@ -225,7 +225,7 @@ public class WinchSimulationTest {
 
     double expectedResult = 4.4;
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    assertTrue(!tempWinchSimulation.getIsBroken());
+    assertTrue(!tempWinchSimulation.isBroken());
 
   }
 }

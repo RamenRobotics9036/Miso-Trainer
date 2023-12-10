@@ -2,19 +2,18 @@ package frc.robot.simulation.armangle;
 
 import frc.robot.simulation.framework.inputoutputs.Copyable;
 
+// $TODO - Note that we're now only returning a single DOUBLE, so no point in all this complexity
 /**
  * Holds the angle that arm is currently positioned.
  */
 public class ArmAngleState implements Copyable<ArmAngleState> {
   private double m_angleSignedDegrees;
-  private boolean m_isBroken;
 
   /**
    * Constructor.
    */
   public ArmAngleState() {
     m_angleSignedDegrees = 0;
-    m_isBroken = false;
   }
 
   // Implement getters and setters for fields
@@ -26,14 +25,6 @@ public class ArmAngleState implements Copyable<ArmAngleState> {
     m_angleSignedDegrees = angleSignedDegrees;
   }
 
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
-  public void setIsBroken(boolean isBroken) {
-    m_isBroken = isBroken;
-  }
-
   /**
    * Copy to another instance of ArmAngleState.
    */
@@ -43,6 +34,5 @@ public class ArmAngleState implements Copyable<ArmAngleState> {
     }
 
     m_angleSignedDegrees = other.m_angleSignedDegrees;
-    m_isBroken = other.m_isBroken;
   }
 }

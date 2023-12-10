@@ -65,10 +65,6 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     m_robotSpecificArmLogic = robotSpecificArmLogic;
   }
 
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
   private Pair<Boolean, Double> checkIfArmBroken(double oldSignedDegrees,
       boolean isOldSignedDegreesSet,
       double newSignedDegrees) {
@@ -122,6 +118,10 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     // Now check general cases for arm stuck
 
     return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
+  }
+
+  public boolean isBroken() {
+    return m_isBroken;
   }
 
   /**

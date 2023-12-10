@@ -127,15 +127,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     return getWindingOrientation().name();
   }
 
-  /**
-   * Returns whether the string is currently broken.
-   *
-   * @return true if the string is currently broken, false otherwise
-   */
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
   private double getDeltaRotations(double currentRotationsWithPolarity) {
     if (!m_isInitialMotorRotationsSet) {
       m_initialMotorRotations = currentRotationsWithPolarity;
@@ -143,6 +134,10 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     }
 
     return currentRotationsWithPolarity - m_initialMotorRotations;
+  }
+
+  public boolean isBroken() {
+    return m_isBroken;
   }
 
   /**

@@ -124,15 +124,9 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     return m_isBroken;
   }
 
-  /**
-   * Called every 20ms.
-   */
-  public Double updateSimulation(Double newAbsoluteEncoderSignedDegrees) {
-    // If the arm is broken, there's nothing to update
-    if (m_isBroken) {
-      return m_currentSignedDegrees;
-    }
-
+  // Note that this method calculates the new SIGNED degrees, but doesn't
+  // add the offset back. Nor does it convert to rotations.
+  private Double calcNewSignedDegreesHelper(Double signedDegrees) {
     // $LATER - For now, we assume that robot specific object is always there
     if (m_robotSpecificArmLogic == null) {
       throw new IllegalStateException("We assume robotSpecificArmLogic is always there");
@@ -140,24 +134,39 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
 
     Pair<Boolean, Double> resultPairStuck = checkIfArmStuck(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
-        newAbsoluteEncoderSignedDegrees);
+        signedDegrees);
 
     if (resultPairStuck != null && !resultPairStuck.getFirst()) {
-      newAbsoluteEncoderSignedDegrees = resultPairStuck.getSecond();
+      signedDegrees = resultPairStuck.getSecond();
     }
 
     Pair<Boolean, Double> resultPairBroken = checkIfArmBroken(m_currentSignedDegrees,
         m_isCurrentSignedDegreesSet,
-        newAbsoluteEncoderSignedDegrees);
+        signedDegrees);
 
     if (resultPairBroken != null && !resultPairBroken.getFirst()) {
       m_isBroken = true;
-      newAbsoluteEncoderSignedDegrees = resultPairBroken.getSecond();
+      signedDegrees = resultPairBroken.getSecond();
     }
 
-    // Update the current position
-    m_currentSignedDegrees = newAbsoluteEncoderSignedDegrees;
-    m_isCurrentSignedDegreesSet = true;
+    return signedDegrees;
+  }
+
+  /**
+   * Called every 20ms.
+   */
+  public Double updateSimulation(Double newAbsoluteEncoderSignedDegrees) {
+    // If the arm is broken, there's nothing to update
+    if (m_isBroken) {
+      newAbsoluteEncoderSignedDegrees = m_currentSignedDegrees;
+    }
+    else {
+      newAbsoluteEncoderSignedDegrees = calcNewSignedDegreesHelper(newAbsoluteEncoderSignedDegrees);
+
+      // Update the current position
+      m_currentSignedDegrees = newAbsoluteEncoderSignedDegrees;
+      m_isCurrentSignedDegreesSet = true;
+    }
 
     // Add arm offset position back and convert to rotations units
     double newAbsoluteEncoderPosition = m_encoderRotationsOffset

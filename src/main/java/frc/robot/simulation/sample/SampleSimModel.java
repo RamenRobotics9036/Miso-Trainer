@@ -17,6 +17,11 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
     m_accumulator = 0;
   }
 
+  public boolean isModelBroken() {
+    // Sample doesn't break in this simulation
+    return false;
+  }
+
   public Integer updateSimulation(Integer numValue) {
     m_accumulator += (numValue * m_ratio);
     return m_accumulator;

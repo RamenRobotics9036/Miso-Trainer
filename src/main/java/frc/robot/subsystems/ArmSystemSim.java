@@ -20,15 +20,13 @@ import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
-import frc.robot.simulation.simplearm.ArmSimulation;
-import frc.robot.simulation.simplearm.ArmSimulationParams;
+import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -52,7 +50,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected DIOSim m_sensorSim;
 
-  protected ArmSimulation m_armSimulation;
+  protected SimManager<Double, Double> m_armSimManager;
   protected RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
@@ -101,11 +99,11 @@ public class ArmSystemSim extends ArmSystem {
     m_winchAbsoluteEncoderSim = new DutyCycleEncoderSim2(m_winchAbsoluteEncoder);
 
     // Create a DoubleSupplier that gets the angle
-    DoubleSupplier armAngleSupplier = () -> {
+    Supplier<Double> armAngleSupplier = () -> {
       return m_armAngleState.getAngleSignedDegrees();
     };
 
-    ArmSimulationParams armParams = new ArmSimulationParams(
+    ArmSimParams armParams = new ArmSimParams(
         UnitConversions.rotationToSignedDegrees(Constants.OperatorConstants.kWinchEncoderUpperLimit
             - Constants.SimConstants.karmEncoderRotationsOffset
             + Constants.SimConstants.kdeltaRotationsBeforeBroken),
@@ -114,15 +112,16 @@ public class ArmSystemSim extends ArmSystem {
             - Constants.SimConstants.kdeltaRotationsBeforeBroken),
         Constants.SimConstants.karmEncoderRotationsOffset);
 
-    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
-        armAngleSupplier,
-        m_winchAbsoluteEncoderSim,
-        armParams,
-        UnitConversions
-            .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
-                - Constants.SimConstants.karmEncoderRotationsOffset));
+    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
+        .createRamenArmSimulation(armAngleSupplier,
+            m_winchAbsoluteEncoderSim,
+            armParams,
+            UnitConversions
+                .rotationToSignedDegrees(Constants.SimConstants.kgrabberBreaksIfOpenBelowThisLimit
+                    - Constants.SimConstants.karmEncoderRotationsOffset),
+            false);
 
-    m_armSimulation = createResult.getFirst();
+    m_armSimManager = createResult.getFirst();
     m_ramenArmSimLogic = createResult.getSecond();
   }
 
@@ -193,15 +192,15 @@ public class ArmSystemSim extends ArmSystem {
 
   // $LATER - This is temporary until we combine string and arm simulation
   protected boolean getIsStringOrArmBroken() {
-    return m_armAngleState.getIsBroken() || m_armSimulation.getIsBroken();
+    return m_angleSimManager.isBroken() || m_armSimManager.isBroken();
   }
 
   // $LATER - This is temporary until we combine string and arm simulation
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimulation,
-      ArmSimulation armSimulation) {
+      SimManager<Double, Double> armSimManager) {
 
     angleSimulation.simulationPeriodic();
-    armSimulation.simulationPeriodic();
+    armSimManager.simulationPeriodic();
   }
 
   @Override
@@ -221,7 +220,7 @@ public class ArmSystemSim extends ArmSystem {
       m_winchSimManager.simulationPeriodic();
 
       m_extenderSimulation.simulationPeriodic();
-      simulatePeriodicStringAndArm(m_angleSimManager, m_armSimulation);
+      simulatePeriodicStringAndArm(m_angleSimManager, m_armSimManager);
 
       boolean isExtenderSensorOn = m_extenderSimulation
           .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;

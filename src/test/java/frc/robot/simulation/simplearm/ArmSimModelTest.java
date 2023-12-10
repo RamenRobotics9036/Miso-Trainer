@@ -22,7 +22,6 @@ import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +30,8 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the ArmSimulation class.
  */
-public class ArmSimulationTest {
-  private final ArmSimulationParams m_defaultArmParams;
+public class ArmSimModelTest {
+  private final ArmSimParams m_defaultArmParams;
   private final double m_defaultHeightFromWinchToPivotPoint;
   private final double m_defaultArmLengthFromEdgeToPivot;
   private final double m_defaultArmLengthFromEdgeToPivotMin;
@@ -46,19 +45,19 @@ public class ArmSimulationTest {
 
   private WinchSimModel m_winchSimulation;
   private ArmAngleState m_armAngleState;
-  DoubleSupplier m_armAngleSupplier;
+  Supplier<Double> m_armAngleSupplier;
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim = null;
 
   /**
    * Constructor.
    */
-  public ArmSimulationTest() {
+  public ArmSimModelTest() {
     m_defaultHeightFromWinchToPivotPoint = 1;
     m_defaultArmLengthFromEdgeToPivot = 0.5;
     m_defaultArmLengthFromEdgeToPivotMin = 0.1;
 
-    m_defaultArmParams = new ArmSimulationParams(UnitConversions.rotationToSignedDegrees(0.25),
+    m_defaultArmParams = new ArmSimParams(UnitConversions.rotationToSignedDegrees(0.25),
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
         UnitConversions.rotationToUnsignedDegrees(0)); // encoderRotationsOffset
 
@@ -99,21 +98,23 @@ public class ArmSimulationTest {
 
   // $LATER - This is temporary. Once we place the string angle simulation plus the arm
   // simulation into a single simulation class, we can get rid of this.
-  private boolean getIsStringOrArmBroken(ArmAngleState armAngleState, ArmSimulation armSimulation) {
+  private boolean getIsStringOrArmBroken(SimManager<Double, ArmAngleState> armAngleManager,
+      SimManager<Double, Double> armSimManager) {
 
-    return armAngleState.getIsBroken() || armSimulation.getIsBroken();
+    return armAngleManager.isBroken() || armSimManager.isBroken();
   }
 
   // $LATER - This is temporary until we place the string angle simulation plus the arm
   // simulation into a single simulation class.
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimManager,
-      ArmSimulation armSimulation) {
+      SimManager<Double, Double> armSimManager) {
 
     angleSimManager.simulationPeriodic();
-    armSimulation.simulationPeriodic();
+    armSimManager.simulationPeriodic();
   }
 
-  private Pair<ArmSimulation, SimManager<Double, ArmAngleState>> createDefaultArmHelper(
+  @SuppressWarnings("LineLengthCheck")
+  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArmHelper(
       WinchSimModel winchSimulation,
       ArmAngleState armAngleState,
       boolean initialIsGrabberOpen,
@@ -135,28 +136,29 @@ public class ArmSimulationTest {
     double offsetRotations = 0;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
-        m_armAngleSupplier,
-        m_winchAbsoluteEncoderSim,
-        m_defaultArmParams,
-        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
+        .createRamenArmSimulation(m_armAngleSupplier,
+            m_winchAbsoluteEncoderSim,
+            m_defaultArmParams,
+            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+            true);
 
-    ArmSimulation armSimulation = createResult.getFirst();
+    SimManager<Double, Double> armSimManager = createResult.getFirst();
     RamenArmSimLogic ramenArmSimLogic = createResult.getSecond();
 
     // Set grabber
     BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
     ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
 
-    assertTrue(armSimulation != null);
-    assertTrue(!winchSimulation.getIsBroken());
-    assertTrue(getIsStringOrArmBroken(armAngleState, armSimulation) == expectArmBroken);
+    assertTrue(armSimManager != null);
+    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(getIsStringOrArmBroken(angleSimManager, armSimManager) == expectArmBroken);
 
-    return new Pair<ArmSimulation, SimManager<Double, ArmAngleState>>(armSimulation,
+    return new Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>>(armSimManager,
         angleSimManager);
   }
 
-  private Pair<ArmSimulation, SimManager<Double, ArmAngleState>> createDefaultArm(
+  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArm(
       ArmAngleState armAngleState) {
     return createDefaultArmHelper(m_winchSimulation, armAngleState, false, false);
   }
@@ -167,20 +169,23 @@ public class ArmSimulationTest {
         m_winchinvertMotor);
 
     assertTrue(winchSimulation != null);
-    assertTrue(!winchSimulation.getIsBroken());
+    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
 
     return winchSimulation;
   }
 
   @Test
   public void createArmSimulationShouldSucceed() {
-    Pair<ArmSimulation, SimManager<Double, ArmAngleState>> resultPair = createDefaultArm(
-        m_armAngleState);
-    ArmSimulation tempArmSimulation = resultPair.getFirst();
+    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
+    resultPair = createDefaultArm(m_armAngleState);
+    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
+    SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
-    assertTrue(tempArmSimulation != null);
-    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation)
-        && !m_winchSimulation.getIsBroken());
+    // $TODO - I should not be saving the winchSimulation! Instead, I should be checking
+    // winchSimMANAGER to see if it is broken.
+    assertTrue(tempArmSimManager != null);
+    assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager)
+        && !m_winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
   }
 
   @Test
@@ -190,14 +195,15 @@ public class ArmSimulationTest {
       double offsetRotations = 0;
       double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-      Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic
+      Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
           .createRamenArmSimulation(null,
               m_winchAbsoluteEncoderSim,
               m_defaultArmParams,
-              UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+              UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+              true);
 
-      ArmSimulation tempArmSimulation = createResult.getFirst();
-      assertTrue(tempArmSimulation != null);
+      SimManager<Double, Double> tempArmSimManager = createResult.getFirst();
+      assertTrue(tempArmSimManager != null);
     });
   }
 
@@ -207,16 +213,15 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, SimManager<Double, ArmAngleState>> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
-        m_armAngleState,
-        true,
-        false);
-    ArmSimulation tempArmSimulation = resultPair.getFirst();
+    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
+    resultPair = createDefaultArmHelper(tempwinchSimulation, m_armAngleState, true, false);
+    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
+    SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
-    assertTrue(tempArmSimulation != null);
-    assertTrue(!tempwinchSimulation.getIsBroken());
-    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
+    assertTrue(tempArmSimManager != null);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
+    assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager));
     assertEquals(90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),
         UnitConversions.kAngleTolerance);
@@ -228,18 +233,15 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, SimManager<Double, ArmAngleState>> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
-        m_armAngleState,
-        true,
-        false);
-    ArmSimulation tempArmSimulation = resultPair.getFirst();
+    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
+    resultPair = createDefaultArmHelper(tempwinchSimulation, m_armAngleState, true, false);
+    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
     // Now that grabber is set open, need to simulate one cycle
-    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
-    assertTrue(getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
+    assertTrue(getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager));
     assertEquals(-90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),
         UnitConversions.kAngleTolerance);
@@ -260,12 +262,12 @@ public class ArmSimulationTest {
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, SimManager<Double, ArmAngleState>> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
+    resultPair = createDefaultArmHelper(tempwinchSimulation,
         m_armAngleState,
         initialIsGrabberOpen,
         false);
-    ArmSimulation tempArmSimulation = resultPair.getFirst();
+    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
     // Initialize the number of rotations
@@ -273,10 +275,10 @@ public class ArmSimulationTest {
     tempwinchSimulation.updateSimulation(currentWinchRotations);
 
     // Now that grabber is set open, need to simulate one cycle
-    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
-    assertTrue(
-        getIsStringOrArmBroken(m_armAngleState, tempArmSimulation) == expectedArmInitiallyBroken);
+    assertTrue(getIsStringOrArmBroken(tempAngleSimManager,
+        tempArmSimManager) == expectedArmInitiallyBroken);
     double expect = initialPosSignedDegrees;
     double actual = UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get());
     assertEquals(expect, actual, UnitConversions.kAngleTolerance);
@@ -293,10 +295,12 @@ public class ArmSimulationTest {
 
     // Simulate one cycle for winch, so that it updates
     tempwinchSimulation.updateSimulation(deltaWinchRotations);
-    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimulation);
+    simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
-    assertTrue(tempwinchSimulation.getIsBroken() == expectedWinchIsBroken);
-    assertTrue(getIsStringOrArmBroken(m_armAngleState, tempArmSimulation) == expectedIsArmBroken);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(tempwinchSimulation.isModelBroken() == expectedWinchIsBroken);
+    assertTrue(
+        getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager) == expectedIsArmBroken);
 
     expect = UnitConversions.rotationToSignedDegrees(m_defaultGrabberBreaksRotations)
         + expectedFinalDegreesAboveBreakPoint;
@@ -381,15 +385,16 @@ public class ArmSimulationTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<ArmSimulation, SimManager<Double, ArmAngleState>> resultPair = createDefaultArmHelper(
-        tempwinchSimulation,
+    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
+    resultPair = createDefaultArmHelper(tempwinchSimulation,
         m_armAngleState,
         false,
         expectArmBroken);
-    ArmSimulation tempArmSimulation = resultPair.getFirst();
+    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
 
-    assertTrue(tempArmSimulation != null);
-    assertTrue(!tempwinchSimulation.getIsBroken());
+    assertTrue(tempArmSimManager != null);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
 
     if (!expectArmBroken) {
       assertEquals(expectedDegrees,
@@ -480,24 +485,25 @@ public class ArmSimulationTest {
     double offsetRotations = 0.25;
     double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
 
-    ArmSimulationParamsBuilder tempArmParamsBuilder = new ArmSimulationParamsBuilder(
-        m_defaultArmParams);
+    ArmSimParamsBuilder tempArmParamsBuilder = new ArmSimParamsBuilder(m_defaultArmParams);
 
     tempArmParamsBuilder.setTopSignedDegreesBreak(m_defaultArmParams.topSignedDegreesBreak)
         .setBottomSignedDegreesBreak(m_defaultArmParams.bottomSignedDegreesBreak)
         .setEncoderRotationsOffset(offsetRotations);
 
-    Pair<ArmSimulation, RamenArmSimLogic> createResult = RamenArmSimLogic.createRamenArmSimulation(
-        m_armAngleSupplier,
-        m_winchAbsoluteEncoderSim,
-        tempArmParamsBuilder.build(),
-        UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
+        .createRamenArmSimulation(m_armAngleSupplier,
+            m_winchAbsoluteEncoderSim,
+            tempArmParamsBuilder.build(),
+            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+            true);
 
-    ArmSimulation tempArmSimulation = createResult.getFirst();
+    SimManager<Double, Double> tempArmSimManager = createResult.getFirst();
 
-    assertTrue(tempArmSimulation != null);
-    assertTrue(!tempwinchSimulation.getIsBroken());
-    assertTrue(!getIsStringOrArmBroken(m_armAngleState, tempArmSimulation));
+    assertTrue(tempArmSimManager != null);
+    // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!tempwinchSimulation.isModelBroken());
+    assertTrue(!getIsStringOrArmBroken(angleSimManager, tempArmSimManager));
 
     double expectedDegrees = 45 + 90;
     assertEquals(expectedDegrees,

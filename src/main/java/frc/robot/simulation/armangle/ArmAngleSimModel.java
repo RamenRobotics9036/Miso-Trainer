@@ -33,6 +33,10 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
     m_isBroken = false;
   }
 
+  public boolean isModelBroken() {
+    return m_isBroken;
+  }
+
   /**
    * Called every 20ms to calculate the new arm angle.
    */
@@ -42,7 +46,6 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
     // If the arm-angle-calculator is broken, there's nothing to update
     if (m_isBroken) {
       armAngleResult.setAngleSignedDegrees(m_angleSignedDegrees);
-      armAngleResult.setIsBroken(true);
       return armAngleResult;
     }
 
@@ -57,7 +60,6 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
 
     m_angleSignedDegrees = resultPair.m_value;
     armAngleResult.setAngleSignedDegrees(m_angleSignedDegrees);
-    armAngleResult.setIsBroken(m_isBroken);
 
     return armAngleResult;
   }

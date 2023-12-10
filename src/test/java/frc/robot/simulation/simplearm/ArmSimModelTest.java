@@ -20,6 +20,7 @@ import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
+import frc.robot.simulation.winch.WinchState;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -43,7 +44,9 @@ public class ArmSimModelTest {
   private final WindingOrientation m_winchInitialStringOrientation = WindingOrientation.BackOfRobot;
   private final boolean m_winchinvertMotor = false;
 
+  // $TODO - Delete m_winchSimulation
   private WinchSimModel m_winchSimulation;
+  private SimManager<Double, WinchState> m_winchSimManager;
   private ArmAngleState m_armAngleState;
   Supplier<Double> m_armAngleSupplier;
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
@@ -77,8 +80,13 @@ public class ArmSimModelTest {
   public void setUp() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
 
+    // $TODO - DONT stash this. Fix ASAP
     m_winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters, m_winchTotalStringLenMeters,
         m_winchInitialLenSpooled, m_winchInitialStringOrientation, m_winchinvertMotor);
+
+    // $TODO - This isn't being used yet
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        m_winchSimulation, true);
 
     m_armAngleState = new ArmAngleState();
 
@@ -163,6 +171,7 @@ public class ArmSimModelTest {
     return createDefaultArmHelper(m_winchSimulation, armAngleState, false, false);
   }
 
+  // $TODO - This method should be deleted
   private WinchSimModel createWinchSimulation(double winchInitialLenSpooled) {
     WinchSimModel winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters,
         m_winchTotalStringLenMeters, winchInitialLenSpooled, m_winchInitialStringOrientation,

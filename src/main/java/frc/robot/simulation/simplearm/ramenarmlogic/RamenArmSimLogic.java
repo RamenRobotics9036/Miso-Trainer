@@ -48,15 +48,14 @@ public class RamenArmSimLogic implements ExtendArmInterface {
       Supplier<Double> stringUnspooledLenSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams,
-      double grabberBreaksIfOpenBelowSignedDegreesLimit) {
+      double grabberBreaksIfOpenBelowSignedDegreesLimit,
+      boolean enableTestMode) {
 
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(
         grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
-    // $TODO - Since this function is used both for simulation AND for unit tests, enableTestMode
-    // needs to be a parameter
     SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
-        new ArmSimModel(armParams, ramenArmLogic), false);
+        new ArmSimModel(armParams, ramenArmLogic), enableTestMode);
     armSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
     armSimManager.setOutputHandler(new ArmSimOutput(winchAbsoluteEncoderSim));
 

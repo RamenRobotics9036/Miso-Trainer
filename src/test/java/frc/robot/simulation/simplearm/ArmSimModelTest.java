@@ -114,6 +114,7 @@ public class ArmSimModelTest {
     armSimManager.simulationPeriodic();
   }
 
+  @SuppressWarnings("LineLengthCheck")
   private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArmHelper(
       WinchSimModel winchSimulation,
       ArmAngleState armAngleState,
@@ -140,7 +141,8 @@ public class ArmSimModelTest {
         .createRamenArmSimulation(m_armAngleSupplier,
             m_winchAbsoluteEncoderSim,
             m_defaultArmParams,
-            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+            true);
 
     SimManager<Double, Double> armSimManager = createResult.getFirst();
     RamenArmSimLogic ramenArmSimLogic = createResult.getSecond();
@@ -195,7 +197,8 @@ public class ArmSimModelTest {
           .createRamenArmSimulation(null,
               m_winchAbsoluteEncoderSim,
               m_defaultArmParams,
-              UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+              UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+              true);
 
       SimManager<Double, Double> tempArmSimManager = createResult.getFirst();
       assertTrue(tempArmSimManager != null);
@@ -485,7 +488,8 @@ public class ArmSimModelTest {
         .createRamenArmSimulation(m_armAngleSupplier,
             m_winchAbsoluteEncoderSim,
             tempArmParamsBuilder.build(),
-            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations));
+            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+            true);
 
     SimManager<Double, Double> tempArmSimManager = createResult.getFirst();
 

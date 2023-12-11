@@ -20,8 +20,8 @@ import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
-import frc.robot.simulation.winch.WinchState;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
+import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.AfterEach;
@@ -46,7 +46,7 @@ public class ArmSimModelTest {
 
   // $TODO - Delete m_winchSimulation
   private WinchSimModel m_winchSimulation;
-  private SimManager<Double, WinchState> m_winchSimManager;
+  private SimManager<Double, WinchState> m_winchSimManager; // $TODO - This is new, but not used yet
   private ArmAngleState m_armAngleState;
   Supplier<Double> m_armAngleSupplier;
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
@@ -71,6 +71,24 @@ public class ArmSimModelTest {
     m_armAngleSupplier = () -> {
       return m_armAngleState.getAngleSignedDegrees();
     };
+  }
+
+  // Internal return type used to return multiple SimManagers.
+  class SimManagersType {
+    @SuppressWarnings("MemberNameCheck")
+    public SimManager<Double, Double> armSimManager;
+    @SuppressWarnings("MemberNameCheck")
+    public SimManager<Double, ArmAngleState> angleSimManager;
+    @SuppressWarnings("MemberNameCheck")
+    public SimManager<Double, Double> winchSimManager;
+
+    public SimManagersType(SimManager<Double, Double> armSimManager,
+        SimManager<Double, ArmAngleState> angleSimManager,
+        SimManager<Double, Double> winchSimManager) {
+      this.armSimManager = armSimManager;
+      this.angleSimManager = angleSimManager;
+      this.winchSimManager = winchSimManager;
+    }
   }
 
   /**
@@ -121,8 +139,9 @@ public class ArmSimModelTest {
     armSimManager.simulationPeriodic();
   }
 
+  // $TODO - This is the old version
   @SuppressWarnings("LineLengthCheck")
-  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArmHelper(
+  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArmHelper_old(
       WinchSimModel winchSimulation,
       ArmAngleState armAngleState,
       boolean initialIsGrabberOpen,
@@ -166,9 +185,50 @@ public class ArmSimModelTest {
         angleSimManager);
   }
 
-  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArm(
-      ArmAngleState armAngleState) {
-    return createDefaultArmHelper(m_winchSimulation, armAngleState, false, false);
+  private SimManagersType createDefaultArmHelper_new(WinchSimModel winchSimulation,
+      ArmAngleState armAngleState,
+      boolean initialIsGrabberOpen,
+      boolean expectArmBroken) {
+
+    // Create a DoubleSupplier that gets the value getStringUnspooledLen()
+    Supplier<Double> stringUnspooledLenSupplier = () -> {
+      return winchSimulation.getStringUnspooledLen();
+    };
+
+    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
+        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+
+    SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
+        new ArmAngleSimModel(armAngleParams), true);
+    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
+
+    double offsetRotations = 0;
+    double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
+
+    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
+        .createRamenArmSimulation(m_armAngleSupplier,
+            m_winchAbsoluteEncoderSim,
+            m_defaultArmParams,
+            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
+            true);
+
+    SimManager<Double, Double> armSimManager = createResult.getFirst();
+    RamenArmSimLogic ramenArmSimLogic = createResult.getSecond();
+
+    // Set grabber
+    BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
+    ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
+
+    assertTrue(armSimManager != null);
+    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(getIsStringOrArmBroken(angleSimManager, armSimManager) == expectArmBroken);
+
+    return new SimManagersType(armSimManager, angleSimManager, null); // $TODO
+  }
+
+  private SimManagersType createDefaultArm_new(ArmAngleState armAngleState) {
+    return createDefaultArmHelper_new(m_winchSimulation, armAngleState, false, false);
   }
 
   // $TODO - This method should be deleted
@@ -185,10 +245,10 @@ public class ArmSimModelTest {
 
   @Test
   public void createArmSimulationShouldSucceed() {
-    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArm(m_armAngleState);
-    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
-    SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
+    SimManagersType simManagers = createDefaultArm_new(m_armAngleState);
+    SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
+    SimManager<Double, ArmAngleState> tempAngleSimManager = simManagers.angleSimManager;
+    SimManager<Double, Double> tempWinchSimManager = simManagers.winchSimManager;
 
     // $TODO - I should not be saving the winchSimulation! Instead, I should be checking
     // winchSimMANAGER to see if it is broken.
@@ -223,7 +283,7 @@ public class ArmSimModelTest {
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
     Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper(tempwinchSimulation, m_armAngleState, true, false);
+    resultPair = createDefaultArmHelper_old(tempwinchSimulation, m_armAngleState, true, false);
     SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
@@ -243,7 +303,7 @@ public class ArmSimModelTest {
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
     Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper(tempwinchSimulation, m_armAngleState, true, false);
+    resultPair = createDefaultArmHelper_old(tempwinchSimulation, m_armAngleState, true, false);
     SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
     SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
 
@@ -272,7 +332,7 @@ public class ArmSimModelTest {
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
     Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper(tempwinchSimulation,
+    resultPair = createDefaultArmHelper_old(tempwinchSimulation,
         m_armAngleState,
         initialIsGrabberOpen,
         false);
@@ -395,7 +455,7 @@ public class ArmSimModelTest {
 
     WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
     Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper(tempwinchSimulation,
+    resultPair = createDefaultArmHelper_old(tempwinchSimulation,
         m_armAngleState,
         false,
         expectArmBroken);

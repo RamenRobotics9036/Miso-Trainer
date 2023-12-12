@@ -18,6 +18,8 @@ import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.CalcArmAngleHelper;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
@@ -80,11 +82,11 @@ public class ArmSimModelTest {
     @SuppressWarnings("MemberNameCheck")
     public SimManager<Double, ArmAngleState> angleSimManager;
     @SuppressWarnings("MemberNameCheck")
-    public SimManager<Double, Double> winchSimManager;
+    public SimManager<Double, WinchState> winchSimManager;
 
     public SimManagersType(SimManager<Double, Double> armSimManager,
         SimManager<Double, ArmAngleState> angleSimManager,
-        SimManager<Double, Double> winchSimManager) {
+        SimManager<Double, WinchState> winchSimManager) {
       this.armSimManager = armSimManager;
       this.angleSimManager = angleSimManager;
       this.winchSimManager = winchSimManager;
@@ -101,10 +103,6 @@ public class ArmSimModelTest {
     // $TODO - DONT stash this. Fix ASAP
     m_winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters, m_winchTotalStringLenMeters,
         m_winchInitialLenSpooled, m_winchInitialStringOrientation, m_winchinvertMotor);
-
-    // $TODO - This isn't being used yet
-    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        m_winchSimulation, true);
 
     m_armAngleState = new ArmAngleState();
 
@@ -185,14 +183,27 @@ public class ArmSimModelTest {
         angleSimManager);
   }
 
-  private SimManagersType createDefaultArmHelper_new(WinchSimModel winchSimulation,
+  private SimManagersType createDefaultArmHelper_new(Supplier<Double> winchInputSupplier,
       ArmAngleState armAngleState,
       boolean initialIsGrabberOpen,
       boolean expectArmBroken) {
 
+    // Local variable used to hold the winch output. It exists outside of this
+    // function since the lambdas capture it.
+    WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
+
+    WinchSimModel winchSimModel = new WinchSimModel(m_winchSpoolDiameterMeters,
+        m_winchTotalStringLenMeters, m_winchInitialLenSpooled, m_winchInitialStringOrientation,
+        m_winchinvertMotor);
+
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        winchSimModel, true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
+
     // Create a DoubleSupplier that gets the value getStringUnspooledLen()
     Supplier<Double> stringUnspooledLenSupplier = () -> {
-      return winchSimulation.getStringUnspooledLen();
+      return winchState.getStringUnspooledLen();
     };
 
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
@@ -221,14 +232,15 @@ public class ArmSimModelTest {
     ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
 
     assertTrue(armSimManager != null);
-    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
+    assertTrue(!winchSimManager.isBroken());
     assertTrue(getIsStringOrArmBroken(angleSimManager, armSimManager) == expectArmBroken);
 
-    return new SimManagersType(armSimManager, angleSimManager, null); // $TODO
+    return new SimManagersType(armSimManager, angleSimManager, winchSimManager);
   }
 
-  private SimManagersType createDefaultArm_new(ArmAngleState armAngleState) {
-    return createDefaultArmHelper_new(m_winchSimulation, armAngleState, false, false);
+  private SimManagersType createDefaultArm_new(Supplier<Double> winchInputSupplier,
+      ArmAngleState armAngleState) {
+    return createDefaultArmHelper_new(winchInputSupplier, armAngleState, false, false);
   }
 
   // $TODO - This method should be deleted
@@ -245,16 +257,21 @@ public class ArmSimModelTest {
 
   @Test
   public void createArmSimulationShouldSucceed() {
-    SimManagersType simManagers = createDefaultArm_new(m_armAngleState);
+    Supplier<Double> staticWinchInputSupplier = () -> {
+      return 0.0;
+    };
+
+    SimManagersType simManagers = createDefaultArm_new(staticWinchInputSupplier, m_armAngleState);
+
     SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
     SimManager<Double, ArmAngleState> tempAngleSimManager = simManagers.angleSimManager;
-    SimManager<Double, Double> tempWinchSimManager = simManagers.winchSimManager;
+    SimManager<Double, WinchState> tempWinchSimManager = simManagers.winchSimManager;
 
     // $TODO - I should not be saving the winchSimulation! Instead, I should be checking
     // winchSimMANAGER to see if it is broken.
     assertTrue(tempArmSimManager != null);
     assertTrue(!getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager)
-        && !m_winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
+        && !tempWinchSimManager.isBroken());
   }
 
   @Test

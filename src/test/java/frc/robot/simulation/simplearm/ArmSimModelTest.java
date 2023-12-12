@@ -129,53 +129,7 @@ public class ArmSimModelTest {
     armSimManager.simulationPeriodic();
   }
 
-  // $TODO - This is the old version
-  @SuppressWarnings("LineLengthCheck")
-  private Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> createDefaultArmHelper_old(
-      WinchSimModel winchSimulation,
-      ArmAngleState armAngleState,
-      boolean initialIsGrabberOpen,
-      boolean expectArmBroken) {
-
-    // Create a DoubleSupplier that gets the value getStringUnspooledLen()
-    Supplier<Double> stringUnspooledLenSupplier = () -> {
-      return winchSimulation.getStringUnspooledLen();
-    };
-
-    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
-        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
-
-    SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(armAngleParams), true);
-    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
-    angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
-
-    double offsetRotations = 0;
-    double grabberLimitRotations = m_defaultGrabberBreaksRotations + offsetRotations;
-
-    Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
-        .createRamenArmSimulation(m_armAngleSupplier,
-            m_winchAbsoluteEncoderSim,
-            m_defaultArmParams,
-            UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
-            true);
-
-    SimManager<Double, Double> armSimManager = createResult.getFirst();
-    RamenArmSimLogic ramenArmSimLogic = createResult.getSecond();
-
-    // Set grabber
-    BooleanSupplier isGrabberOpen = () -> initialIsGrabberOpen;
-    ramenArmSimLogic.setGrabberOpenSupplier(isGrabberOpen);
-
-    assertTrue(armSimManager != null);
-    assertTrue(!winchSimulation.isModelBroken()); // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(getIsStringOrArmBroken(angleSimManager, armSimManager) == expectArmBroken);
-
-    return new Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>>(armSimManager,
-        angleSimManager);
-  }
-
-  private SimManagersType createDefaultArmHelper_new(Supplier<Double> winchInputSupplier,
+  private SimManagersType createDefaultArmHelper(Supplier<Double> winchInputSupplier,
       ArmAngleState armAngleState,
       double winchInitialLenSpooled,
       boolean initialIsGrabberOpen,
@@ -254,7 +208,7 @@ public class ArmSimModelTest {
       return 0.0;
     };
 
-    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+    SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
         m_winchInitialLenSpooled,
         false,
@@ -297,7 +251,7 @@ public class ArmSimModelTest {
       return 0.0;
     };
 
-    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+    SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
         winchInitialLenSpooled,
         true,
@@ -324,7 +278,7 @@ public class ArmSimModelTest {
       return 0.0;
     };
 
-    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+    SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
         winchInitialLenSpooled,
         true,
@@ -365,7 +319,7 @@ public class ArmSimModelTest {
     double winchInitialLenSpooled = m_winchTotalStringLenMeters
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
-    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+    SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
         winchInitialLenSpooled,
         initialIsGrabberOpen,
@@ -495,7 +449,7 @@ public class ArmSimModelTest {
       return 0.0;
     };
 
-    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+    SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
         winchInitialLenSpooled,
         false,

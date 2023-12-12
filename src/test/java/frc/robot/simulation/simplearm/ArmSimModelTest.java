@@ -19,7 +19,6 @@ import frc.robot.simulation.armangle.CalcArmAngleHelper;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
-import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
@@ -46,11 +45,8 @@ public class ArmSimModelTest {
   private final WindingOrientation m_winchInitialStringOrientation = WindingOrientation.BackOfRobot;
   private final boolean m_winchinvertMotor = false;
 
-  // $TODO - Delete m_winchSimulation
-  private WinchSimModel m_winchSimulation;
-  private SimManager<Double, WinchState> m_winchSimManager; // $TODO - This is new, but not used yet
   private ArmAngleState m_armAngleState; // $TODO - This should go away?
-  Supplier<Double> m_armAngleSupplier;
+  Supplier<Double> m_armAngleSupplier; // $TODO - This should go away?
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim = null;
 
@@ -100,11 +96,7 @@ public class ArmSimModelTest {
   public void setUp() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
 
-    // $TODO - DONT stash this. Fix ASAP
-    m_winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters, m_winchTotalStringLenMeters,
-        m_winchInitialLenSpooled, m_winchInitialStringOrientation, m_winchinvertMotor);
-
-    m_armAngleState = new ArmAngleState();
+    m_armAngleState = new ArmAngleState(); // $TODO - This should go away?
 
     m_winchAbsoluteEncoder = new DutyCycleEncoder(
         Constants.OperatorConstants.kAbsoluteEncoderWinchChannel);

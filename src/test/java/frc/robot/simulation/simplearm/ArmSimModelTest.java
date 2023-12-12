@@ -479,20 +479,25 @@ public class ArmSimModelTest {
   private void createWithDegreeArmHelper(double backArmAbovePivot,
       double expectedDegrees,
       boolean expectArmBroken) {
+
     double lengthStringExtended = m_defaultHeightFromWinchToPivotPoint + backArmAbovePivot;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
+    ArmAngleState tempArmAngleState = new ArmAngleState();
+    Supplier<Double> staticWinchInputSupplier = () -> {
+      return 0.0;
+    };
 
-    WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper_old(tempwinchSimulation,
-        m_armAngleState,
+    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+        tempArmAngleState,
+        winchInitialLenSpooled,
         false,
         expectArmBroken);
-    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
+
+    SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
+    SimManager<Double, WinchState> tempWinchSimManager = simManagers.winchSimManager;
 
     assertTrue(tempArmSimManager != null);
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(!tempwinchSimulation.isModelBroken());
+    assertTrue(!tempWinchSimManager.isBroken());
 
     if (!expectArmBroken) {
       assertEquals(expectedDegrees,

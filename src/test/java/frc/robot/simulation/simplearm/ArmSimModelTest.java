@@ -319,16 +319,26 @@ public class ArmSimModelTest {
   public void armDownWithGrabberInitiallyOpenShouldFail() {
     double lengthStringExtended = m_defaultHeightFromWinchToPivotPoint + 0.5;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters - lengthStringExtended;
+    ArmAngleState tempArmAngleState = new ArmAngleState();
+    Supplier<Double> staticWinchInputSupplier = () -> {
+      return 0.0;
+    };
 
-    WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper_old(tempwinchSimulation, m_armAngleState, true, false);
-    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
-    SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
+    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+        tempArmAngleState,
+        winchInitialLenSpooled,
+        true,
+        false);
+
+    SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
+    SimManager<Double, ArmAngleState> tempAngleSimManager = simManagers.angleSimManager;
+    SimManager<Double, WinchState> tempWinchSimManager = simManagers.winchSimManager;
 
     // Now that grabber is set open, need to simulate one cycle
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
+    assertTrue(tempArmSimManager != null);
+    assertTrue(!tempWinchSimManager.isBroken());
     assertTrue(getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager));
     assertEquals(-90,
         UnitConversions.rotationToSignedDegrees(m_winchAbsoluteEncoder.get()),

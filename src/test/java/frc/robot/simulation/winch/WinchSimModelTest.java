@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the WinchSimulation class.
  */
-public class WinchSimulationTest {
+public class WinchSimModelTest {
   private final double m_spoolDiameterMeters = 0.01; // (1 centimeter)
   private final double m_totalStringLenMeters = 5;
   private final double m_initialLenSpooled = 1;

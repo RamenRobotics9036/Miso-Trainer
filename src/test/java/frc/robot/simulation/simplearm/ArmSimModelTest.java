@@ -353,24 +353,31 @@ public class ArmSimModelTest {
       boolean expectedIsArmBroken) {
 
     boolean initialIsGrabberOpen = true;
-
+    ArmAngleState tempArmAngleState = new ArmAngleState();
+    double[] currentWinchRotations = {
+        0
+    };
+    Supplier<Double> staticWinchInputSupplier = () -> {
+      return currentWinchRotations[0];
+    };
     double initialPosSignedDegrees = UnitConversions
         .rotationToSignedDegrees(m_defaultGrabberBreaksRotations) + initialDegreesAboveBreakPoint;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters
         - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
-    WinchSimModel tempwinchSimulation = createWinchSimulation(winchInitialLenSpooled);
-    Pair<SimManager<Double, Double>, SimManager<Double, ArmAngleState>> resultPair;
-    resultPair = createDefaultArmHelper_old(tempwinchSimulation,
-        m_armAngleState,
+    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+        tempArmAngleState,
+        winchInitialLenSpooled,
         initialIsGrabberOpen,
         false);
-    SimManager<Double, Double> tempArmSimManager = resultPair.getFirst();
-    SimManager<Double, ArmAngleState> tempAngleSimManager = resultPair.getSecond();
+
+    SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
+    SimManager<Double, ArmAngleState> tempAngleSimManager = simManagers.angleSimManager;
+    SimManager<Double, WinchState> tempWinchSimManager = simManagers.winchSimManager;
 
     // Initialize the number of rotations
-    double currentWinchRotations = 0;
-    tempwinchSimulation.updateSimulation(currentWinchRotations);
+    currentWinchRotations[0] = 0;
+    tempWinchSimManager.simulationPeriodic();
 
     // Now that grabber is set open, need to simulate one cycle
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
@@ -392,11 +399,12 @@ public class ArmSimModelTest {
         / spoolCircumferenceMeters;
 
     // Simulate one cycle for winch, so that it updates
-    tempwinchSimulation.updateSimulation(deltaWinchRotations);
+    currentWinchRotations[0] = deltaWinchRotations;
+    tempWinchSimManager.simulationPeriodic();
+
     simulatePeriodicStringAndArm(tempAngleSimManager, tempArmSimManager);
 
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(tempwinchSimulation.isModelBroken() == expectedWinchIsBroken);
+    assertTrue(tempWinchSimManager.isBroken() == expectedWinchIsBroken);
     assertTrue(
         getIsStringOrArmBroken(tempAngleSimManager, tempArmSimManager) == expectedIsArmBroken);
 

@@ -49,7 +49,7 @@ public class ArmSimModelTest {
   // $TODO - Delete m_winchSimulation
   private WinchSimModel m_winchSimulation;
   private SimManager<Double, WinchState> m_winchSimManager; // $TODO - This is new, but not used yet
-  private ArmAngleState m_armAngleState;
+  private ArmAngleState m_armAngleState; // $TODO - This should go away?
   Supplier<Double> m_armAngleSupplier;
   private DutyCycleEncoder m_winchAbsoluteEncoder = null;
   private DutyCycleEncoderSim m_winchAbsoluteEncoderSim = null;
@@ -238,11 +238,6 @@ public class ArmSimModelTest {
     return new SimManagersType(armSimManager, angleSimManager, winchSimManager);
   }
 
-  private SimManagersType createDefaultArm_new(Supplier<Double> winchInputSupplier,
-      ArmAngleState armAngleState) {
-    return createDefaultArmHelper_new(winchInputSupplier, armAngleState, false, false);
-  }
-
   // $TODO - This method should be deleted
   private WinchSimModel createWinchSimulation(double winchInitialLenSpooled) {
     WinchSimModel winchSimulation = new WinchSimModel(m_winchSpoolDiameterMeters,
@@ -257,11 +252,15 @@ public class ArmSimModelTest {
 
   @Test
   public void createArmSimulationShouldSucceed() {
+    ArmAngleState tempArmAngleState = new ArmAngleState();
     Supplier<Double> staticWinchInputSupplier = () -> {
       return 0.0;
     };
 
-    SimManagersType simManagers = createDefaultArm_new(staticWinchInputSupplier, m_armAngleState);
+    SimManagersType simManagers = createDefaultArmHelper_new(staticWinchInputSupplier,
+        tempArmAngleState,
+        false,
+        false);
 
     SimManager<Double, Double> tempArmSimManager = simManagers.armSimManager;
     SimManager<Double, ArmAngleState> tempAngleSimManager = simManagers.angleSimManager;

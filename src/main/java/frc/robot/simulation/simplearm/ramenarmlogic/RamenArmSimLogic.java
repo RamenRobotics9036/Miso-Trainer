@@ -45,7 +45,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
    * from Ramen bot.
    */
   public static Pair<SimManager<Double, Double>, RamenArmSimLogic> createRamenArmSimulation(
-      Supplier<Double> stringUnspooledLenSupplier,
+      Supplier<Double> desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams,
       double grabberBreaksIfOpenBelowSignedDegreesLimit,
@@ -56,7 +56,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
 
     SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
         new ArmSimModel(armParams, ramenArmLogic), enableTestMode);
-    armSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
+    armSimManager.setInputHandler(new LambdaSimInput<Double>(desiredArmAngleSupplier));
     armSimManager.setOutputHandler(new ArmSimOutput(winchAbsoluteEncoderSim));
 
     return new Pair<SimManager<Double, Double>, RamenArmSimLogic>(armSimManager, ramenArmLogic);

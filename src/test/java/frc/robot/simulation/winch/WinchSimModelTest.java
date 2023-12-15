@@ -5,7 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.wpi.first.hal.HAL;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,22 +36,39 @@ public class WinchSimModelTest {
       double expectedResult,
       boolean expectIsBroken) {
 
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
+    double[] currentWinchRotations = {
+        0
+    };
+    Supplier<Double> winchInputSupplier = () -> {
+      return currentWinchRotations[0];
+    };
+
+    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
+
+    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
         m_totalStringLenMeters, m_initialLenSpooled, stringOrientation, flipWinchPolarity);
 
+    // Create SimManager
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        tempWinchSimModel, true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+
     // Initialize the number of rotations
-    tempWinchSimulation.updateSimulation(0.0);
+    currentWinchRotations[0] = 0.0;
+    winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets 0.5 meters longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = lenToGrowString / spoolCircumference;
 
-    tempWinchSimulation.updateSimulation(numRotations);
-    double result = tempWinchSimulation.getStringUnspooledLen();
+    currentWinchRotations[0] = numRotations;
+    winchSimManager.simulationPeriodic();
+
+    double result = tempWinchState.getStringUnspooledLen();
 
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(tempWinchSimulation.isModelBroken() == expectIsBroken);
+    assertTrue(winchSimManager.isBroken() == expectIsBroken);
   }
 
   @Test

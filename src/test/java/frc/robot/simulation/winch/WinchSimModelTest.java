@@ -1,24 +1,26 @@
 package frc.robot.simulation.winch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.wpi.first.hal.HAL;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the WinchSimulation class.
+ * Test the WinchSimulation class. These are more advanced
+ * tests that run a cycle of the simulation and check the results.
  */
 public class WinchSimModelTest {
   private final double m_spoolDiameterMeters = 0.01; // (1 centimeter)
   private final double m_totalStringLenMeters = 5;
   private final double m_initialLenSpooled = 1;
-  private final WindingOrientation m_initialStringOrientation = WindingOrientation.BackOfRobot;
-  private final boolean m_invertMotor = false;
 
   /**
    * Runs before each test.
@@ -28,127 +30,45 @@ public class WinchSimModelTest {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }
 
-  @Test
-  public void initialLenSpooledLessThanTotalStringLenShouldSucceed() {
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, 5, 4,
-        m_initialStringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation != null);
-  }
-
-  @Test
-  public void initialLenSpooledLenEqualToTotalStringLenShouldSucceed() {
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, 5, 5,
-        m_initialStringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation != null);
-  }
-
-  @Test
-  public void initialLenSpooledLenGreaterThanTotalStringLenShouldFail() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, 5, 5.1,
-          m_initialStringOrientation, m_invertMotor);
-      assertTrue(tempWinchSimulation != null);
-    });
-  }
-
-  @Test
-  public void initialLenSpooledLenZeroShouldSucceed() {
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, 5, 0,
-        m_initialStringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation != null);
-  }
-
-  @Test
-  public void initialLenSpooledLenLessThanZeroShouldFail() {
-    assertThrows(IllegalArgumentException.class, () -> {
-      WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, 5, -1,
-          m_initialStringOrientation, m_invertMotor);
-      assertTrue(tempWinchSimulation != null);
-    });
-  }
-
-  @Test
-  public void queryingStringLenExtendedShouldReturnCorrectValueWhenStringOnBack() {
-    double totalStringLen = 5;
-    double stringLenSpooled = 1;
-    WindingOrientation stringOrientation = WindingOrientation.BackOfRobot;
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, totalStringLen,
-        stringLenSpooled, stringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
-  }
-
-  @Test
-  public void queryingStringLenExtendedShouldReturnCorrectValueWhenStringOnFront() {
-    double totalStringLen = 5;
-    double stringLenSpooled = 1;
-    WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters, totalStringLen,
-        stringLenSpooled, stringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
-  }
-
-  @Test
-  public void queryingStringOrientationFrontShouldReturnCorrectValue() {
-    double initialLenSpooled = 1;
-    WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
-        m_totalStringLenMeters, initialLenSpooled, stringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
-  }
-
-  @Test
-  public void queryingStringOrientationBackShouldReturnCorrectValue() {
-    double initialLenSpooled = 1;
-    WindingOrientation stringOrientation = WindingOrientation.BackOfRobot;
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
-        m_totalStringLenMeters, initialLenSpooled, stringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
-  }
-
-  @Test
-  public void queryingStringOrientationShouldReturnBackWhenSpooledAmountIsZero() {
-    WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
-    double initialLenSpooled = 0;
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
-        m_totalStringLenMeters, initialLenSpooled, stringOrientation, m_invertMotor);
-
-    assertTrue(tempWinchSimulation.getWindingOrientation() == WindingOrientation.BackOfRobot);
-  }
-
   private void testWinchMove(WindingOrientation stringOrientation,
       double lenToGrowString,
       boolean flipWinchPolarity,
       double expectedResult,
       boolean expectIsBroken) {
 
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
+    double[] currentWinchRotations = {
+        0
+    };
+    Supplier<Double> winchInputSupplier = () -> {
+      return currentWinchRotations[0];
+    };
+
+    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
+
+    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
         m_totalStringLenMeters, m_initialLenSpooled, stringOrientation, flipWinchPolarity);
 
+    // Create SimManager
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        tempWinchSimModel, true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+
     // Initialize the number of rotations
-    tempWinchSimulation.updateSimulation(0.0);
+    currentWinchRotations[0] = 0.0;
+    winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets 0.5 meters longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = lenToGrowString / spoolCircumference;
 
-    tempWinchSimulation.updateSimulation(numRotations);
-    double result = tempWinchSimulation.getStringUnspooledLen();
+    currentWinchRotations[0] = numRotations;
+    winchSimManager.simulationPeriodic();
+
+    double result = tempWinchState.getStringUnspooledLen();
 
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(tempWinchSimulation.isModelBroken() == expectIsBroken);
+    assertTrue(winchSimManager.isBroken() == expectIsBroken);
   }
 
   @Test
@@ -207,27 +127,43 @@ public class WinchSimModelTest {
 
   @Test
   public void twoMotorMovesShouldMoveStringCumulatively() {
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
+    double[] currentWinchRotations = {
+        0
+    };
+    Supplier<Double> winchInputSupplier = () -> {
+      return currentWinchRotations[0];
+    };
+
+    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
+
+    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
         m_totalStringLenMeters, m_initialLenSpooled, WindingOrientation.BackOfRobot, false);
 
+    // Create SimManager
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        tempWinchSimModel, true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+
     // Initialize the number of rotations
-    tempWinchSimulation.updateSimulation(0.0);
+    currentWinchRotations[0] = 0.0;
+    winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets a bit longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateSimulation(numRotations);
+
+    currentWinchRotations[0] = numRotations;
+    winchSimManager.simulationPeriodic();
 
     // Rotate again
-    numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateSimulation(numRotations * 2);
+    currentWinchRotations[0] = numRotations * 2;
+    winchSimManager.simulationPeriodic();
 
-    double result = tempWinchSimulation.getStringUnspooledLen();
+    double result = tempWinchState.getStringUnspooledLen();
 
     double expectedResult = 4.4;
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(!tempWinchSimulation.isModelBroken());
-
+    assertTrue(!winchSimManager.isBroken());
   }
 }

@@ -127,27 +127,43 @@ public class WinchSimModelTest {
 
   @Test
   public void twoMotorMovesShouldMoveStringCumulatively() {
-    WinchSimModel tempWinchSimulation = new WinchSimModel(m_spoolDiameterMeters,
+    double[] currentWinchRotations = {
+        0
+    };
+    Supplier<Double> winchInputSupplier = () -> {
+      return currentWinchRotations[0];
+    };
+
+    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
+
+    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
         m_totalStringLenMeters, m_initialLenSpooled, WindingOrientation.BackOfRobot, false);
 
+    // Create SimManager
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        tempWinchSimModel, true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+
     // Initialize the number of rotations
-    tempWinchSimulation.updateSimulation(0.0);
+    currentWinchRotations[0] = 0.0;
+    winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets a bit longer
     double spoolCircumference = m_spoolDiameterMeters * Math.PI;
     double numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateSimulation(numRotations);
+
+    currentWinchRotations[0] = numRotations;
+    winchSimManager.simulationPeriodic();
 
     // Rotate again
-    numRotations = 0.2 / spoolCircumference;
-    tempWinchSimulation.updateSimulation(numRotations * 2);
+    currentWinchRotations[0] = numRotations * 2;
+    winchSimManager.simulationPeriodic();
 
-    double result = tempWinchSimulation.getStringUnspooledLen();
+    double result = tempWinchState.getStringUnspooledLen();
 
     double expectedResult = 4.4;
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
-    // $TODO - Shouldnt be stashing winchSimulation!
-    assertTrue(!tempWinchSimulation.isModelBroken());
-
+    assertTrue(!winchSimManager.isBroken());
   }
 }

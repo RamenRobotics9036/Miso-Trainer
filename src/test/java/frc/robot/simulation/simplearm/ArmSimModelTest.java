@@ -20,6 +20,7 @@ import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
+import frc.robot.simulation.winch.WinchParams;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchState;
@@ -130,12 +131,12 @@ public class ArmSimModelTest {
     // function since the lambdas capture it.
     WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
 
-    WinchSimModel winchSimModel = new WinchSimModel(m_winchSpoolDiameterMeters,
+    WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
         m_winchTotalStringLenMeters, winchInitialLenSpooled, m_winchInitialStringOrientation,
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        winchSimModel, true);
+        new WinchSimModel(winchParams), true);
     winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
     winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
 
@@ -518,12 +519,12 @@ public class ArmSimModelTest {
     // function since the lambdas capture it.
     WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
 
-    WinchSimModel winchSimModel = new WinchSimModel(m_winchSpoolDiameterMeters,
+    WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
         m_winchTotalStringLenMeters, winchInitialLenSpooled, m_winchInitialStringOrientation,
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        winchSimModel, true);
+        new WinchSimModel(winchParams), true);
     winchSimManager.setInputHandler(new LambdaSimInput<Double>(staticWinchInputSupplier));
     winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
 

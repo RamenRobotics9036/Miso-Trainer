@@ -25,22 +25,35 @@ public class CreateWinchTest {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }
 
-  @Test
-  public void initialLenSpooledLessThanTotalStringLenShouldSucceed() {
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, 5, 4,
-        m_initialStringOrientation, m_invertMotor);
+  private void helperCreatingWinchWithParamsShouldSucceed(double spoolDiameterMeters,
+      double totalStringLenMeters,
+      double lenSpooled,
+      WindingOrientation windingOrientation,
+      boolean invertMotor) {
+
+    WinchParams winchParams = new WinchParams(spoolDiameterMeters, totalStringLenMeters, lenSpooled,
+        windingOrientation, invertMotor);
 
     WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
     assertTrue(tempWinchSimulation != null);
   }
 
   @Test
-  public void initialLenSpooledLenEqualToTotalStringLenShouldSucceed() {
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, 5, 5,
-        m_initialStringOrientation, m_invertMotor);
+  public void initialLenSpooledLessThanTotalStringLenShouldSucceed() {
+    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+        5,
+        4,
+        m_initialStringOrientation,
+        m_invertMotor);
+  }
 
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
-    assertTrue(tempWinchSimulation != null);
+  @Test
+  public void initialLenSpooledLenEqualToTotalStringLenShouldSucceed() {
+    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+        5,
+        5,
+        m_initialStringOrientation,
+        m_invertMotor);
   }
 
   @Test
@@ -56,11 +69,11 @@ public class CreateWinchTest {
 
   @Test
   public void initialLenSpooledLenZeroShouldSucceed() {
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, 5, 0,
-        m_initialStringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
-    assertTrue(tempWinchSimulation != null);
+    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+        5,
+        0,
+        m_initialStringOrientation,
+        m_invertMotor);
   }
 
   @Test

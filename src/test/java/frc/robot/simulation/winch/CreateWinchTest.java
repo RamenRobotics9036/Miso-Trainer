@@ -25,7 +25,7 @@ public class CreateWinchTest {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }
 
-  private void helperCreatingWinchWithParamsShouldSucceed(double spoolDiameterMeters,
+  private WinchSimModel helperCreatingWinchWithParams(double spoolDiameterMeters,
       double totalStringLenMeters,
       double lenSpooled,
       WindingOrientation windingOrientation,
@@ -36,11 +36,13 @@ public class CreateWinchTest {
 
     WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
     assertTrue(tempWinchSimulation != null);
+
+    return tempWinchSimulation;
   }
 
   @Test
   public void initialLenSpooledLessThanTotalStringLenShouldSucceed() {
-    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+    helperCreatingWinchWithParams(m_spoolDiameterMeters,
         5,
         4,
         m_initialStringOrientation,
@@ -49,7 +51,7 @@ public class CreateWinchTest {
 
   @Test
   public void initialLenSpooledLenEqualToTotalStringLenShouldSucceed() {
-    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+    helperCreatingWinchWithParams(m_spoolDiameterMeters,
         5,
         5,
         m_initialStringOrientation,
@@ -59,17 +61,17 @@ public class CreateWinchTest {
   @Test
   public void initialLenSpooledLenGreaterThanTotalStringLenShouldFail() {
     assertThrows(IllegalArgumentException.class, () -> {
-      WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, 5, 5.1,
-          m_initialStringOrientation, m_invertMotor);
-
-      WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
-      assertTrue(tempWinchSimulation != null);
+      helperCreatingWinchWithParams(m_spoolDiameterMeters,
+          5,
+          5.1,
+          m_initialStringOrientation,
+          m_invertMotor);
     });
   }
 
   @Test
   public void initialLenSpooledLenZeroShouldSucceed() {
-    helperCreatingWinchWithParamsShouldSucceed(m_spoolDiameterMeters,
+    helperCreatingWinchWithParams(m_spoolDiameterMeters,
         5,
         0,
         m_initialStringOrientation,
@@ -79,11 +81,11 @@ public class CreateWinchTest {
   @Test
   public void initialLenSpooledLenLessThanZeroShouldFail() {
     assertThrows(IllegalArgumentException.class, () -> {
-      WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, 5, -1,
-          m_initialStringOrientation, m_invertMotor);
-
-      WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
-      assertTrue(tempWinchSimulation != null);
+      helperCreatingWinchWithParams(m_spoolDiameterMeters,
+          5,
+          -1,
+          m_initialStringOrientation,
+          m_invertMotor);
     });
   }
 
@@ -93,10 +95,11 @@ public class CreateWinchTest {
     double stringLenSpooled = 1;
     WindingOrientation stringOrientation = WindingOrientation.BackOfRobot;
 
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, totalStringLen,
-        stringLenSpooled, stringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
+    WinchSimModel tempWinchSimulation = helperCreatingWinchWithParams(m_spoolDiameterMeters,
+        totalStringLen,
+        stringLenSpooled,
+        stringOrientation,
+        m_invertMotor);
     assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
   }
 
@@ -106,10 +109,11 @@ public class CreateWinchTest {
     double stringLenSpooled = 1;
     WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
 
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, totalStringLen,
-        stringLenSpooled, stringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
+    WinchSimModel tempWinchSimulation = helperCreatingWinchWithParams(m_spoolDiameterMeters,
+        totalStringLen,
+        stringLenSpooled,
+        stringOrientation,
+        m_invertMotor);
     assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
   }
 
@@ -118,10 +122,11 @@ public class CreateWinchTest {
     double initialLenSpooled = 1;
     WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
 
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, m_totalStringLenMeters,
-        initialLenSpooled, stringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
+    WinchSimModel tempWinchSimulation = helperCreatingWinchWithParams(m_spoolDiameterMeters,
+        m_totalStringLenMeters,
+        initialLenSpooled,
+        stringOrientation,
+        m_invertMotor);
     assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
   }
 
@@ -130,10 +135,11 @@ public class CreateWinchTest {
     double initialLenSpooled = 1;
     WindingOrientation stringOrientation = WindingOrientation.BackOfRobot;
 
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, m_totalStringLenMeters,
-        initialLenSpooled, stringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
+    WinchSimModel tempWinchSimulation = helperCreatingWinchWithParams(m_spoolDiameterMeters,
+        m_totalStringLenMeters,
+        initialLenSpooled,
+        stringOrientation,
+        m_invertMotor);
     assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
   }
 
@@ -142,10 +148,11 @@ public class CreateWinchTest {
     WindingOrientation stringOrientation = WindingOrientation.FrontOfRobot;
     double initialLenSpooled = 0;
 
-    WinchParams winchParams = new WinchParams(m_spoolDiameterMeters, m_totalStringLenMeters,
-        initialLenSpooled, stringOrientation, m_invertMotor);
-
-    WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
+    WinchSimModel tempWinchSimulation = helperCreatingWinchWithParams(m_spoolDiameterMeters,
+        m_totalStringLenMeters,
+        initialLenSpooled,
+        stringOrientation,
+        m_invertMotor);
     assertTrue(tempWinchSimulation.getWindingOrientation() == WindingOrientation.BackOfRobot);
   }
 }

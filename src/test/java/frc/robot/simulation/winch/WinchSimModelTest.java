@@ -18,9 +18,6 @@ import org.junit.jupiter.api.Test;
  * tests that run a cycle of the simulation and check the results.
  */
 public class WinchSimModelTest {
-  private final double m_spoolDiameterMeters = 0.01; // (1 centimeter)
-  private final double m_totalStringLenMeters = 5;
-  private final double m_initialLenSpooled = 1;
 
   /**
    * Runs before each test.
@@ -28,6 +25,34 @@ public class WinchSimModelTest {
   @BeforeEach
   public void setUp() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
+  }
+
+  private double getSpoolDiameter() {
+    return 0.01; // (1 centimeter)
+  }
+
+  private double getStringLen() {
+    return 5;
+  }
+
+  private double getInitialLenSpooled() {
+    return 1;
+  }
+
+  private SimManager<Double, WinchState> createTestSimManager(WindingOrientation stringOrientation,
+      boolean flipWinchPolarity,
+      Supplier<Double> winchInputSupplier,
+      WinchState winchState) {
+
+    WinchParams winchParams = new WinchParams(getSpoolDiameter(), getStringLen(),
+        getInitialLenSpooled(), stringOrientation, flipWinchPolarity);
+
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        new WinchSimModel(winchParams), true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
+
+    return winchSimManager;
   }
 
   private void testWinchMove(WindingOrientation stringOrientation,
@@ -43,23 +68,20 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
-
-    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
-        m_totalStringLenMeters, m_initialLenSpooled, stringOrientation, flipWinchPolarity);
+    WinchState tempWinchState = new WinchState(getStringLen());
 
     // Create SimManager
-    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        tempWinchSimModel, true);
-    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
-    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+    SimManager<Double, WinchState> winchSimManager = createTestSimManager(stringOrientation,
+        flipWinchPolarity,
+        winchInputSupplier,
+        tempWinchState);
 
     // Initialize the number of rotations
     currentWinchRotations[0] = 0.0;
     winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets 0.5 meters longer
-    double spoolCircumference = m_spoolDiameterMeters * Math.PI;
+    double spoolCircumference = getSpoolDiameter() * Math.PI;
     double numRotations = lenToGrowString / spoolCircumference;
 
     currentWinchRotations[0] = numRotations;
@@ -134,23 +156,21 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(m_totalStringLenMeters);
-
-    WinchSimModel tempWinchSimModel = new WinchSimModel(m_spoolDiameterMeters,
-        m_totalStringLenMeters, m_initialLenSpooled, WindingOrientation.BackOfRobot, false);
+    WinchState tempWinchState = new WinchState(getStringLen());
 
     // Create SimManager
-    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        tempWinchSimModel, true);
-    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
-    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+    SimManager<Double, WinchState> winchSimManager = createTestSimManager(
+        WindingOrientation.BackOfRobot,
+        false,
+        winchInputSupplier,
+        tempWinchState);
 
     // Initialize the number of rotations
     currentWinchRotations[0] = 0.0;
     winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets a bit longer
-    double spoolCircumference = m_spoolDiameterMeters * Math.PI;
+    double spoolCircumference = getSpoolDiameter() * Math.PI;
     double numRotations = 0.2 / spoolCircumference;
 
     currentWinchRotations[0] = numRotations;

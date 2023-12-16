@@ -41,42 +41,33 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
    * Constructs a new WinchSimulation.
    *
-   * @param spoolDiameterMeters       the diameter of the spool, in meters
-   * @param totalStringLenMeters      the total length of the string, in meters
-   * @param initialLenSpooled         the initial length of string spooled, in meters
-   * @param initialWindingOrientation the initial winding orientation of the string
-   * @param invertMotor               whether to invert the motor (true for inverted, false for not)
-   * @throws IllegalArgumentException if any of the parameters are invalid
    */
-  public WinchSimModel(double spoolDiameterMeters,
-      double totalStringLenMeters,
-      double initialLenSpooled,
-      WindingOrientation initialWindingOrientation,
-      boolean invertMotor) {
+  public WinchSimModel(WinchParams winchParams) {
 
     // Sanity checks
-    if (spoolDiameterMeters <= 0) {
+    if (winchParams.spoolDiameterMeters <= 0) {
       throw new IllegalArgumentException("SpoolDiameterMeters must be >0");
     }
-    if (totalStringLenMeters <= 0) {
+    if (winchParams.totalStringLenMeters <= 0) {
       throw new IllegalArgumentException("TotalStringLenMeters must be >0");
     }
-    if (initialLenSpooled < 0 || initialLenSpooled > totalStringLenMeters) {
+    if (winchParams.initialLenSpooled < 0
+        || winchParams.initialLenSpooled > winchParams.totalStringLenMeters) {
       throw new IllegalArgumentException(
           "InitialLenSpooled must be between 0 and TotalStringLenMeters");
     }
 
     // Initialize fields
-    m_spoolDiameterMeters = spoolDiameterMeters;
-    m_totalStringLenMeters = totalStringLenMeters;
-    m_motorPolarity = invertMotor ? -1 : 1;
+    m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
+    m_totalStringLenMeters = winchParams.totalStringLenMeters;
+    m_motorPolarity = winchParams.invertMotor ? -1 : 1;
 
     // If the string is towards the back of the robot, then we represent the length
     // of string pooled as a NEGATIVE number
     // See diagram above
-    m_initialLenSpooled = (initialWindingOrientation == WindingOrientation.BackOfRobot)
-        ? -1 * initialLenSpooled
-        : initialLenSpooled;
+    m_initialLenSpooled = (winchParams.initialWindingOrientation == WindingOrientation.BackOfRobot)
+        ? -1 * winchParams.initialLenSpooled
+        : winchParams.initialLenSpooled;
     m_currentLenSpooled = m_initialLenSpooled;
     m_isBroken = false;
     m_initialMotorRotations = 0;

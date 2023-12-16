@@ -39,6 +39,22 @@ public class WinchSimModelTest {
     return 1;
   }
 
+  private SimManager<Double, WinchState> createTestSimManager(WindingOrientation stringOrientation,
+      boolean flipWinchPolarity,
+      Supplier<Double> winchInputSupplier,
+      WinchState winchState) {
+
+    WinchParams winchParams = new WinchParams(getSpoolDiameter(), getStringLen(),
+        getInitialLenSpooled(), stringOrientation, flipWinchPolarity);
+
+    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
+        new WinchSimModel(winchParams), true);
+    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
+    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
+
+    return winchSimManager;
+  }
+
   private void testWinchMove(WindingOrientation stringOrientation,
       double lenToGrowString,
       boolean flipWinchPolarity,
@@ -54,14 +70,11 @@ public class WinchSimModelTest {
 
     WinchState tempWinchState = new WinchState(getStringLen());
 
-    WinchParams winchParams = new WinchParams(getSpoolDiameter(), getStringLen(),
-        getInitialLenSpooled(), stringOrientation, flipWinchPolarity);
-
     // Create SimManager
-    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        new WinchSimModel(winchParams), true);
-    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
-    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+    SimManager<Double, WinchState> winchSimManager = createTestSimManager(stringOrientation,
+        flipWinchPolarity,
+        winchInputSupplier,
+        tempWinchState);
 
     // Initialize the number of rotations
     currentWinchRotations[0] = 0.0;
@@ -145,14 +158,12 @@ public class WinchSimModelTest {
 
     WinchState tempWinchState = new WinchState(getStringLen());
 
-    WinchParams winchParams = new WinchParams(getSpoolDiameter(), getStringLen(),
-        getInitialLenSpooled(), WindingOrientation.BackOfRobot, false);
-
     // Create SimManager
-    SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        new WinchSimModel(winchParams), true);
-    winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
-    winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(tempWinchState));
+    SimManager<Double, WinchState> winchSimManager = createTestSimManager(
+        WindingOrientation.BackOfRobot,
+        false,
+        winchInputSupplier,
+        tempWinchState);
 
     // Initialize the number of rotations
     currentWinchRotations[0] = 0.0;

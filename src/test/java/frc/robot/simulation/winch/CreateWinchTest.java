@@ -92,7 +92,10 @@ public class CreateWinchTest {
         stringLenSpooled,
         stringOrientation,
         false);
-    assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
+
+    // Call updateSimulation with 0 rotations as a way to get back current winchState
+    WinchState winchState = tempWinchSimulation.updateSimulation(0.0);
+    assertTrue(winchState.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
   }
 
   @Test
@@ -106,7 +109,10 @@ public class CreateWinchTest {
         stringLenSpooled,
         stringOrientation,
         false);
-    assertTrue(tempWinchSimulation.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
+
+    // Call updateSimulation with 0 rotations as a way to get back current winchState
+    WinchState winchState = tempWinchSimulation.updateSimulation(0.0);
+    assertTrue(winchState.getStringUnspooledLen() == totalStringLen - stringLenSpooled);
   }
 
   @Test
@@ -119,7 +125,10 @@ public class CreateWinchTest {
         initialLenSpooled,
         stringOrientation,
         false);
-    assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
+
+    // Call updateSimulation with 0 rotations as a way to get back current winchState
+    WinchState winchState = tempWinchSimulation.updateSimulation(0.0);
+    assertTrue(winchState.getWindingOrientation() == stringOrientation);
   }
 
   @Test
@@ -132,7 +141,10 @@ public class CreateWinchTest {
         initialLenSpooled,
         stringOrientation,
         false);
-    assertTrue(tempWinchSimulation.getWindingOrientation() == stringOrientation);
+
+    // Call updateSimulation with 0 rotations as a way to get back current winchState
+    WinchState winchState = tempWinchSimulation.updateSimulation(0.0);
+    assertTrue(winchState.getWindingOrientation() == stringOrientation);
   }
 
   @Test
@@ -145,6 +157,9 @@ public class CreateWinchTest {
         initialLenSpooled,
         stringOrientation,
         false);
-    assertTrue(tempWinchSimulation.getWindingOrientation() == WindingOrientation.BackOfRobot);
+
+    // Call updateSimulation with 0 rotations as a way to get back current winchState
+    WinchState winchState = tempWinchSimulation.updateSimulation(0.0);
+    assertTrue(winchState.getWindingOrientation() == WindingOrientation.BackOfRobot);
   }
 }

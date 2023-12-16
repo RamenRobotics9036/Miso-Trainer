@@ -74,25 +74,11 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     m_isInitialMotorRotationsSet = false;
   }
 
-  /**
-   * Returns the length of string that is currently unspooled.
-   *
-   * @return the length of string that is currently unspooled, in meters
-   */
-  // $LATER All these getters can go away. Instead, the test-code should just use the return value
-  // of updateSimulation().
-  public double getStringUnspooledLen() {
+  private double getStringUnspooledLen() {
     return m_totalStringLenMeters - Math.abs(m_currentLenSpooled);
   }
 
-  /**
-   * Returns the current winding orientation.
-   *
-   * @return the current winding orientation
-   */
-  // $LATER All these getters can go away. Instead, the test-code should just use the return value
-  // of updateSimulation().
-  public WindingOrientation getWindingOrientation() {
+  private WindingOrientation getWindingOrientation() {
     // We define 0 as string orientation: back
     return (m_currentLenSpooled <= 0) ? WindingOrientation.BackOfRobot
         : WindingOrientation.FrontOfRobot;

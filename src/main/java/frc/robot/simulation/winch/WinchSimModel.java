@@ -74,10 +74,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     m_isInitialMotorRotationsSet = false;
   }
 
-  public double getTotalStringLenMeters() {
-    return m_totalStringLenMeters;
-  }
-
   /**
    * Returns the length of string that is currently unspooled.
    *
@@ -90,32 +86,16 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   }
 
   /**
-   * Returns the proportion of string that is currently unspooled.
-   *
-   * @return the proportion of string that is currently unspooled, as a decimal
-   */
-  public double getStringUnspooledPercent() {
-    return getStringUnspooledLen() / m_totalStringLenMeters;
-  }
-
-  /**
    * Returns the current winding orientation.
    *
    * @return the current winding orientation
    */
+  // $LATER All these getters can go away. Instead, the test-code should just use the return value
+  // of updateSimulation().
   public WindingOrientation getWindingOrientation() {
     // We define 0 as string orientation: back
     return (m_currentLenSpooled <= 0) ? WindingOrientation.BackOfRobot
         : WindingOrientation.FrontOfRobot;
-  }
-
-  /**
-   * Returns the name of the current winding orientation.
-   *
-   * @return the name of the current winding orientation
-   */
-  public String getWindingOrientationName() {
-    return getWindingOrientation().name();
   }
 
   private double getDeltaRotations(double currentRotationsWithPolarity) {

@@ -1,6 +1,5 @@
 package frc.robot.simulation.armangle;
 
-import frc.robot.Constants;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -21,9 +20,7 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
       throw new IllegalArgumentException("pivotMechanism cannot be null");
     }
 
-    // $TODO - Shouldn't this use a copy constructor instead?
-    m_pivotMechanism = new PivotMechanism(pivotMechanism.getLengthFromWinchToPivotPoint(),
-        pivotMechanism.getLengthFromEdgeToPivot());
+    m_pivotMechanism = pivotMechanism;
 
     m_angleSignedDegrees = 0;
     m_isBroken = false;

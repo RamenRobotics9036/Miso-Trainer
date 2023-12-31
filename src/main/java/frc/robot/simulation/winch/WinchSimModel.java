@@ -30,6 +30,9 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   }
 
   private double m_spoolDiameterMeters;
+  private WinchCable m_winchCable;
+  private WinchCable m_initialWinchCable;
+  // $TODO - Remove m_totalStringLenMeters and m_currentLenSpooled
   private double m_totalStringLenMeters;
   private double m_currentLenSpooled;
   private boolean m_isBroken;
@@ -60,6 +63,13 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     // Initialize fields
     m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
     m_totalStringLenMeters = winchParams.totalStringLenMeters;
+
+    // $TODO - winchParams should pass a WinchCable object instead of the string length
+    m_winchCable = new WinchCable(winchParams.totalStringLenMeters,
+        winchParams.totalStringLenMeters - winchParams.initialLenSpooled,
+        winchParams.initialWindingOrientation);
+    m_initialWinchCable = new WinchCable(m_winchCable);
+
     m_motorPolarity = winchParams.invertMotor ? -1 : 1;
 
     // If the string is towards the back of the robot, then we represent the length
@@ -72,6 +82,17 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     m_isBroken = false;
     m_initialMotorRotations = 0;
     m_isInitialMotorRotationsSet = false;
+  }
+
+  /**
+   * Calculates the length of cable that is unspooled, in meters.
+   * If the string is towards the front of the robot, then we represent the length
+   * of unspooled cable as a POSITIVE number.
+   * If the string is towards the back of the robot, then we represent the length
+   * of unspooled cable as a NEGATIVE number.
+   */
+  private double calcSignedCableUnspooledLen(WinchCable winchCable) {
+    return 0;
   }
 
   private double getStringUnspooledLen() {

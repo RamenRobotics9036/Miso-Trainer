@@ -7,7 +7,7 @@ import frc.robot.simulation.framework.SimModelInterface;
  * the ANGLE of the arm.
  */
 public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState> {
-  private CalcArmAngleHelper m_calcArmAngleHelper;
+  private PivotMechanism m_pivotMechanism;
   private double m_angleSignedDegrees;
   private boolean m_isBroken;
 
@@ -26,7 +26,7 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
           + " meters, otherwise the arm cant be pivoted");
     }
 
-    m_calcArmAngleHelper = new CalcArmAngleHelper(armAngleParams.heightFromWinchToPivotPoint,
+    m_pivotMechanism = new PivotMechanism(armAngleParams.heightFromWinchToPivotPoint,
         armAngleParams.armLengthFromEdgeToPivot);
 
     m_angleSignedDegrees = 0;
@@ -49,7 +49,7 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
       return armAngleResult;
     }
 
-    CalcArmAngleHelper.Result resultPair = m_calcArmAngleHelper
+    PivotMechanism.Result resultPair = m_pivotMechanism
         .calcSignedDegreesForStringLength(newStringLen);
 
     // Check if we got back that string length was invalid

@@ -3,19 +3,19 @@ package frc.robot.simulation.armangle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.armangle.CalcArmAngleHelper.Result;
+import frc.robot.simulation.armangle.PivotMechanism.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the CalcArmAngleHelper class.
+ * Tests the PivotMechanism class.
  */
-public class CalcArmAngleHelperTest {
-  private CalcArmAngleHelper m_calcArmAngleHelper;
+public class PivotMechanismTest {
+  private PivotMechanism m_pivotMechanism;
 
   @BeforeEach
   public void setUp() {
-    m_calcArmAngleHelper = new CalcArmAngleHelper(getTestingHeightFromWinchToPivotPoint(),
+    m_pivotMechanism = new PivotMechanism(getTestingHeightFromWinchToPivotPoint(),
         getTestingLengthFromEdgeToPivot());
   }
 
@@ -28,7 +28,7 @@ public class CalcArmAngleHelperTest {
   }
 
   private void calcDegreesHelper(double stringLen, double expectedDegrees, boolean expectIsValid) {
-    Result result = m_calcArmAngleHelper.calcSignedDegreesForStringLength(stringLen);
+    Result result = m_pivotMechanism.calcSignedDegreesForStringLength(stringLen);
 
     assertEquals(result.m_value, expectedDegrees, UnitConversions.kAngleTolerance);
     assertEquals(result.m_isValid, expectIsValid);
@@ -73,7 +73,7 @@ public class CalcArmAngleHelperTest {
   }
 
   private void calcStringLenHelper(double degrees, double expectedResult, boolean expectIsValid) {
-    Result result = m_calcArmAngleHelper.calcStringLengthForSignedDegrees(degrees);
+    Result result = m_pivotMechanism.calcStringLengthForSignedDegrees(degrees);
 
     assertEquals(result.m_value, expectedResult, UnitConversions.kDoubleTolerance);
     assertEquals(result.m_isValid, expectIsValid);

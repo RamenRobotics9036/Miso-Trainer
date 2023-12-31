@@ -4,7 +4,7 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 
 /**
- * The CalcArmAngleHelper class is responsible for calculating the signed degrees
+ * The PivotMechanism class is responsible for calculating the signed degrees
  * for a given string length. It is based on the lengths from the winch to the pivot point
  * and from the pivot point to the arm's back end.
  * 
@@ -18,7 +18,7 @@ import frc.robot.helpers.UnitConversions;
  * String - Connects winch to arm back end
  * </p>
  */
-public class CalcArmAngleHelper {
+public class PivotMechanism {
   /**
    * The Result class represents the outcome of an operation that
    * includes a validity status and a numeric result.
@@ -38,7 +38,7 @@ public class CalcArmAngleHelper {
   private double m_lengthFromPivotPointToArmBackEnd;
 
   /**
-   * Constructs a new instance of CalcArmAngleHelper.
+   * Constructs a new instance of PivotMechanism.
    *
    * <p>
    * The lengths from the winch to the pivot and from the pivot point to the arm's back end are
@@ -54,7 +54,7 @@ public class CalcArmAngleHelper {
    *                                  or
    *                                  lengthFromPivotPointToArmBackEnd is less than min.
    */
-  public CalcArmAngleHelper(double lengthFromWinchToPivotPoint,
+  public PivotMechanism(double lengthFromWinchToPivotPoint,
       double lengthFromPivotPointToArmBackEnd) {
     if (lengthFromWinchToPivotPoint < Constants.SimConstants.klengthFromWinchToPivotPoint_Min) {
       throw new IllegalArgumentException(

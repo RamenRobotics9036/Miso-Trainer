@@ -35,8 +35,9 @@ public class CreateWinchTest {
       WindingOrientation windingOrientation,
       boolean invertMotor) {
 
-    WinchParams winchParams = new WinchParams(spoolDiameterMeters, totalStringLenMeters, lenSpooled,
-        windingOrientation, invertMotor);
+    WinchParams winchParams = new WinchParams(spoolDiameterMeters,
+        new WinchCable(totalStringLenMeters, totalStringLenMeters - lenSpooled, windingOrientation),
+        invertMotor);
 
     WinchSimModel tempWinchSimulation = new WinchSimModel(winchParams);
     assertTrue(tempWinchSimulation != null);

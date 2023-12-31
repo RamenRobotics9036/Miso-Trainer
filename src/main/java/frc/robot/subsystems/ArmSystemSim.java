@@ -22,6 +22,7 @@ import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
+import frc.robot.simulation.winch.WinchCable;
 import frc.robot.simulation.winch.WinchParams;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
@@ -158,8 +159,10 @@ public class ArmSystemSim extends ArmSystem {
     m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
 
     // Create the winch simulation
-    WinchParams winchParams = new WinchParams(0.0254, Constants.SimConstants.kTotalStringLenMeters,
-        Constants.SimConstants.kCurrentLenSpooled, WindingOrientation.BackOfRobot, true);
+    WinchParams winchParams = new WinchParams(0.0254, new WinchCable(
+        Constants.SimConstants.kTotalStringLenMeters,
+        Constants.SimConstants.kTotalStringLenMeters - Constants.SimConstants.kCurrentLenSpooled,
+        WindingOrientation.BackOfRobot), true);
 
     m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams), false);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));

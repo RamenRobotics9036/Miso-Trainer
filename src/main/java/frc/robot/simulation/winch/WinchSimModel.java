@@ -50,8 +50,8 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     if (winchParams.winchCable.getTotalLenMeters() <= 0) {
       throw new IllegalArgumentException("TotalCableLenMeters must be >0");
     }
-    if (winchParams.winchCable.calcSpooledLenMeters() < 0
-        || winchParams.winchCable.calcSpooledLenMeters() > winchParams.winchCable.getTotalLenMeters() {
+    if (winchParams.winchCable.calcSpooledLenMeters() < 0 || winchParams.winchCable
+        .calcSpooledLenMeters() > winchParams.winchCable.getTotalLenMeters()) {
       throw new IllegalArgumentException(
           "InitialLenSpooled must be between 0 and TotalCableLenMeters");
     }
@@ -59,9 +59,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     // Initialize fields
     m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
 
-    m_winchCable = new WinchCable(winchParams.winchCable.getTotalLenMeters(),
-        winchParams.winchCable.getTotalLenMeters() - winchParams.winchCable.calcSpooledLenMeters(),
-        winchParams.winchCable.getWindingOrientation());
+    m_winchCable = winchParams.winchCable;
     m_initialWinchCable = new WinchCable(m_winchCable);
 
     m_motorPolarity = winchParams.invertMotor ? -1 : 1;

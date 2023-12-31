@@ -44,8 +44,10 @@ public class WinchSimModelTest {
       Supplier<Double> winchInputSupplier,
       WinchState winchState) {
 
-    WinchParams winchParams = new WinchParams(getTestingSpoolDiameter(), getTestingStringLen(),
-        getTestingInitialLenSpooled(), stringOrientation, flipWinchPolarity);
+    WinchParams winchParams = new WinchParams(
+        getTestingSpoolDiameter(), new WinchCable(getTestingStringLen(),
+            getTestingStringLen() - getTestingInitialLenSpooled(), stringOrientation),
+        flipWinchPolarity);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
         new WinchSimModel(winchParams), true);

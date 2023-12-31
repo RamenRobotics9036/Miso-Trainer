@@ -1,7 +1,5 @@
 package frc.robot.simulation.winch;
 
-import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
-
 /**
  * Class that holds paramaters for the winch.
  */

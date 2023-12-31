@@ -20,6 +20,7 @@ import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
+import frc.robot.simulation.winch.WinchCable;
 import frc.robot.simulation.winch.WinchParams;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
@@ -132,7 +133,8 @@ public class ArmSimModelTest {
     WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
 
     WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
-        m_winchTotalStringLenMeters, winchInitialLenSpooled, m_winchInitialStringOrientation,
+        new WinchCable(m_winchTotalStringLenMeters,
+            m_winchTotalStringLenMeters - winchInitialLenSpooled, m_winchInitialStringOrientation),
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
@@ -520,7 +522,8 @@ public class ArmSimModelTest {
     WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
 
     WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
-        m_winchTotalStringLenMeters, winchInitialLenSpooled, m_winchInitialStringOrientation,
+        new WinchCable(m_winchTotalStringLenMeters,
+            m_winchTotalStringLenMeters - winchInitialLenSpooled, m_winchInitialStringOrientation),
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(

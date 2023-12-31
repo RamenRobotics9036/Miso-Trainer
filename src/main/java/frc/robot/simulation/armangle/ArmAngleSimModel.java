@@ -1,5 +1,6 @@
 package frc.robot.simulation.armangle;
 
+import frc.robot.Constants;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -20,9 +21,10 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
       throw new IllegalArgumentException("armAngleParams cannot be null");
     }
 
-    if (armAngleParams.armLengthFromEdgeToPivot < armAngleParams.armLengthFromEdgeToPivotMin) {
+    double min = Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min;
+    if (armAngleParams.armLengthFromEdgeToPivot < min) {
       throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
-          + armAngleParams.armLengthFromEdgeToPivotMin
+          + Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min
           + " meters, otherwise the arm cant be pivoted");
     }
 

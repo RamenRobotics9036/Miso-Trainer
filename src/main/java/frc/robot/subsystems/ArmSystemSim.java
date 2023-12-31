@@ -137,8 +137,7 @@ public class ArmSystemSim extends ArmSystem {
 
     ArmAngleParams armAngleParams = new ArmAngleParams(
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
-        Constants.SimConstants.karmLengthFromEdgeToPivot,
-        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
+        Constants.SimConstants.karmLengthFromEdgeToPivot);
 
     m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(armAngleParams),
         false);

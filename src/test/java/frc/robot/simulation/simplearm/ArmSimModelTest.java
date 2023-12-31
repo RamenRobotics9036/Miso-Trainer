@@ -38,7 +38,6 @@ public class ArmSimModelTest {
   private final ArmSimParams m_defaultArmParams;
   private final double m_defaultHeightFromWinchToPivotPoint;
   private final double m_defaultArmLengthFromEdgeToPivot;
-  private final double m_defaultArmLengthFromEdgeToPivotMin;
   private final double m_defaultGrabberBreaksRotations = 0.80;
   private PivotMechanism m_pivotMechanism;
   private final double m_winchSpoolDiameterMeters = 0.01; // (1 centimeter)
@@ -56,7 +55,6 @@ public class ArmSimModelTest {
   public ArmSimModelTest() {
     m_defaultHeightFromWinchToPivotPoint = 1;
     m_defaultArmLengthFromEdgeToPivot = 0.5;
-    m_defaultArmLengthFromEdgeToPivotMin = 0.1;
 
     m_defaultArmParams = new ArmSimParams(UnitConversions.rotationToSignedDegrees(0.25),
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
@@ -148,7 +146,7 @@ public class ArmSimModelTest {
     };
 
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
-        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+        m_defaultArmLengthFromEdgeToPivot);
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
         new ArmAngleSimModel(armAngleParams), true);
@@ -537,7 +535,7 @@ public class ArmSimModelTest {
     };
 
     ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
-        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+        m_defaultArmLengthFromEdgeToPivot);
 
     ArmAngleState tempArmAngleState = new ArmAngleState();
 

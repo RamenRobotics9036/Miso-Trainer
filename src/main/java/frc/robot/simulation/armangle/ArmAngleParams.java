@@ -10,18 +10,13 @@ public class ArmAngleParams {
   @SuppressWarnings("checkstyle:MemberName")
   public double armLengthFromEdgeToPivot;
 
-  @SuppressWarnings("checkstyle:MemberName")
-  public double armLengthFromEdgeToPivotMin;
-
   /**
    * Constructor.
    */
   public ArmAngleParams(double heightFromWinchToPivotPointInput,
-      double armLengthFromEdgeToPivotInput,
-      double armLengthFromEdgeToPivotMinInput) {
+      double armLengthFromEdgeToPivotInput) {
 
     heightFromWinchToPivotPoint = heightFromWinchToPivotPointInput;
     armLengthFromEdgeToPivot = armLengthFromEdgeToPivotInput;
-    armLengthFromEdgeToPivotMin = armLengthFromEdgeToPivotMinInput;
   }
 }

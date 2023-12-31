@@ -34,7 +34,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   private WinchCable m_initialWinchCable;
   // $TODO - Remove m_totalStringLenMeters and m_currentLenSpooled
   private double m_totalStringLenMeters;
-  private double m_currentSignedLenSpooled;
   private boolean m_isBroken;
   private double m_initialMotorRotations;
   private boolean m_isInitialMotorRotationsSet;
@@ -73,7 +72,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     m_motorPolarity = winchParams.invertMotor ? -1 : 1;
 
     m_initialSignedLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable);
-    m_currentSignedLenSpooled = m_initialSignedLenSpooled;
     m_isBroken = false;
     m_initialMotorRotations = 0;
     m_isInitialMotorRotationsSet = false;
@@ -156,8 +154,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
       m_isBroken = true;
     }
 
-    m_currentSignedLenSpooled = newCurrentSignedLenSpooled;
-    m_winchCable = calcWinchCableFromSignedSpooledLen(m_currentSignedLenSpooled);
+    m_winchCable = calcWinchCableFromSignedSpooledLen(newCurrentSignedLenSpooled);
 
     winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
     winchStateResult.setWindingOrientation(getWindingOrientation());

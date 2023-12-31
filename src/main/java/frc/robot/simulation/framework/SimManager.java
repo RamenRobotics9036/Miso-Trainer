@@ -1,5 +1,6 @@
 package frc.robot.simulation.framework;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import java.util.function.Supplier;
 
@@ -20,6 +21,13 @@ public class SimManager<InputT, OutputT> {
   public SimManager(SimModelInterface<InputT, OutputT> simModelFunc, boolean enableTestMode) {
     if (simModelFunc == null) {
       throw new IllegalArgumentException("simModelFunc cannot be null");
+    }
+
+    // This entire class should only be instantiated when we're under simulation.
+    // But just in-case someone tries to instantiate it otherwise, we do an extra
+    // check here.
+    if (!RobotBase.isSimulation()) {
+      throw new IllegalStateException("SimManager should only be instantiated when in simulation");
     }
 
     m_simModelFunc = simModelFunc;
@@ -94,6 +102,11 @@ public class SimManager<InputT, OutputT> {
    * Called every 20ms.
    */
   public void simulationPeriodic() {
+    // Yet another safety check just to be sure
+    if (!RobotBase.isSimulation()) {
+      throw new IllegalStateException("SimManager should only be instantiated when in simulation");
+    }
+
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
       doSimulationWrapper();

@@ -85,13 +85,13 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   }
 
   /**
-   * Calculates the length of cable that is unspooled, in meters.
+   * Calculates the length of cable that is spooled, in meters.
    * If the string is towards the front of the robot, then we represent the length
-   * of unspooled cable as a POSITIVE number.
+   * of cable as a POSITIVE number.
    * If the string is towards the back of the robot, then we represent the length
-   * of unspooled cable as a NEGATIVE number.
+   * of cable as a NEGATIVE number.
    */
-  private double calcSignedCableUnspooledLen(WinchCable winchCable) {
+  private double calcSignedCableSpooledLen(WinchCable winchCable) {
     return 0;
   }
 

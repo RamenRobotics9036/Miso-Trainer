@@ -96,11 +96,13 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     WindingOrientation windingOrientation = (signedSpooledLen < 0) ? WindingOrientation.BackOfRobot
         : WindingOrientation.FrontOfRobot;
     double absSpooledLen = Math.abs(signedSpooledLen);
-    return new WinchCable(m_totalStringLenMeters, absSpooledLen, windingOrientation);
+
+    return new WinchCable(m_totalStringLenMeters, m_totalStringLenMeters - absSpooledLen,
+        windingOrientation);
   }
 
   private double getStringUnspooledLen() {
-    return m_totalStringLenMeters - Math.abs(m_currentSignedLenSpooled);
+    return m_winchCable.getUnspooledLenMeters();
   }
 
   private WindingOrientation getWindingOrientation() {

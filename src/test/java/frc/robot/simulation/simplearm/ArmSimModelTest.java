@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
-import frc.robot.simulation.armangle.CalcArmAngleHelper;
+import frc.robot.simulation.armangle.PivotMechanism;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
@@ -38,9 +37,8 @@ public class ArmSimModelTest {
   private final ArmSimParams m_defaultArmParams;
   private final double m_defaultHeightFromWinchToPivotPoint;
   private final double m_defaultArmLengthFromEdgeToPivot;
-  private final double m_defaultArmLengthFromEdgeToPivotMin;
   private final double m_defaultGrabberBreaksRotations = 0.80;
-  private CalcArmAngleHelper m_calcArmAngleHelper;
+  private PivotMechanism m_pivotMechanism;
   private final double m_winchSpoolDiameterMeters = 0.01; // (1 centimeter)
   private final double m_winchTotalStringLenMeters = 5;
   private final double m_winchInitialLenSpooled = 4;
@@ -56,13 +54,12 @@ public class ArmSimModelTest {
   public ArmSimModelTest() {
     m_defaultHeightFromWinchToPivotPoint = 1;
     m_defaultArmLengthFromEdgeToPivot = 0.5;
-    m_defaultArmLengthFromEdgeToPivotMin = 0.1;
 
     m_defaultArmParams = new ArmSimParams(UnitConversions.rotationToSignedDegrees(0.25),
         UnitConversions.rotationToSignedDegrees(0.75), // bottomRotationsBreak
         UnitConversions.rotationToUnsignedDegrees(0)); // encoderRotationsOffset
 
-    m_calcArmAngleHelper = new CalcArmAngleHelper(m_defaultHeightFromWinchToPivotPoint,
+    m_pivotMechanism = new PivotMechanism(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot);
   }
 
@@ -147,11 +144,11 @@ public class ArmSimModelTest {
       return winchState.getStringUnspooledLen();
     };
 
-    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
-        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+    PivotMechanism pivotMechanism = new PivotMechanism(m_defaultHeightFromWinchToPivotPoint,
+        m_defaultArmLengthFromEdgeToPivot);
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(armAngleParams), true);
+        new ArmAngleSimModel(pivotMechanism), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
 
@@ -299,7 +296,7 @@ public class ArmSimModelTest {
     double initialPosSignedDegrees = UnitConversions
         .rotationToSignedDegrees(m_defaultGrabberBreaksRotations) + initialDegreesAboveBreakPoint;
     double winchInitialLenSpooled = m_winchTotalStringLenMeters
-        - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
+        - m_pivotMechanism.calcAndValidateStringLengthForSignedDegrees(initialPosSignedDegrees);
 
     SimManagersType simManagers = createDefaultArmHelper(staticWinchInputSupplier,
         tempArmAngleState,
@@ -327,7 +324,7 @@ public class ArmSimModelTest {
     double targetPosSignedDegrees = UnitConversions
         .rotationToSignedDegrees(m_defaultGrabberBreaksRotations) + targetDegreesAboveBreakPoint;
     double winchTargetLenSpooled = m_winchTotalStringLenMeters
-        - m_calcArmAngleHelper.calcAndValidateStringLengthForSignedDegrees(targetPosSignedDegrees);
+        - m_pivotMechanism.calcAndValidateStringLengthForSignedDegrees(targetPosSignedDegrees);
 
     // Now calculate how much to turn the winch motor to get it to the target position
     double spoolCircumferenceMeters = Math.PI * m_winchSpoolDiameterMeters;
@@ -536,13 +533,13 @@ public class ArmSimModelTest {
       return winchState.getStringUnspooledLen();
     };
 
-    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
-        m_defaultArmLengthFromEdgeToPivot, m_defaultArmLengthFromEdgeToPivotMin);
+    PivotMechanism pivotMechanism = new PivotMechanism(m_defaultHeightFromWinchToPivotPoint,
+        m_defaultArmLengthFromEdgeToPivot);
 
     ArmAngleState tempArmAngleState = new ArmAngleState();
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(armAngleParams), true);
+        new ArmAngleSimModel(pivotMechanism), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(tempArmAngleState));
 

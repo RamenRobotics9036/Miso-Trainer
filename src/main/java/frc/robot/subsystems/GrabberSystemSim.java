@@ -13,7 +13,6 @@ import frc.robot.commands.CloseGrabberCommand;
 import frc.robot.commands.GrabberOpenCommand;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
-
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 

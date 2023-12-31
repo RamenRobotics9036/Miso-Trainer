@@ -11,10 +11,10 @@ import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.ExtenderSimulation;
-import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
+import frc.robot.simulation.armangle.PivotMechanism;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorSimModel;
@@ -135,12 +135,11 @@ public class ArmSystemSim extends ArmSystem {
 
     m_armAngleState = new ArmAngleState();
 
-    ArmAngleParams armAngleParams = new ArmAngleParams(
+    PivotMechanism pivotMechanism = new PivotMechanism(
         Constants.SimConstants.karmHeightFromWinchToPivotPoint,
-        Constants.SimConstants.karmLengthFromEdgeToPivot,
-        Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min);
+        Constants.SimConstants.karmLengthFromEdgeToPivot);
 
-    m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(armAngleParams),
+    m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(pivotMechanism),
         false);
     m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));

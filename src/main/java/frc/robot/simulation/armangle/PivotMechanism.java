@@ -4,7 +4,7 @@ import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
 
 /**
- * The CalcArmAngleHelper class is responsible for calculating the signed degrees
+ * The PivotMechanism class is responsible for calculating the signed degrees
  * for a given string length. It is based on the lengths from the winch to the pivot point
  * and from the pivot point to the arm's back end.
  * 
@@ -18,7 +18,7 @@ import frc.robot.helpers.UnitConversions;
  * String - Connects winch to arm back end
  * </p>
  */
-public class CalcArmAngleHelper {
+public class PivotMechanism {
   /**
    * The Result class represents the outcome of an operation that
    * includes a validity status and a numeric result.
@@ -35,43 +35,58 @@ public class CalcArmAngleHelper {
   }
 
   private double m_lengthFromWinchToPivotPoint;
-  private double m_lengthFromPivotPointToArmBackEnd;
+  private double m_lengthFromEdgeToPivot;
 
   /**
-   * Constructs a new instance of CalcArmAngleHelper.
+   * Constructs a new instance of PivotMechanism.
    *
    * <p>
    * The lengths from the winch to the pivot and from the pivot point to the arm's back end are
    * used for angle calculation in the helper.
    * </p>
    *
-   * @param lengthFromWinchToPivotPoint      The distance from the winch to the pivot point in
-   *                                         meters.
-   * @param lengthFromPivotPointToArmBackEnd Distance from the pivot to the arm's back end
-   *                                         in meters.
+   * @param lengthFromWinchToPivotPoint The distance from the winch to the pivot point in
+   *                                    Fix meters.
+   * @param lengthFromEdgeToPivot       Distance from the pivot to the arm's back end
+   *                                    in meters.
    *
    * @throws IllegalArgumentException If lengthFromWinchToPivotPoint is less than min.
    *                                  or
-   *                                  lengthFromPivotPointToArmBackEnd is less than min.
+   *                                  lengthFromEdgeToPivot is less than min.
    */
-  public CalcArmAngleHelper(double lengthFromWinchToPivotPoint,
-      double lengthFromPivotPointToArmBackEnd) {
+  public PivotMechanism(double lengthFromWinchToPivotPoint, double lengthFromEdgeToPivot) {
     if (lengthFromWinchToPivotPoint < Constants.SimConstants.klengthFromWinchToPivotPoint_Min) {
       throw new IllegalArgumentException(
           "Distance from winch to arm pivot point needs to be at least "
               + Constants.SimConstants.klengthFromWinchToPivotPoint_Min + " meters");
     }
 
-    double pivotToArmBackEndMin = Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min;
-    if (lengthFromPivotPointToArmBackEnd < pivotToArmBackEndMin) {
+    if (lengthFromEdgeToPivot < Constants.SimConstants.klengthFromEdgeToPivot_Min) {
       throw new IllegalArgumentException(
           "Length from arm pivot point to arm back end needs to be at least "
-              + Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min
+              + Constants.SimConstants.klengthFromEdgeToPivot_Min
               + " meters, otherwise the arm cant be rotated");
     }
 
+    // The length from the winch to the arm's pivot point needs to be LONGER
+    // than the length from the pivot point to the arm's back end. Otherwise,
+    // the back of the arm would hit the winch when the arm goes all the way up.
+    if (lengthFromWinchToPivotPoint < lengthFromEdgeToPivot) {
+      throw new IllegalArgumentException(
+          "lengthFromWinchToPivotPoint needs to be at least lengthFromEdgeToPivot meters,"
+              + " otherwise the arm cant be moved all the way ups");
+    }
+
     m_lengthFromWinchToPivotPoint = lengthFromWinchToPivotPoint;
-    m_lengthFromPivotPointToArmBackEnd = lengthFromPivotPointToArmBackEnd;
+    m_lengthFromEdgeToPivot = lengthFromEdgeToPivot;
+  }
+
+  public double getLengthFromWinchToPivotPoint() {
+    return m_lengthFromWinchToPivotPoint;
+  }
+
+  public double getLengthFromEdgeToPivot() {
+    return m_lengthFromEdgeToPivot;
   }
 
   /**
@@ -101,20 +116,20 @@ public class CalcArmAngleHelper {
     // If the string is too long, it means the string is no longer taut.
     // Still, we consider this a valid position of the arm; arm is dangling down
     if (UnitConversions.greaterThanButNotEqualDouble(heightArmBackendAbovePivot,
-        m_lengthFromPivotPointToArmBackEnd)) {
+        m_lengthFromEdgeToPivot)) {
       System.out.println("String too long, and is no longer taut");
       return new Result(true, down);
     }
 
     // Is arm beyond highest possible point?
     if (UnitConversions.lessThanButNotEqualDouble(heightArmBackendAbovePivot,
-        -1 * m_lengthFromPivotPointToArmBackEnd)) {
+        -1 * m_lengthFromEdgeToPivot)) {
       System.out.println("Above highest point: String too short!");
       return new Result(false, up);
     }
 
-    return new Result(true, -1
-        * calcAngleOnRightTriangle(m_lengthFromPivotPointToArmBackEnd, heightArmBackendAbovePivot));
+    return new Result(true,
+        -1 * calcAngleOnRightTriangle(m_lengthFromEdgeToPivot, heightArmBackendAbovePivot));
   }
 
   // We are calculating the angle of a right triangle at point (0,0). We know the length of the
@@ -128,8 +143,8 @@ public class CalcArmAngleHelper {
    * from the winch to the arm's back end.
    */
   public Result calcStringLengthForSignedDegrees(double signedDegrees) {
-    double maxStringLen = m_lengthFromWinchToPivotPoint + m_lengthFromPivotPointToArmBackEnd;
-    double minStringLen = m_lengthFromWinchToPivotPoint - m_lengthFromPivotPointToArmBackEnd;
+    double maxStringLen = m_lengthFromWinchToPivotPoint + m_lengthFromEdgeToPivot;
+    double minStringLen = m_lengthFromWinchToPivotPoint - m_lengthFromEdgeToPivot;
 
     // If signedDegrees is > 90, it means arm is pointing straight up.
     if (signedDegrees > 90) {
@@ -142,7 +157,7 @@ public class CalcArmAngleHelper {
     }
 
     double heightArmBackendAbovePivot = -1
-        * calcHeightOnRightTriangle(m_lengthFromPivotPointToArmBackEnd, signedDegrees);
+        * calcHeightOnRightTriangle(m_lengthFromEdgeToPivot, signedDegrees);
     double stringLen = m_lengthFromWinchToPivotPoint + heightArmBackendAbovePivot;
     return new Result(true, stringLen);
   }

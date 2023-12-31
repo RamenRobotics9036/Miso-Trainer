@@ -75,9 +75,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     // If the string is towards the back of the robot, then we represent the length
     // of string pooled as a NEGATIVE number
     // See diagram above
-    m_initialLenSpooled = (winchParams.initialWindingOrientation == WindingOrientation.BackOfRobot)
-        ? -1 * winchParams.initialLenSpooled
-        : winchParams.initialLenSpooled;
+    m_initialLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable);
     m_currentLenSpooled = m_initialLenSpooled;
     m_isBroken = false;
     m_initialMotorRotations = 0;
@@ -92,7 +90,9 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
    * of cable as a NEGATIVE number.
    */
   private double calcSignedCableSpooledLen(WinchCable winchCable) {
-    return 0;
+    return (winchCable.getWindingOrientation() == WindingOrientation.BackOfRobot)
+        ? -1 * winchCable.calcSpooledLenMeters()
+        : winchCable.calcSpooledLenMeters();
   }
 
   private double getStringUnspooledLen() {

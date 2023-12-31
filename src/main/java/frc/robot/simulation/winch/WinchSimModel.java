@@ -32,12 +32,11 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   private double m_spoolDiameterMeters;
   private WinchCable m_winchCable;
   private WinchCable m_initialWinchCable;
-  // $TODO - Remove m_totalStringLenMeters and m_currentLenSpooled
+  // $TODO - Remove m_totalStringLenMeters
   private double m_totalStringLenMeters;
   private boolean m_isBroken;
   private double m_initialMotorRotations;
   private boolean m_isInitialMotorRotationsSet;
-  private double m_initialSignedLenSpooled;
   private double m_motorPolarity;
 
   /**
@@ -71,7 +70,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
     m_motorPolarity = winchParams.invertMotor ? -1 : 1;
 
-    m_initialSignedLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable);
     m_isBroken = false;
     m_initialMotorRotations = 0;
     m_isInitialMotorRotationsSet = false;
@@ -142,7 +140,8 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
     // How much sting-length (in meters) has been spooled or unspooled?
     double deltaStringLenMeters = deltaRotations * (Math.PI * m_spoolDiameterMeters);
-    double newCurrentSignedLenSpooled = m_initialSignedLenSpooled + deltaStringLenMeters;
+    double newCurrentSignedLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable)
+        + deltaStringLenMeters;
 
     // Check for bounds
     if (newCurrentSignedLenSpooled > m_totalStringLenMeters) {

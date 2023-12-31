@@ -3,27 +3,27 @@ package frc.robot.simulation.winch;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
- * Simulates a winch with a spool and a string. The string can be extended and retracted,
+ * Simulates a winch with a spool and a cable. The cable can be extended and retracted,
  * and it can be positioned either at the front or the back of a robot.
- * The simulation takes into account the diameter of the spool and the length of the string,
- * as well as the current position of the motor. It can simulate the string breaking
+ * The simulation takes into account the diameter of the spool and the length of the cable,
+ * as well as the current position of the motor. It can simulate the cable breaking
  * if it's extended or retracted beyond its total length.
  * <p>
  * Terminology:
- * Total string length - The length of the string in meters
- * Spool - The cylinder that the string is wrapped around
- * Length Spooled - The amount of string that is wrapped around the spool
- * Length Unspooled - How far the string is extended from the spool
- * Top of spool - The string is coming off the top of the spool
- * Bottom of spool - The string is coming off the bottom of the spool
- * Winding orientation - Whether string is coming off the top of the spool or the bottom
+ * Total cable length - The length of the cable in meters
+ * Spool - The cylinder that the cable is wrapped around
+ * Length Spooled - The amount of cable that is wrapped around the spool
+ * Length Unspooled - How far the cable is extended from the spool
+ * Top of spool - The cable is coming off the top of the spool
+ * Bottom of spool - The cable is coming off the bottom of the spool
+ * Winding orientation - Whether cable is coming off the top of the spool or the bottom
  * </p>
  */
 public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
-   * The WindingOrientation enum represents the orientation of the string.
-   * If the string is towards the back of the robot, then we represent as BackOfRobot.
-   * If the string is towards the front of the robot, then we represent as FrontOfRobot.
+   * The WindingOrientation enum represents the orientation of the cable.
+   * If the cable is towards the back of the robot, then we represent as BackOfRobot.
+   * If the cable is towards the front of the robot, then we represent as FrontOfRobot.
    */
   public enum WindingOrientation {
     BackOfRobot, FrontOfRobot
@@ -59,7 +59,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     // Initialize fields
     m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
 
-    // $TODO - winchParams should pass a WinchCable object instead of the string length
     m_winchCable = new WinchCable(winchParams.totalStringLenMeters,
         winchParams.totalStringLenMeters - winchParams.initialLenSpooled,
         winchParams.initialWindingOrientation);
@@ -74,9 +73,9 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
   /**
    * Calculates the length of cable that is spooled, in meters.
-   * If the string is towards the front of the robot, then we represent the length
+   * If the cable is towards the front of the robot, then we represent the length
    * of cable as a POSITIVE number.
-   * If the string is towards the back of the robot, then we represent the length
+   * If the cable is towards the back of the robot, then we represent the length
    * of cable as a NEGATIVE number.
    */
   private double calcSignedCableSpooledLen(WinchCable winchCable) {
@@ -98,7 +97,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     return m_winchCable.getTotalLenMeters();
   }
 
-  private double getStringUnspooledLen() {
+  private double getCableUnspooledLen() {
     return m_winchCable.getUnspooledLenMeters();
   }
 
@@ -120,7 +119,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   }
 
   /**
-   * Updates the current length of string spooled. This method is called periodically
+   * Updates the current length of cable spooled. This method is called periodically
    * during simulation to update the state of the winch.
    */
   public WinchState updateSimulation(Double currentRotations) {
@@ -130,7 +129,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
     // If the winch is broken, there's nothing to update
     if (m_isBroken) {
-      winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+      winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
       winchStateResult.setWindingOrientation(getWindingOrientation());
       winchStateResult.setIsBroken(true);
       return winchStateResult;
@@ -140,9 +139,9 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     deltaRotations = getDeltaRotations(currentRotationsWithPolarity);
 
     // How much sting-length (in meters) has been spooled or unspooled?
-    double deltaStringLenMeters = deltaRotations * (Math.PI * m_spoolDiameterMeters);
+    double deltaCableLenMeters = deltaRotations * (Math.PI * m_spoolDiameterMeters);
     double newCurrentSignedLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable)
-        + deltaStringLenMeters;
+        + deltaCableLenMeters;
 
     // Check for bounds
     if (newCurrentSignedLenSpooled > getTotalLenMeters()) {
@@ -156,7 +155,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
     m_winchCable = calcWinchCableFromSignedSpooledLen(newCurrentSignedLenSpooled);
 
-    winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+    winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
     winchStateResult.setWindingOrientation(getWindingOrientation());
     winchStateResult.setIsBroken(m_isBroken);
 

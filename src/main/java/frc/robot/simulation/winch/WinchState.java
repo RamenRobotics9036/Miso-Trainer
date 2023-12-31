@@ -31,7 +31,7 @@ public class WinchState implements Copyable<WinchState> {
     return m_stringUnspooledLen;
   }
 
-  public void setStringUnspooledLen(double stringUnspooledLen) {
+  public void setCableUnspooledLen(double stringUnspooledLen) {
     m_stringUnspooledLen = stringUnspooledLen;
   }
 

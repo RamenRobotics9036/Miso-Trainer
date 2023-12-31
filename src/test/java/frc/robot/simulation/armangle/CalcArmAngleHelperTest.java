@@ -12,13 +12,19 @@ import org.junit.jupiter.api.Test;
  */
 public class CalcArmAngleHelperTest {
   private CalcArmAngleHelper m_calcArmAngleHelper;
-  private final double m_armHeightFromWinchToPivotPoint = 1;
-  private final double m_armLengthFromEdgeToPivot = 0.25;
 
   @BeforeEach
   public void setUp() {
-    m_calcArmAngleHelper = new CalcArmAngleHelper(m_armHeightFromWinchToPivotPoint,
-        m_armLengthFromEdgeToPivot);
+    m_calcArmAngleHelper = new CalcArmAngleHelper(getTestingHeightFromWinchToPivotPoint(),
+        getTestingLengthFromEdgeToPivot());
+  }
+
+  private double getTestingHeightFromWinchToPivotPoint() {
+    return 1;
+  }
+
+  private double getTestingLengthFromEdgeToPivot() {
+    return 0.25;
   }
 
   private void calcDegreesHelper(double stringLen, double expectedDegrees, boolean expectIsValid) {
@@ -31,35 +37,39 @@ public class CalcArmAngleHelperTest {
   @Test
   public void calcDegreesArmBeyondFullyUpShouldReturnError() {
     double amountBeyondLimit = 0.0001;
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint - m_armLengthFromEdgeToPivot
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint() - getTestingLengthFromEdgeToPivot()
         - amountBeyondLimit, 90, false);
   }
 
   @Test
   public void calcDegreesArmBeyondFullyDownShouldReturnSuccessSinceStringDangling() {
     double amountBeyondLimit = 0.0001;
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint + m_armLengthFromEdgeToPivot
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint() + getTestingLengthFromEdgeToPivot()
         + amountBeyondLimit, -90, true);
   }
 
   @Test
   public void calcDegreesArmAtFullyUpShouldReturn90Degrees() {
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint - m_armLengthFromEdgeToPivot, 90, true);
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint() - getTestingLengthFromEdgeToPivot(),
+        90,
+        true);
   }
 
   @Test
   public void calcDegreesArmAtFullyDownShouldReturnNegative90Degrees() {
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint + m_armLengthFromEdgeToPivot, -90, true);
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint() + getTestingLengthFromEdgeToPivot(),
+        -90,
+        true);
   }
 
   @Test
   public void calcDegreesLevelArmShouldReturn0Degrees() {
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint, 0, true);
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint(), 0, true);
   }
 
   @Test
   public void calcDegreesArmAt45DegreesShouldSucceed() {
-    calcDegreesHelper(m_armHeightFromWinchToPivotPoint - 0.17678, 45, true);
+    calcDegreesHelper(getTestingHeightFromWinchToPivotPoint() - 0.17678, 45, true);
   }
 
   private void calcStringLenHelper(double degrees, double expectedResult, boolean expectIsValid) {
@@ -71,17 +81,21 @@ public class CalcArmAngleHelperTest {
 
   @Test
   public void calcStringLenFor0Degrees() {
-    calcStringLenHelper(0, m_armHeightFromWinchToPivotPoint, true);
+    calcStringLenHelper(0, getTestingHeightFromWinchToPivotPoint(), true);
   }
 
   @Test
   public void calcStringLenFor90Degrees() {
-    calcStringLenHelper(90, m_armHeightFromWinchToPivotPoint - m_armLengthFromEdgeToPivot, true);
+    calcStringLenHelper(90,
+        getTestingHeightFromWinchToPivotPoint() - getTestingLengthFromEdgeToPivot(),
+        true);
   }
 
   @Test
   public void calcStringLenForNegative90Degrees() {
-    calcStringLenHelper(-90, m_armHeightFromWinchToPivotPoint + m_armLengthFromEdgeToPivot, true);
+    calcStringLenHelper(-90,
+        getTestingHeightFromWinchToPivotPoint() + getTestingLengthFromEdgeToPivot(),
+        true);
   }
 
   @Test
@@ -96,11 +110,15 @@ public class CalcArmAngleHelperTest {
 
   @Test
   public void calcStringLenFor91Degrees() {
-    calcStringLenHelper(91, m_armHeightFromWinchToPivotPoint - m_armLengthFromEdgeToPivot, false);
+    calcStringLenHelper(91,
+        getTestingHeightFromWinchToPivotPoint() - getTestingLengthFromEdgeToPivot(),
+        false);
   }
 
   @Test
   public void calcStringLenForNegative91Degrees() {
-    calcStringLenHelper(-91, m_armHeightFromWinchToPivotPoint + m_armLengthFromEdgeToPivot, false);
+    calcStringLenHelper(-91,
+        getTestingHeightFromWinchToPivotPoint() + getTestingLengthFromEdgeToPivot(),
+        false);
   }
 }

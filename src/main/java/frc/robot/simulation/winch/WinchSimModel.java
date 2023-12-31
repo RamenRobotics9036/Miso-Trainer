@@ -32,8 +32,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   private double m_spoolDiameterMeters;
   private WinchCable m_winchCable;
   private WinchCable m_initialWinchCable;
-  // $TODO - Remove m_totalStringLenMeters
-  private double m_totalStringLenMeters;
   private boolean m_isBroken;
   private double m_initialMotorRotations;
   private boolean m_isInitialMotorRotationsSet;
@@ -60,7 +58,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
 
     // Initialize fields
     m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
-    m_totalStringLenMeters = winchParams.totalStringLenMeters;
 
     // $TODO - winchParams should pass a WinchCable object instead of the string length
     m_winchCable = new WinchCable(winchParams.totalStringLenMeters,
@@ -93,8 +90,12 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
         : WindingOrientation.FrontOfRobot;
     double absSpooledLen = Math.abs(signedSpooledLen);
 
-    return new WinchCable(m_totalStringLenMeters, m_totalStringLenMeters - absSpooledLen,
+    return new WinchCable(getTotalLenMeters(), getTotalLenMeters() - absSpooledLen,
         windingOrientation);
+  }
+
+  private double getTotalLenMeters() {
+    return m_winchCable.getTotalLenMeters();
   }
 
   private double getStringUnspooledLen() {
@@ -123,7 +124,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
    * during simulation to update the state of the winch.
    */
   public WinchState updateSimulation(Double currentRotations) {
-    WinchState winchStateResult = new WinchState(m_totalStringLenMeters);
+    WinchState winchStateResult = new WinchState(getTotalLenMeters());
     double currentRotationsWithPolarity = currentRotations * m_motorPolarity;
     double deltaRotations;
 
@@ -144,12 +145,12 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
         + deltaStringLenMeters;
 
     // Check for bounds
-    if (newCurrentSignedLenSpooled > m_totalStringLenMeters) {
-      newCurrentSignedLenSpooled = m_totalStringLenMeters;
+    if (newCurrentSignedLenSpooled > getTotalLenMeters()) {
+      newCurrentSignedLenSpooled = getTotalLenMeters();
       m_isBroken = true;
     }
-    else if (newCurrentSignedLenSpooled < -1 * m_totalStringLenMeters) {
-      newCurrentSignedLenSpooled = -1 * m_totalStringLenMeters;
+    else if (newCurrentSignedLenSpooled < -1 * getTotalLenMeters()) {
+      newCurrentSignedLenSpooled = -1 * getTotalLenMeters();
       m_isBroken = true;
     }
 

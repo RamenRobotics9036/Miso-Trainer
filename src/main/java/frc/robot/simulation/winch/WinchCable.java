@@ -38,6 +38,10 @@ public class WinchCable {
     m_windingOrientation = other.m_windingOrientation;
   }
 
+  public double getTotalLenMeters() {
+    return m_totalLenMeters;
+  }
+
   public double getUnspooledLenMeters() {
     return m_unspooledLenMeters;
   }

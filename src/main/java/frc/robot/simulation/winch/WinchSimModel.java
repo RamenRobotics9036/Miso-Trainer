@@ -3,39 +3,38 @@ package frc.robot.simulation.winch;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
- * Simulates a winch with a spool and a string. The string can be extended and retracted,
+ * Simulates a winch with a spool and a cable. The cable can be extended and retracted,
  * and it can be positioned either at the front or the back of a robot.
- * The simulation takes into account the diameter of the spool and the length of the string,
- * as well as the current position of the motor. It can simulate the string breaking
+ * The simulation takes into account the diameter of the spool and the length of the cable,
+ * as well as the current position of the motor. It can simulate the cable breaking
  * if it's extended or retracted beyond its total length.
  * <p>
  * Terminology:
- * Total string length - The length of the string in meters
- * Spool - The cylinder that the string is wrapped around
- * Length Spooled - The amount of string that is wrapped around the spool
- * Length Unspooled - How far the string is extended from the spool
- * Top of spool - The string is coming off the top of the spool
- * Bottom of spool - The string is coming off the bottom of the spool
- * Winding orientation - Whether string is coming off the top of the spool or the bottom
+ * Total cable length - The length of the cable in meters
+ * Spool - The cylinder that the cable is wrapped around
+ * Length Spooled - The amount of cable that is wrapped around the spool
+ * Length Unspooled - How far the cable is extended from the spool
+ * Top of spool - The cable is coming off the top of the spool
+ * Bottom of spool - The cable is coming off the bottom of the spool
+ * Winding orientation - Whether cable is coming off the top of the spool or the bottom
  * </p>
  */
 public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
-   * The WindingOrientation enum represents the orientation of the string.
-   * If the string is towards the back of the robot, then we represent as BackOfRobot.
-   * If the string is towards the front of the robot, then we represent as FrontOfRobot.
+   * The WindingOrientation enum represents the orientation of the cable.
+   * If the cable is towards the back of the robot, then we represent as BackOfRobot.
+   * If the cable is towards the front of the robot, then we represent as FrontOfRobot.
    */
   public enum WindingOrientation {
     BackOfRobot, FrontOfRobot
   }
 
   private double m_spoolDiameterMeters;
-  private double m_totalStringLenMeters;
-  private double m_currentLenSpooled;
+  private WinchCable m_winchCable;
+  private WinchCable m_initialWinchCable;
   private boolean m_isBroken;
   private double m_initialMotorRotations;
   private boolean m_isInitialMotorRotationsSet;
-  private double m_initialLenSpooled;
   private double m_motorPolarity;
 
   /**
@@ -48,74 +47,60 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     if (winchParams.spoolDiameterMeters <= 0) {
       throw new IllegalArgumentException("SpoolDiameterMeters must be >0");
     }
-    if (winchParams.totalStringLenMeters <= 0) {
-      throw new IllegalArgumentException("TotalStringLenMeters must be >0");
+    if (winchParams.winchCable.getTotalLenMeters() <= 0) {
+      throw new IllegalArgumentException("TotalCableLenMeters must be >0");
     }
-    if (winchParams.initialLenSpooled < 0
-        || winchParams.initialLenSpooled > winchParams.totalStringLenMeters) {
+    if (winchParams.winchCable.calcSpooledLenMeters() < 0 || winchParams.winchCable
+        .calcSpooledLenMeters() > winchParams.winchCable.getTotalLenMeters()) {
       throw new IllegalArgumentException(
-          "InitialLenSpooled must be between 0 and TotalStringLenMeters");
+          "InitialLenSpooled must be between 0 and TotalCableLenMeters");
     }
 
     // Initialize fields
     m_spoolDiameterMeters = winchParams.spoolDiameterMeters;
-    m_totalStringLenMeters = winchParams.totalStringLenMeters;
+
+    m_winchCable = winchParams.winchCable;
+    m_initialWinchCable = new WinchCable(m_winchCable);
+
     m_motorPolarity = winchParams.invertMotor ? -1 : 1;
 
-    // If the string is towards the back of the robot, then we represent the length
-    // of string pooled as a NEGATIVE number
-    // See diagram above
-    m_initialLenSpooled = (winchParams.initialWindingOrientation == WindingOrientation.BackOfRobot)
-        ? -1 * winchParams.initialLenSpooled
-        : winchParams.initialLenSpooled;
-    m_currentLenSpooled = m_initialLenSpooled;
     m_isBroken = false;
     m_initialMotorRotations = 0;
     m_isInitialMotorRotationsSet = false;
   }
 
-  public double getTotalStringLenMeters() {
-    return m_totalStringLenMeters;
+  /**
+   * Calculates the length of cable that is spooled, in meters.
+   * If the cable is towards the front of the robot, then we represent the length
+   * of cable as a POSITIVE number.
+   * If the cable is towards the back of the robot, then we represent the length
+   * of cable as a NEGATIVE number.
+   */
+  private double calcSignedCableSpooledLen(WinchCable winchCable) {
+    return (winchCable.getWindingOrientation() == WindingOrientation.BackOfRobot)
+        ? -1 * winchCable.calcSpooledLenMeters()
+        : winchCable.calcSpooledLenMeters();
   }
 
-  /**
-   * Returns the length of string that is currently unspooled.
-   *
-   * @return the length of string that is currently unspooled, in meters
-   */
-  // $LATER All these getters can go away. Instead, the test-code should just use the return value
-  // of updateSimulation().
-  public double getStringUnspooledLen() {
-    return m_totalStringLenMeters - Math.abs(m_currentLenSpooled);
-  }
-
-  /**
-   * Returns the proportion of string that is currently unspooled.
-   *
-   * @return the proportion of string that is currently unspooled, as a decimal
-   */
-  public double getStringUnspooledPercent() {
-    return getStringUnspooledLen() / m_totalStringLenMeters;
-  }
-
-  /**
-   * Returns the current winding orientation.
-   *
-   * @return the current winding orientation
-   */
-  public WindingOrientation getWindingOrientation() {
-    // We define 0 as string orientation: back
-    return (m_currentLenSpooled <= 0) ? WindingOrientation.BackOfRobot
+  private WinchCable calcWinchCableFromSignedSpooledLen(double signedSpooledLen) {
+    WindingOrientation windingOrientation = (signedSpooledLen <= 0) ? WindingOrientation.BackOfRobot
         : WindingOrientation.FrontOfRobot;
+    double absSpooledLen = Math.abs(signedSpooledLen);
+
+    return new WinchCable(getTotalLenMeters(), getTotalLenMeters() - absSpooledLen,
+        windingOrientation);
   }
 
-  /**
-   * Returns the name of the current winding orientation.
-   *
-   * @return the name of the current winding orientation
-   */
-  public String getWindingOrientationName() {
-    return getWindingOrientation().name();
+  private double getTotalLenMeters() {
+    return m_winchCable.getTotalLenMeters();
+  }
+
+  private double getCableUnspooledLen() {
+    return m_winchCable.getUnspooledLenMeters();
+  }
+
+  private WindingOrientation getWindingOrientation() {
+    return m_winchCable.getWindingOrientation();
   }
 
   private double getDeltaRotations(double currentRotationsWithPolarity) {
@@ -132,17 +117,17 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   }
 
   /**
-   * Updates the current length of string spooled. This method is called periodically
+   * Updates the current length of cable spooled. This method is called periodically
    * during simulation to update the state of the winch.
    */
   public WinchState updateSimulation(Double currentRotations) {
-    WinchState winchStateResult = new WinchState(m_totalStringLenMeters);
+    WinchState winchStateResult = new WinchState(getTotalLenMeters());
     double currentRotationsWithPolarity = currentRotations * m_motorPolarity;
     double deltaRotations;
 
     // If the winch is broken, there's nothing to update
     if (m_isBroken) {
-      winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+      winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
       winchStateResult.setWindingOrientation(getWindingOrientation());
       winchStateResult.setIsBroken(true);
       return winchStateResult;
@@ -152,21 +137,23 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     deltaRotations = getDeltaRotations(currentRotationsWithPolarity);
 
     // How much sting-length (in meters) has been spooled or unspooled?
-    double deltaStringLenMeters = deltaRotations * (Math.PI * m_spoolDiameterMeters);
-    double newCurrentLenSpooled = m_initialLenSpooled + deltaStringLenMeters;
+    double deltaCableLenMeters = deltaRotations * (Math.PI * m_spoolDiameterMeters);
+    double newCurrentSignedLenSpooled = calcSignedCableSpooledLen(m_initialWinchCable)
+        + deltaCableLenMeters;
 
     // Check for bounds
-    if (newCurrentLenSpooled > m_totalStringLenMeters) {
-      newCurrentLenSpooled = m_totalStringLenMeters;
+    if (newCurrentSignedLenSpooled > getTotalLenMeters()) {
+      newCurrentSignedLenSpooled = getTotalLenMeters();
       m_isBroken = true;
     }
-    else if (newCurrentLenSpooled < -1 * m_totalStringLenMeters) {
-      newCurrentLenSpooled = -1 * m_totalStringLenMeters;
+    else if (newCurrentSignedLenSpooled < -1 * getTotalLenMeters()) {
+      newCurrentSignedLenSpooled = -1 * getTotalLenMeters();
       m_isBroken = true;
     }
 
-    m_currentLenSpooled = newCurrentLenSpooled;
-    winchStateResult.setStringUnspooledLen(getStringUnspooledLen());
+    m_winchCable = calcWinchCableFromSignedSpooledLen(newCurrentSignedLenSpooled);
+
+    winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
     winchStateResult.setWindingOrientation(getWindingOrientation());
     winchStateResult.setIsBroken(m_isBroken);
 

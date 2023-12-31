@@ -27,15 +27,15 @@ public class WinchSimModelTest {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }
 
-  private double getSpoolDiameter() {
+  private double getTestingSpoolDiameter() {
     return 0.01; // (1 centimeter)
   }
 
-  private double getStringLen() {
+  private double getTestingStringLen() {
     return 5;
   }
 
-  private double getInitialLenSpooled() {
+  private double getTestingInitialLenSpooled() {
     return 1;
   }
 
@@ -44,8 +44,10 @@ public class WinchSimModelTest {
       Supplier<Double> winchInputSupplier,
       WinchState winchState) {
 
-    WinchParams winchParams = new WinchParams(getSpoolDiameter(), getStringLen(),
-        getInitialLenSpooled(), stringOrientation, flipWinchPolarity);
+    WinchParams winchParams = new WinchParams(
+        getTestingSpoolDiameter(), new WinchCable(getTestingStringLen(),
+            getTestingStringLen() - getTestingInitialLenSpooled(), stringOrientation),
+        flipWinchPolarity);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
         new WinchSimModel(winchParams), true);
@@ -68,7 +70,7 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(getStringLen());
+    WinchState tempWinchState = new WinchState(getTestingStringLen());
 
     // Create SimManager
     SimManager<Double, WinchState> winchSimManager = createTestSimManager(stringOrientation,
@@ -81,7 +83,7 @@ public class WinchSimModelTest {
     winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets 0.5 meters longer
-    double spoolCircumference = getSpoolDiameter() * Math.PI;
+    double spoolCircumference = getTestingSpoolDiameter() * Math.PI;
     double numRotations = lenToGrowString / spoolCircumference;
 
     currentWinchRotations[0] = numRotations;
@@ -156,7 +158,7 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(getStringLen());
+    WinchState tempWinchState = new WinchState(getTestingStringLen());
 
     // Create SimManager
     SimManager<Double, WinchState> winchSimManager = createTestSimManager(
@@ -170,7 +172,7 @@ public class WinchSimModelTest {
     winchSimManager.simulationPeriodic();
 
     // Rotate the motor such that string gets a bit longer
-    double spoolCircumference = getSpoolDiameter() * Math.PI;
+    double spoolCircumference = getTestingSpoolDiameter() * Math.PI;
     double numRotations = 0.2 / spoolCircumference;
 
     currentWinchRotations[0] = numRotations;

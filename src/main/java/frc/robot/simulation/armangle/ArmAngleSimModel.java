@@ -15,21 +15,15 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
   /**
    * Constructor.
    */
-  public ArmAngleSimModel(ArmAngleParams armAngleParams) {
+  public ArmAngleSimModel(PivotMechanism pivotMechanism) {
 
-    if (armAngleParams == null) {
-      throw new IllegalArgumentException("armAngleParams cannot be null");
+    if (pivotMechanism == null) {
+      throw new IllegalArgumentException("pivotMechanism cannot be null");
     }
 
-    double min = Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min;
-    if (armAngleParams.armLengthFromEdgeToPivot < min) {
-      throw new IllegalArgumentException("armLengthFromEdgeToPivot needs to be at least "
-          + Constants.SimConstants.klengthFromPivotPointToArmBackEnd_Min
-          + " meters, otherwise the arm cant be pivoted");
-    }
-
-    m_pivotMechanism = new PivotMechanism(armAngleParams.heightFromWinchToPivotPoint,
-        armAngleParams.armLengthFromEdgeToPivot);
+    // $TODO - Shouldn't this use a copy constructor instead?
+    m_pivotMechanism = new PivotMechanism(pivotMechanism.getLengthFromWinchToPivotPoint(),
+        pivotMechanism.getLengthFromEdgeToPivot());
 
     m_angleSignedDegrees = 0;
     m_isBroken = false;

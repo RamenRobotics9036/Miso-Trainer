@@ -107,7 +107,7 @@ public final class Constants {
     public static double karmHeightFromWinchToPivotPoint = 0.75;
 
     public static double klengthFromWinchToPivotPoint_Min = 0.1;
-    public static double klengthFromPivotPointToArmBackEnd_Min = 0.1;
+    public static double klengthFromEdgeToPivot_Min = 0.1;
     public static double karmEncoderRotationsOffset = 0.56;
 
     public static double kdeltaRotationsBeforeBroken = .01;

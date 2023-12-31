@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.armangle.ArmAngleParams;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
@@ -145,11 +144,11 @@ public class ArmSimModelTest {
       return winchState.getStringUnspooledLen();
     };
 
-    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
+    PivotMechanism pivotMechanism = new PivotMechanism(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot);
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(armAngleParams), true);
+        new ArmAngleSimModel(pivotMechanism), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
 
@@ -534,13 +533,13 @@ public class ArmSimModelTest {
       return winchState.getStringUnspooledLen();
     };
 
-    ArmAngleParams armAngleParams = new ArmAngleParams(m_defaultHeightFromWinchToPivotPoint,
+    PivotMechanism pivotMechanism = new PivotMechanism(m_defaultHeightFromWinchToPivotPoint,
         m_defaultArmLengthFromEdgeToPivot);
 
     ArmAngleState tempArmAngleState = new ArmAngleState();
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(armAngleParams), true);
+        new ArmAngleSimModel(pivotMechanism), true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(tempArmAngleState));
 

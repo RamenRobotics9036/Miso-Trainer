@@ -2,6 +2,7 @@ package frc.robot.shuffle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -63,5 +64,53 @@ public class MultiTypeTest {
   public void testGetWrongTypeString() {
     MultiType doubleType = MultiType.of(123.45);
     assertEquals(Optional.empty(), doubleType.getString());
+  }
+
+  @Test
+  void testSetBoolean() {
+    MultiType booleanMultiType = MultiType.of(true);
+
+    // Test setting a new boolean value
+    booleanMultiType.setBoolean(false);
+    assertTrue(false == booleanMultiType.getBoolean().orElseThrow());
+
+    // Test setting null (should throw IllegalArgumentException)
+    assertThrows(IllegalArgumentException.class, () -> booleanMultiType.setBoolean(null));
+
+    // Test setting boolean on a double type (should throw IllegalStateException)
+    MultiType doubleMultiType = MultiType.of(1.0);
+    assertThrows(IllegalStateException.class, () -> doubleMultiType.setBoolean(true));
+  }
+
+  @Test
+  void testSetDouble() {
+    MultiType doubleMultiType = MultiType.of(1.0);
+
+    // Test setting a new double value
+    doubleMultiType.setDouble(2.0);
+    assertEquals(2.0, doubleMultiType.getDouble().orElseThrow());
+
+    // Test setting null (should throw IllegalArgumentException)
+    assertThrows(IllegalArgumentException.class, () -> doubleMultiType.setDouble(null));
+
+    // Test setting double on a string type (should throw IllegalStateException)
+    MultiType stringMultiType = MultiType.of("test");
+    assertThrows(IllegalStateException.class, () -> stringMultiType.setDouble(3.0));
+  }
+
+  @Test
+  void testSetString() {
+    MultiType stringMultiType = MultiType.of("test");
+
+    // Test setting a new string value
+    stringMultiType.setString("new test");
+    assertEquals("new test", stringMultiType.getString().orElseThrow());
+
+    // Test setting null (should throw IllegalArgumentException)
+    assertThrows(IllegalArgumentException.class, () -> stringMultiType.setString(null));
+
+    // Test setting string on a boolean type (should throw IllegalStateException)
+    MultiType booleanMultiType = MultiType.of(true);
+    assertThrows(IllegalStateException.class, () -> booleanMultiType.setString("false"));
   }
 }

@@ -7,9 +7,9 @@ import java.util.Optional;
  * String. Thanks to ChatGPT!
  */
 public class MultiType {
-  private final Boolean m_booleanValue;
-  private final Double m_doubleValue;
-  private final String m_stringValue;
+  private Boolean m_booleanValue;
+  private Double m_doubleValue;
+  private String m_stringValue;
 
   // Private constructor
   private MultiType(Boolean booleanValue, Double doubleValue, String stringValue) {
@@ -49,6 +49,51 @@ public class MultiType {
     }
 
     return new MultiType(null, null, value);
+  }
+
+  /**
+   * Change value of Boolean.
+   */
+  public void setBoolean(Boolean value) {
+    if (m_booleanValue == null) {
+      throw new IllegalStateException("Cannot change type of value");
+    }
+
+    if (value == null) {
+      throw new IllegalArgumentException("Null value not allowed for Boolean type");
+    }
+
+    m_booleanValue = value;
+  }
+
+  /**
+   * Change value of Double.
+   */
+  public void setDouble(Double value) {
+    if (m_doubleValue == null) {
+      throw new IllegalStateException("Cannot change type of value");
+    }
+
+    if (value == null) {
+      throw new IllegalArgumentException("Null value not allowed for Double type");
+    }
+
+    m_doubleValue = value;
+  }
+
+  /**
+   * Change value of String.
+   */
+  public void setString(String value) {
+    if (m_stringValue == null) {
+      throw new IllegalStateException("Cannot change type of value");
+    }
+
+    if (value == null) {
+      throw new IllegalArgumentException("Null value not allowed for String type");
+    }
+
+    m_stringValue = value;
   }
 
   // Methods to safely retrieve the value

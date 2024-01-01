@@ -42,7 +42,7 @@ public class PrefixedConcurrentMap<T> {
   }
 
   public String toString() {
-    return m_map.toString();
+    return m_map.keySet().toString();
   }
 
   /**

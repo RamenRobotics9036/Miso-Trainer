@@ -2,6 +2,8 @@ package frc.robot.simulation.framework;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import java.util.function.Supplier;
 
 /**
@@ -18,7 +20,9 @@ public class SimManager<InputT, OutputT> {
   /**
    * Constructor.
    */
-  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc, boolean enableTestMode) {
+  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
+      Client<Supplier<MultiType>> shuffleClient,
+      boolean enableTestMode) {
     if (simModelFunc == null) {
       throw new IllegalArgumentException("simModelFunc cannot be null");
     }
@@ -47,8 +51,9 @@ public class SimManager<InputT, OutputT> {
    * determine if the robot is enabled.
    */
   public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
+      Client<Supplier<MultiType>> shuffleClient,
       Supplier<Boolean> isRobotEnabledFunc) {
-    this(simModelFunc, true);
+    this(simModelFunc, shuffleClient, true);
 
     if (isRobotEnabledFunc == null) {
       throw new IllegalArgumentException("isRobotEnabledFunc cannot be null");

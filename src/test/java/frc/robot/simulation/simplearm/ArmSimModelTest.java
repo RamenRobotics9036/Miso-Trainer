@@ -135,7 +135,7 @@ public class ArmSimModelTest {
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        new WinchSimModel(winchParams), true);
+        new WinchSimModel(winchParams), null, true);
     winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
     winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
 
@@ -148,7 +148,7 @@ public class ArmSimModelTest {
         m_defaultArmLengthFromEdgeToPivot);
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(pivotMechanism), true);
+        new ArmAngleSimModel(pivotMechanism), null, true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
 
@@ -524,7 +524,7 @@ public class ArmSimModelTest {
         m_winchinvertMotor);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        new WinchSimModel(winchParams), true);
+        new WinchSimModel(winchParams), null, true);
     winchSimManager.setInputHandler(new LambdaSimInput<Double>(staticWinchInputSupplier));
     winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
 
@@ -539,7 +539,7 @@ public class ArmSimModelTest {
     ArmAngleState tempArmAngleState = new ArmAngleState();
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
-        new ArmAngleSimModel(pivotMechanism), true);
+        new ArmAngleSimModel(pivotMechanism), null, true);
     angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(tempArmAngleState));
 

@@ -4,60 +4,61 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Stores a map of key-value pairs, where the key is prefixed with a string path.
+ * Stores a map of key-value pairs, where the key is prefixed with a string path
+ * and the value can be of any type.
  */
-public class PrefixedConcurrentMap {
-  private final ConcurrentHashMap<String, Double> m_map = new ConcurrentHashMap<>();
+public class PrefixedConcurrentMap<T> {
+  private final ConcurrentHashMap<String, T> m_map = new ConcurrentHashMap<>();
 
   // Method to add a value with a prefixed key
-  private void add(String prefix, String key, Double value) {
+  private void add(String prefix, String key, T value) {
     m_map.put(prefix + (prefix.isEmpty() ? "" : "/") + key, value);
   }
 
   // Method to retrieve a value by its full key
-  public Double get(String key) {
+  public T get(String key) {
     return m_map.get(key);
   }
 
   // Method to retrieve all entries in the map
-  public Map<String, Double> getAllEntries() {
+  public Map<String, T> getAllEntries() {
     return m_map;
   }
 
   /**
    * Client interface for adding items.
    */
-  public interface Client {
-    void addItem(String key, Double value);
+  public interface Client<T> {
+    void addItem(String key, T value);
 
-    Client getSubdirectoryClient(String subdirectory);
+    Client<T> getSubdirectoryClient(String subdirectory);
   }
 
   /**
    * Method to create a client with a specific prefix.
    */
-  public Client getClientWithPrefix(String initialPrefix) {
-    return new Client() {
+  public Client<T> getClientWithPrefix(String initialPrefix) {
+    return new Client<T>() {
       private String m_prefix = initialPrefix;
 
       @Override
-      public void addItem(String key, Double value) {
+      public void addItem(String key, T value) {
         add(m_prefix, key, value);
       }
 
       @Override
-      public Client getSubdirectoryClient(String subdirectory) {
-        return new Client() {
+      public Client<T> getSubdirectoryClient(String subdirectory) {
+        return new Client<T>() {
           private final String m_extendedPrefix = m_prefix + (m_prefix.isEmpty() ? "" : "/")
               + subdirectory;
 
           @Override
-          public void addItem(String key, Double value) {
+          public void addItem(String key, T value) {
             add(m_extendedPrefix, key, value);
           }
 
           @Override
-          public Client getSubdirectoryClient(String furtherSubdirectory) {
+          public Client<T> getSubdirectoryClient(String furtherSubdirectory) {
             return getClientWithPrefix(
                 m_extendedPrefix + (m_extendedPrefix.isEmpty() ? "" : "/") + furtherSubdirectory);
           }

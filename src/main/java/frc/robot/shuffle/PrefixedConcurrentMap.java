@@ -41,6 +41,10 @@ public class PrefixedConcurrentMap<T> {
     return Collections.unmodifiableSet(m_map.entrySet());
   }
 
+  public String toString() {
+    return m_map.toString();
+  }
+
   /**
    * Client interface for adding items.
    */

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.AbstractMap;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,10 +64,50 @@ class PrefixedConcurrentMapTest {
     client.addItem("Key1", "Value1");
     client.addItem("Key2", "Value2");
 
-    Map<String, String> entries = m_map.getAllEntries();
+    Set<Map.Entry<String, String>> entries = m_map.getAllEntries();
     assertEquals(2, entries.size(), "Map should contain exactly 2 entries.");
-    assertTrue(entries.containsKey("Test/Key1"), "Map should contain key Test/Key1.");
-    assertTrue(entries.containsKey("Test/Key2"), "Map should contain key Test/Key2.");
+
+    boolean foundKey1 = false;
+    boolean foundKey2 = false;
+    for (Map.Entry<String, String> entry : entries) {
+      if ("Test/Key1".equals(entry.getKey()) && "Value1".equals(entry.getValue())) {
+        foundKey1 = true;
+      }
+      else if ("Test/Key2".equals(entry.getKey()) && "Value2".equals(entry.getValue())) {
+        foundKey2 = true;
+      }
+    }
+
+    assertTrue(foundKey1, "Map should contain key Test/Key1 with correct value.");
+    assertTrue(foundKey2, "Map should contain key Test/Key2 with correct value.");
+  }
+
+  @Test
+  @DisplayName("Test that returned set of entries is read-only")
+  void testReadOnlyEntries() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+    client.addItem("Key1", "Value1");
+
+    Set<Map.Entry<String, String>> entries = m_map.getAllEntries();
+
+    assertThrows(UnsupportedOperationException.class, () -> {
+      // Trying to modify the set should throw an exception
+      entries.add(new AbstractMap.SimpleEntry<>("Test/Key2", "Value2"));
+    });
+  }
+
+  @Test
+  @DisplayName("Test set reflects current map state")
+  void testSetReflectsMapState() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+    client.addItem("Key1", "Value1");
+
+    Set<Map.Entry<String, String>> entries = m_map.getAllEntries();
+    assertEquals(1, entries.size(), "Initial set should contain 1 entry.");
+
+    // Add another item and check if the set reflects this change
+    client.addItem("Key2", "Value2");
+    assertEquals(2, m_map.getAllEntries().size(), "Set should reflect the new state of the map.");
   }
 
   @Test

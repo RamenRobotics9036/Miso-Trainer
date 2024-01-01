@@ -1,6 +1,8 @@
 package frc.robot.shuffle;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,9 +36,9 @@ public class PrefixedConcurrentMap<T> {
     return m_map.get(key);
   }
 
-  // Method to retrieve all entries in the map
-  public Map<String, T> getAllEntries() {
-    return m_map;
+  // Returns a READ-ONLY set of all entries in the map
+  public Set<Map.Entry<String, T>> getAllEntries() {
+    return Collections.unmodifiableSet(m_map.entrySet());
   }
 
   /**

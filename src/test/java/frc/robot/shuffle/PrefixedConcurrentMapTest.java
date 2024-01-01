@@ -1,6 +1,7 @@
 package frc.robot.shuffle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
@@ -65,5 +66,26 @@ class PrefixedConcurrentMapTest {
     assertEquals(2, entries.size(), "Map should contain exactly 2 entries.");
     assertTrue(entries.containsKey("Test/Key1"), "Map should contain key Test/Key1.");
     assertTrue(entries.containsKey("Test/Key2"), "Map should contain key Test/Key2.");
+  }
+
+  @Test
+  @DisplayName("Test that duplicate keys cannot be added")
+  void testNoDuplicateKeysAllowed() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+    client.addItem("Key1", "Value1");
+
+    // Attempt to add another item with the same key
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.addItem("Key1", "Value2");
+    });
+
+    String expectedMessage = "Duplicate key: Test/Key1";
+    String actualMessage = exception.getMessage();
+    assertTrue(actualMessage.contains(expectedMessage),
+        "Exception message should indicate duplicate key.");
+
+    // Verify the original value is still present
+    String value = m_map.get("Test/Key1");
+    assertEquals("Value1", value, "Original value should remain unchanged.");
   }
 }

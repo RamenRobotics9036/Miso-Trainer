@@ -12,7 +12,13 @@ public class PrefixedConcurrentMap<T> {
 
   // Method to add a value with a prefixed key
   private void add(String prefix, String key, T value) {
-    m_map.put(prefix + (prefix.isEmpty() ? "" : "/") + key, value);
+    String fullKey = prefix + (prefix.isEmpty() ? "" : "/") + key;
+
+    if (m_map.containsKey(fullKey)) {
+      throw new IllegalArgumentException("Duplicate key: " + fullKey);
+    }
+
+    m_map.put(fullKey, value);
   }
 
   // Method to retrieve a value by its full key

@@ -11,7 +11,8 @@ import java.util.function.Supplier;
  */
 public class SimManager<InputT, OutputT> {
 
-  private SimModelInterface<InputT, OutputT> m_simModelFunc;
+  private final SimModelInterface<InputT, OutputT> m_simModelFunc;
+  private final Client<Supplier<MultiType>> m_shuffleClient;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -35,6 +36,7 @@ public class SimManager<InputT, OutputT> {
     }
 
     m_simModelFunc = simModelFunc;
+    m_shuffleClient = shuffleClient;
 
     // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
     // Otherwise, we'd get odd results when unit-testing.

@@ -12,6 +12,14 @@ public class PrefixedConcurrentMap<T> {
 
   // Method to add a value with a prefixed key
   private void add(String prefix, String key, T value) {
+    // Check for null or empty prefix and key
+    if (prefix == null || prefix.isEmpty()) {
+      throw new IllegalArgumentException("Prefix cannot be null or empty.");
+    }
+    if (key == null || key.isEmpty()) {
+      throw new IllegalArgumentException("Key cannot be null or empty.");
+    }
+
     String fullKey = prefix + (prefix.isEmpty() ? "" : "/") + key;
 
     if (m_map.containsKey(fullKey)) {
@@ -44,6 +52,10 @@ public class PrefixedConcurrentMap<T> {
    * Method to create a client with a specific prefix.
    */
   public Client<T> getClientWithPrefix(String initialPrefix) {
+    if (initialPrefix == null || initialPrefix.isEmpty()) {
+      throw new IllegalArgumentException("Initial prefix cannot be null or empty.");
+    }
+
     return new Client<T>() {
       private String m_prefix = initialPrefix;
 
@@ -54,9 +66,12 @@ public class PrefixedConcurrentMap<T> {
 
       @Override
       public Client<T> getSubdirectoryClient(String subdirectory) {
+        if (subdirectory == null || subdirectory.isEmpty()) {
+          throw new IllegalArgumentException("Subdirectory cannot be null or empty.");
+        }
+
         return new Client<T>() {
-          private final String m_extendedPrefix = m_prefix + (m_prefix.isEmpty() ? "" : "/")
-              + subdirectory;
+          private final String m_extendedPrefix = m_prefix + "/" + subdirectory;
 
           @Override
           public void addItem(String key, T value) {
@@ -65,8 +80,7 @@ public class PrefixedConcurrentMap<T> {
 
           @Override
           public Client<T> getSubdirectoryClient(String furtherSubdirectory) {
-            return getClientWithPrefix(
-                m_extendedPrefix + (m_extendedPrefix.isEmpty() ? "" : "/") + furtherSubdirectory);
+            return getClientWithPrefix(m_extendedPrefix + "/" + furtherSubdirectory);
           }
         };
       }

@@ -88,4 +88,84 @@ class PrefixedConcurrentMapTest {
     String value = m_map.get("Test/Key1");
     assertEquals("Value1", value, "Original value should remain unchanged.");
   }
+
+  @Test
+  @DisplayName("Test getClientWithPrefix with null initialPrefix throws IllegalArgumentException")
+  void testGetClientWithNullInitialPrefix() {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      m_map.getClientWithPrefix(null);
+    });
+
+    assertEquals("Initial prefix cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty initial prefix.");
+  }
+
+  @Test
+  @DisplayName("Test getClientWithPrefix with empty initialPrefix throws IllegalArgumentException")
+  void testGetClientWithEmptyInitialPrefix() {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      m_map.getClientWithPrefix("");
+    });
+
+    assertEquals("Initial prefix cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty initial prefix.");
+  }
+
+  @Test
+  @DisplayName("Test getSubdirectoryClient with null subdirectory throws IllegalArgumentException")
+  void testGetSubdirectoryClientWithNullSubdirectory() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.getSubdirectoryClient(null);
+    });
+
+    assertEquals("Subdirectory cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty subdirectory.");
+  }
+
+  @Test
+  @DisplayName("Test getSubdirectoryClient with empty subdirectory throws IllegalArgumentException")
+  void testGetSubdirectoryClientWithEmptySubdirectory() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.getSubdirectoryClient("");
+    });
+
+    assertEquals("Subdirectory cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty subdirectory.");
+  }
+
+  @Test
+  @DisplayName("Test add with null key throws IllegalArgumentException")
+  void testAddWithNullKey() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.addItem(null, "Value");
+    });
+
+    assertEquals("Key cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty key.");
+  }
+
+  @Test
+  @DisplayName("Test add with empty key throws IllegalArgumentException")
+  void testAddWithEmptyKey() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.addItem("", "Value");
+    });
+
+    assertEquals("Key cannot be null or empty.",
+        exception.getMessage(),
+        "Exception message should indicate null or empty key.");
+  }
 }

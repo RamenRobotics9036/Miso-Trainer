@@ -210,4 +210,34 @@ class PrefixedConcurrentMapTest {
         exception.getMessage(),
         "Exception message should indicate null or empty key.");
   }
+
+  @Test
+  @DisplayName("Test reset clears all entries")
+  void testReset() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+    client.addItem("Key1", "Value1");
+    client.addItem("Key2", "Value2");
+
+    m_map.reset();
+
+    assertEquals(0, m_map.getAllEntries().size(), "Map should be empty after reset.");
+  }
+
+  @Test
+  @DisplayName("Test toString returns correct string")
+  void testToString() {
+    PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
+    client.addItem("Key1", "Value1");
+    client.addItem("Key2", "Value2");
+
+    String expectedString = "[Test/Key2, Test/Key1]";
+    assertEquals(expectedString, m_map.toString(), "toString should return correct string.");
+  }
+
+  @Test
+  @DisplayName("Test toString returns empty string when map is empty")
+  void testToStringEmpty() {
+    String expectedString = "[]";
+    assertEquals(expectedString, m_map.toString(), "toString should return empty string.");
+  }
 }

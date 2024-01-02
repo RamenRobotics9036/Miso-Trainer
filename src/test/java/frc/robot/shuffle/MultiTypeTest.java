@@ -27,6 +27,13 @@ public class MultiTypeTest {
   }
 
   @Test
+  public void testCreateIntegerType() {
+    MultiType integerType = MultiType.of(10);
+    assertEquals("Integer", integerType.getType());
+    assertEquals(Optional.of(10), integerType.getInteger());
+  }
+
+  @Test
   public void testCreateStringType() {
     MultiType stringType = MultiType.of("Hello");
     assertEquals("String", stringType.getType());
@@ -44,6 +51,11 @@ public class MultiTypeTest {
   }
 
   @Test
+  public void testNullIntegerCreation() {
+    assertThrows(IllegalArgumentException.class, () -> MultiType.of((Integer) null));
+  }
+
+  @Test
   public void testNullStringCreation() {
     assertThrows(IllegalArgumentException.class, () -> MultiType.of((String) null));
   }
@@ -58,6 +70,12 @@ public class MultiTypeTest {
   public void testGetWrongTypeDouble() {
     MultiType booleanType = MultiType.of(false);
     assertEquals(Optional.empty(), booleanType.getDouble());
+  }
+
+  @Test
+  public void testGetWrongTypeInteger() {
+    MultiType stringType = MultiType.of("Test");
+    assertEquals(Optional.empty(), stringType.getInteger());
   }
 
   @Test
@@ -96,6 +114,22 @@ public class MultiTypeTest {
     // Test setting double on a string type (should throw IllegalStateException)
     MultiType stringMultiType = MultiType.of("test");
     assertThrows(IllegalStateException.class, () -> stringMultiType.setDouble(3.0));
+  }
+
+  @Test
+  void testSetInteger() {
+    MultiType integerMultiType = MultiType.of(1);
+
+    // Test setting a new integer value
+    integerMultiType.setInteger(2);
+    assertEquals(2, integerMultiType.getInteger().orElseThrow());
+
+    // Test setting null (should throw IllegalArgumentException)
+    assertThrows(IllegalArgumentException.class, () -> integerMultiType.setInteger(null));
+
+    // Test setting integer on a string type (should throw IllegalStateException)
+    MultiType stringMultiType = MultiType.of("test");
+    assertThrows(IllegalStateException.class, () -> stringMultiType.setInteger(3));
   }
 
   @Test

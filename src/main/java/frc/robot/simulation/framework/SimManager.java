@@ -18,6 +18,13 @@ public class SimManager<InputT, OutputT> {
   private boolean m_outputInitialized = false;
   private Supplier<Boolean> m_isRobotEnabled;
 
+  // $TODO - Need a few unit tests for dashboard
+  // 1) That passing in null for shuffleClient is OK
+  // 2) That if shuffleclient is NON-null, and the sample sim returns null DashboardItems, that the
+  // shuffleboard global hashmap is properly empty
+  // 3) If shuffleclient is NON-null, and the sample sim returns DashboardItems, that they properly
+  // show-up in shuffleboard global hashmap
+
   /**
    * Constructor.
    */

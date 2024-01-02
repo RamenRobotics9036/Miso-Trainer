@@ -1,5 +1,6 @@
 package frc.robot.simulation.armangle;
 
+import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -24,6 +25,13 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
 
     m_angleSignedDegrees = 0;
     m_isBroken = false;
+  }
+
+  /**
+   * Returns parameters to display in Shuffleboard.
+   */
+  public DashboardItem[] getDashboardItems() {
+    return null;
   }
 
   public boolean isModelBroken() {

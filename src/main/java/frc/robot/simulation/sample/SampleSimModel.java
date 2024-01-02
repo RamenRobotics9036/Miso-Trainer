@@ -1,5 +1,6 @@
 package frc.robot.simulation.sample;
 
+import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -15,6 +16,15 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   public SampleSimModel(int ratio) {
     m_ratio = ratio;
     m_accumulator = 0;
+  }
+
+  // $TODO - Need a unit test to check that the sample dashboard value is actually properly updated
+  // in lambda returned from getDashboardItems().
+  /**
+   * Returns parameters to display in Shuffleboard.
+   */
+  public DashboardItem[] getDashboardItems() {
+    return null;
   }
 
   public boolean isModelBroken() {

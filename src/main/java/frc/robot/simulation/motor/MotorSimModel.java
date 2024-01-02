@@ -2,6 +2,8 @@ package frc.robot.simulation.motor;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.shuffle.MultiType;
+import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -11,6 +13,7 @@ public class MotorSimModel implements SimModelInterface<Double, Double> {
   private final DCMotor m_realMotorModel;
   private final DCMotorSim m_realMotorSim;
   private final double m_gearRatio;
+  private final MultiType m_dashMotorRotations = MultiType.of(0.0);
 
   /**
    * Constructor.
@@ -25,6 +28,15 @@ public class MotorSimModel implements SimModelInterface<Double, Double> {
     // inertia
     double motorMomentInertia = 0.0005;
     m_realMotorSim = new DCMotorSim(m_realMotorModel, m_gearRatio, motorMomentInertia);
+  }
+
+  /**
+   * Returns parameters to display in Shuffleboard.
+   */
+  public DashboardItem[] getDashboardItems() {
+    return new DashboardItem[] {
+        new DashboardItem("Motor Rotations", () -> m_dashMotorRotations)
+    };
   }
 
   public boolean isModelBroken() {

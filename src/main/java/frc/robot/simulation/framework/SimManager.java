@@ -104,7 +104,7 @@ public class SimManager<InputT, OutputT> {
     }
 
     for (DashboardItem dashboardItem : dashboardItems) {
-      m_shuffleClient.addItem("Ido was here", dashboardItem.getSupplier());
+      m_shuffleClient.addItem(dashboardItem.getParamName(), dashboardItem.getSupplier());
     }
   }
 

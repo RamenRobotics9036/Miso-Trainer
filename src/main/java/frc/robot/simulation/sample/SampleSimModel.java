@@ -1,5 +1,6 @@
 package frc.robot.simulation.sample;
 
+import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
@@ -9,6 +10,7 @@ import frc.robot.simulation.framework.SimModelInterface;
 public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   private int m_accumulator;
   private final int m_ratio;
+  private final MultiType m_dashAccumulator = MultiType.of(0);
 
   /**
    * Constructor.
@@ -24,7 +26,9 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
    * Returns parameters to display in Shuffleboard.
    */
   public DashboardItem[] getDashboardItems() {
-    return null;
+    return new DashboardItem[] {
+        new DashboardItem("Accumulator", () -> m_dashAccumulator)
+    };
   }
 
   public boolean isModelBroken() {

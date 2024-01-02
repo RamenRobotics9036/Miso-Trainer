@@ -1,6 +1,9 @@
 package frc.robot.shuffle;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.function.Supplier;
 
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.sample.SampleSimModel;
@@ -11,10 +14,12 @@ import org.junit.jupiter.api.Test;
  * Test querying each sim model for the properties it shows on the Shuffleboard dash.
  */
 public class ShuffleClientTest {
+  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
 
   @BeforeEach
   public void setUp() {
-    // $TODO - Reset the global cache of dashboard items
+    // Reset the global cache of dashboard items before each test
+    m_globalMap.clear();
   }
 
   @Test

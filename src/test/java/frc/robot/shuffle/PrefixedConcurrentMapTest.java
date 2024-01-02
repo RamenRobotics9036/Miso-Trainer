@@ -212,15 +212,15 @@ class PrefixedConcurrentMapTest {
   }
 
   @Test
-  @DisplayName("Test reset clears all entries")
-  void testReset() {
+  @DisplayName("Test clearing all entries")
+  void testClear() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
     client.addItem("Key2", "Value2");
 
-    m_map.reset();
+    m_map.clear();
 
-    assertEquals(0, m_map.getAllEntries().size(), "Map should be empty after reset.");
+    assertEquals(0, m_map.getAllEntries().size(), "Map should be empty after clearing it.");
   }
 
   @Test

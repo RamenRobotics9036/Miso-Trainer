@@ -41,7 +41,7 @@ public class PrefixedConcurrentMap<T> {
     return Collections.unmodifiableSet(m_map.entrySet());
   }
 
-  public void reset() {
+  public void clear() {
     m_map.clear();
   }
 

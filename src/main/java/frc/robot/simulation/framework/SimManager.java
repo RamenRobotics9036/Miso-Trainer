@@ -53,6 +53,8 @@ public class SimManager<InputT, OutputT> {
     else {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
+
+    queryAndSetDashboardItems();
   }
 
   /**
@@ -82,6 +84,28 @@ public class SimManager<InputT, OutputT> {
 
   private boolean isRobotEnabled() {
     return m_isRobotEnabled.get();
+  }
+
+  // Add items to the global hashmap, for every dashboard parameter exposed
+  // by the SimModel.
+  private void queryAndSetDashboardItems() {
+    // No dashboard items are added globally if shuffleClient wasnt passed into
+    // constructor
+    if (m_shuffleClient == null) {
+      return;
+    }
+
+    DashboardItem[] dashboardItems = m_simModelFunc.getDashboardItems();
+
+    // A particular SimModel may return null for getDashboardItems(),
+    // in which case we do nothing.
+    if (dashboardItems == null) {
+      return;
+    }
+
+    for (DashboardItem dashboardItem : dashboardItems) {
+      m_shuffleClient.addItem("Ido was here", dashboardItem.getSupplier());
+    }
   }
 
   // Once the input and output handler are both setup, we want to do one run of the

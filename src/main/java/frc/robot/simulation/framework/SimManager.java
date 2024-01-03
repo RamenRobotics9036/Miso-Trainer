@@ -98,7 +98,7 @@ public class SimManager<InputT, OutputT> {
       return;
     }
 
-    DashboardItem[] dashboardItems = m_simModelFunc.getDashboardItems();
+    DashboardSupplierItem[] dashboardItems = m_simModelFunc.getDashboardItems();
 
     // A particular SimModel may return null for getDashboardItems(),
     // in which case we do nothing.
@@ -106,7 +106,7 @@ public class SimManager<InputT, OutputT> {
       return;
     }
 
-    for (DashboardItem dashboardItem : dashboardItems) {
+    for (DashboardSupplierItem dashboardItem : dashboardItems) {
       m_shuffleClient.addItem(dashboardItem.getParamName(), dashboardItem.getSupplier());
     }
   }

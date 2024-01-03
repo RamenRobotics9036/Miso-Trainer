@@ -1,7 +1,7 @@
 package frc.robot.simulation.sample;
 
 import frc.robot.shuffle.MultiType;
-import frc.robot.simulation.framework.DashboardItem;
+import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -25,9 +25,9 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   /**
    * Returns parameters to display in Shuffleboard.
    */
-  public DashboardItem[] getDashboardItems() {
-    return new DashboardItem[] {
-        new DashboardItem("Accumulator", () -> m_dashAccumulator)
+  public DashboardSupplierItem[] getDashboardItems() {
+    return new DashboardSupplierItem[] {
+        new DashboardSupplierItem("Accumulator", () -> m_dashAccumulator)
     };
   }
 

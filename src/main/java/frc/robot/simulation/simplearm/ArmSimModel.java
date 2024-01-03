@@ -2,7 +2,7 @@ package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.math.Pair;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.framework.DashboardItem;
+import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -124,7 +124,7 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
   /**
    * Returns parameters to display in Shuffleboard.
    */
-  public DashboardItem[] getDashboardItems() {
+  public DashboardSupplierItem[] getDashboardItems() {
     return null;
   }
 

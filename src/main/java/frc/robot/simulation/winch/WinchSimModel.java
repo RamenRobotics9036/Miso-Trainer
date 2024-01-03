@@ -1,6 +1,6 @@
 package frc.robot.simulation.winch;
 
-import frc.robot.simulation.framework.DashboardItem;
+import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -116,7 +116,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
    * Returns parameters to display in Shuffleboard.
    */
-  public DashboardItem[] getDashboardItems() {
+  public DashboardSupplierItem[] getDashboardItems() {
     return null;
   }
 

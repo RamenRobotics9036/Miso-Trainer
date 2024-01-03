@@ -8,11 +8,11 @@ import java.util.function.Supplier;
  * 1. The name of the Parameter, as a String
  * 2. A supplier for a MultiType object that holds the value of the Parameter
  */
-public class DashboardItem {
+public class DashboardSupplierItem {
   private final String m_paramName;
   private final Supplier<MultiType> m_supplier;
 
-  public DashboardItem(String paramName, Supplier<MultiType> supplier) {
+  public DashboardSupplierItem(String paramName, Supplier<MultiType> supplier) {
     m_paramName = paramName;
     m_supplier = supplier;
   }

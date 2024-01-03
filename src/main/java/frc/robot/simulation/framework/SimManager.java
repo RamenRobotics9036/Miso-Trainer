@@ -13,6 +13,7 @@ public class SimManager<InputT, OutputT> {
 
   private final SimModelInterface<InputT, OutputT> m_simModelFunc;
   private final Client<Supplier<MultiType>> m_shuffleClient;
+  private MultiType[] m_dashboardMultiTypeStorage = null;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -54,7 +55,8 @@ public class SimManager<InputT, OutputT> {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
 
-    queryAndSetDashboardItems();
+    old_queryAndSetDashboardItems();
+    setupListOfDashboardProperties();
   }
 
   /**
@@ -88,7 +90,8 @@ public class SimManager<InputT, OutputT> {
 
   // Add items to the global hashmap, for every dashboard parameter exposed
   // by the SimModel.
-  private void queryAndSetDashboardItems() {
+  // $TODO - Get rid of this
+  private void old_queryAndSetDashboardItems() {
     // No dashboard items are added globally if shuffleClient wasnt passed into
     // constructor
     if (m_shuffleClient == null) {
@@ -105,6 +108,14 @@ public class SimManager<InputT, OutputT> {
 
     for (DashboardItem dashboardItem : dashboardItems) {
       m_shuffleClient.addItem(dashboardItem.getParamName(), dashboardItem.getSupplier());
+    }
+  }
+
+  private void setupListOfDashboardProperties() {
+    // No dashboard items are added globally if shuffleClient wasnt passed into
+    // constructor
+    if (m_shuffleClient == null) {
+      return;
     }
   }
 

@@ -4,19 +4,19 @@ import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.DashboardPluginInterface;
 
 /**
- * For Sample Sim Model, exposes the parameters we show on Shuffleboard dashboard.
+ * For Sample Sim Model, exposes the properties we show on Shuffleboard dashboard.
  */
 public class SampleDashboardPlugin implements DashboardPluginInterface<Integer, Integer> {
 
   @Override
-  public String[] queryListOfParameters() {
+  public String[] queryListOfDashboardProperties() {
     return new String[] {
         "Accumulator"
     };
   }
 
   @Override
-  public MultiType[] getDashboardParamsFromInputOutput(Integer input, Integer output) {
+  public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
     MultiType[] result = new MultiType[1];
 
     result[0] = MultiType.of(output);

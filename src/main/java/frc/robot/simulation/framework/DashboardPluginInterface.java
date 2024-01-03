@@ -3,7 +3,7 @@ package frc.robot.simulation.framework;
 import frc.robot.shuffle.MultiType;
 
 /**
- * Interface for Simulation Models to specify which parameters to show
+ * Interface for Simulation Models to specify which properties to show
  * on the Shuffleboard dashboard.
  * <P>
  * The way this works is that the SimModel updates the simulation every 20ms.
@@ -22,7 +22,7 @@ import frc.robot.shuffle.MultiType;
  * </P>
  */
 public interface DashboardPluginInterface<InputT, OutputT> {
-  public String[] queryListOfParameters();
+  public String[] queryListOfDashboardProperties();
 
-  public MultiType[] getDashboardParamsFromInputOutput(InputT input, OutputT output);
+  public MultiType[] getDashboardPropertiesFromInputOutput(InputT input, OutputT output);
 }

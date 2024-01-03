@@ -2,6 +2,8 @@ package frc.robot.simulation.framework;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import java.util.function.Supplier;
 
 /**
@@ -9,16 +11,26 @@ import java.util.function.Supplier;
  */
 public class SimManager<InputT, OutputT> {
 
-  private SimModelInterface<InputT, OutputT> m_simModelFunc;
+  private final SimModelInterface<InputT, OutputT> m_simModelFunc;
+  private final Client<Supplier<MultiType>> m_shuffleClient;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
   private Supplier<Boolean> m_isRobotEnabled;
 
+  // $TODO - Need a few unit tests for dashboard
+  // 1) That passing in null for shuffleClient is OK
+  // 2) That if shuffleclient is NON-null, and the sample sim returns null DashboardItems, that the
+  // shuffleboard global hashmap is properly empty
+  // 3) If shuffleclient is NON-null, and the sample sim returns DashboardItems, that they properly
+  // show-up in shuffleboard global hashmap
+
   /**
    * Constructor.
    */
-  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc, boolean enableTestMode) {
+  public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
+      Client<Supplier<MultiType>> shuffleClient,
+      boolean enableTestMode) {
     if (simModelFunc == null) {
       throw new IllegalArgumentException("simModelFunc cannot be null");
     }
@@ -31,6 +43,7 @@ public class SimManager<InputT, OutputT> {
     }
 
     m_simModelFunc = simModelFunc;
+    m_shuffleClient = shuffleClient;
 
     // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
     // Otherwise, we'd get odd results when unit-testing.
@@ -40,6 +53,8 @@ public class SimManager<InputT, OutputT> {
     else {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
+
+    queryAndSetDashboardItems();
   }
 
   /**
@@ -47,8 +62,9 @@ public class SimManager<InputT, OutputT> {
    * determine if the robot is enabled.
    */
   public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
+      Client<Supplier<MultiType>> shuffleClient,
       Supplier<Boolean> isRobotEnabledFunc) {
-    this(simModelFunc, true);
+    this(simModelFunc, shuffleClient, true);
 
     if (isRobotEnabledFunc == null) {
       throw new IllegalArgumentException("isRobotEnabledFunc cannot be null");
@@ -68,6 +84,28 @@ public class SimManager<InputT, OutputT> {
 
   private boolean isRobotEnabled() {
     return m_isRobotEnabled.get();
+  }
+
+  // Add items to the global hashmap, for every dashboard parameter exposed
+  // by the SimModel.
+  private void queryAndSetDashboardItems() {
+    // No dashboard items are added globally if shuffleClient wasnt passed into
+    // constructor
+    if (m_shuffleClient == null) {
+      return;
+    }
+
+    DashboardItem[] dashboardItems = m_simModelFunc.getDashboardItems();
+
+    // A particular SimModel may return null for getDashboardItems(),
+    // in which case we do nothing.
+    if (dashboardItems == null) {
+      return;
+    }
+
+    for (DashboardItem dashboardItem : dashboardItems) {
+      m_shuffleClient.addItem(dashboardItem.getParamName(), dashboardItem.getSupplier());
+    }
   }
 
   // Once the input and output handler are both setup, we want to do one run of the

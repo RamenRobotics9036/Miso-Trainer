@@ -50,7 +50,7 @@ public class WinchSimModelTest {
         flipWinchPolarity);
 
     SimManager<Double, WinchState> winchSimManager = new SimManager<Double, WinchState>(
-        new WinchSimModel(winchParams), true);
+        new WinchSimModel(winchParams), null, true);
     winchSimManager.setInputHandler(new LambdaSimInput<Double>(winchInputSupplier));
     winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(winchState));
 

@@ -140,7 +140,7 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.karmLengthFromEdgeToPivot);
 
     m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(pivotMechanism),
-        false);
+        null, false);
     m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
     m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
   }
@@ -153,7 +153,7 @@ public class ArmSystemSim extends ArmSystem {
 
     // Create the motor simulation for the winch motor
     m_winchMotorSimManager = new SimManager<Double, Double>(
-        new MotorSimModel(Constants.SimConstants.kwinchSimGearRatio), false);
+        new MotorSimModel(Constants.SimConstants.kwinchSimGearRatio), null, false);
     m_winchMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armWinch));
     m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
 
@@ -163,7 +163,8 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.kTotalStringLenMeters - Constants.SimConstants.kCurrentLenSpooled,
         WindingOrientation.BackOfRobot), true);
 
-    m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams), false);
+    m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams), null,
+        false);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }
@@ -174,7 +175,7 @@ public class ArmSystemSim extends ArmSystem {
 
     // Create the motor simulation for the extender motor
     m_extenderMotorSimManager = new SimManager<Double, Double>(
-        new MotorSimModel(Constants.SimConstants.kextenderSimGearRatio), false);
+        new MotorSimModel(Constants.SimConstants.kextenderSimGearRatio), null, false);
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 

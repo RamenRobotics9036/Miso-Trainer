@@ -30,7 +30,7 @@ public class SampleSimManagerTest {
     // Note: Many of these tests run with isRobotEnabled = () -> true. This is because
     // we want all the testing to concretely run the simulation, and not skip it.
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), () -> true);
+        new SampleSimModel(ratio), null, () -> true);
     assertTrue(sampleSimManager != null);
   }
 
@@ -59,7 +59,7 @@ public class SampleSimManagerTest {
 
       @SuppressWarnings("unused")
       SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-          new SampleSimModel(ratio), null);
+          new SampleSimModel(ratio), null, null);
     });
   }
 
@@ -77,7 +77,7 @@ public class SampleSimManagerTest {
   public void creatingSimManagerWithNoInputOutputsAndRunningPeriodicShouldSucceed() {
     int ratio = 2;
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), () -> true);
+        new SampleSimModel(ratio), null, () -> true);
 
     runSimulationTenTimes(sampleSimManager);
   }
@@ -91,7 +91,7 @@ public class SampleSimManagerTest {
     int expectedVallue = outputVariable[0];
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), () -> true);
+        new SampleSimModel(ratio), null, () -> true);
     sampleSimManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
       outputVariable[0] = numOutput;
     }));
@@ -121,7 +121,7 @@ public class SampleSimManagerTest {
     };
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), () -> isRobotEnabled[0]);
+        new SampleSimModel(ratio), null, () -> isRobotEnabled[0]);
 
     sampleSimManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
       return inputVariable[0];

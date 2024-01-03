@@ -41,6 +41,14 @@ public class PrefixedConcurrentMap<T> {
     return Collections.unmodifiableSet(m_map.entrySet());
   }
 
+  public void clear() {
+    m_map.clear();
+  }
+
+  public String toString() {
+    return m_map.keySet().toString();
+  }
+
   /**
    * Client interface for adding items.
    */

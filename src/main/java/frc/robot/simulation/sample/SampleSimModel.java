@@ -36,8 +36,15 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
     return false;
   }
 
+  /**
+   * Runs the simulation.
+   */
   public Integer updateSimulation(Integer numValue) {
     m_accumulator += (numValue * m_ratio);
+
+    // Set the dashboard value too
+    m_dashAccumulator.setInteger(m_accumulator);
+
     return m_accumulator;
   }
 }

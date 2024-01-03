@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.function.Supplier;
-
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 import frc.robot.simulation.sample.SampleSimModel;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -104,42 +105,49 @@ public class ShuffleClientTest {
   // $TODO - Verify that after the value is CHANGED, querying the Supplier again returns the new
   // value
 
-  // $TODO - Get rid of this
-  // public int testSimulation_Helper(int ratio,
-  // int initialOutputValue,
-  // int inputValue,
-  // boolean isEnabledDuringInit,
-  // boolean isEnabledDuringSimulation,
-  // boolean doSimulationTenTimes) {
+  @Test
+  public void changingParametersShouldChangeDashboardValues() {
 
-  // final int[] inputVariable = {
-  // inputValue
-  // };
+    int ratio = 1;
 
-  // final int[] outputVariable = {
-  // initialOutputValue
-  // };
+    final int[] inputVariable = {
+        1
+    };
 
-  // final boolean[] isRobotEnabled = {
-  // isEnabledDuringInit
-  // };
+    final int[] outputVariable = {
+        0
+    };
 
-  // SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-  // new SampleSimModel(ratio), null, () -> isRobotEnabled[0]);
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
-  // sampleSimManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
-  // return inputVariable[0];
-  // }));
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, () -> true);
 
-  // sampleSimManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
-  // outputVariable[0] = numOutput;
-  // }));
+    sampleSimManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
+      return inputVariable[0];
+    }));
 
-  // isRobotEnabled[0] = isEnabledDuringSimulation;
-  // if (doSimulationTenTimes) {
-  // runSimulationTenTimes(sampleSimManager);
-  // }
+    sampleSimManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
+      outputVariable[0] = numOutput;
+    }));
 
-  // return outputVariable[0];
-  // }
+    // Get the dashboardSupplier
+    Supplier<MultiType> dashboardSupplier = m_globalMap.get("Sample sim/Accumulator");
+
+    // After initializing the input and output handlers, value of output should be 1
+    int expected = 1;
+    assertEquals(expected, outputVariable[0]);
+
+    int actual = dashboardSupplier.get().getInteger().orElseThrow();
+    assertEquals(expected, actual);
+
+    // Simulate another iteration
+    sampleSimManager.simulationPeriodic();
+
+    expected = 2;
+    assertEquals(expected, outputVariable[0]);
+
+    actual = dashboardSupplier.get().getInteger().orElseThrow();
+    assertEquals(expected, actual);
+  }
 }

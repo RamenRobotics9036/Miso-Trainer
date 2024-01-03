@@ -164,4 +164,29 @@ public class MultiType {
       return "None";
     }
   }
+
+  /**
+   * CopyTo method.
+   */
+  public void copyTo(MultiType other) {
+    if (other == null) {
+      throw new IllegalArgumentException("Null value not allowed for copyTo target");
+    }
+
+    if (m_booleanValue != null) {
+      other.setBoolean(m_booleanValue);
+    }
+
+    if (m_doubleValue != null) {
+      other.setDouble(m_doubleValue);
+    }
+
+    if (m_integerValue != null) {
+      other.setInteger(m_integerValue);
+    }
+
+    if (m_stringValue != null) {
+      other.setString(m_stringValue);
+    }
+  }
 }

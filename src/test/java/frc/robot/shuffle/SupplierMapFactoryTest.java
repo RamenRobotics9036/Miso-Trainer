@@ -11,14 +11,14 @@ class SupplierMapFactoryTest {
 
   @Test
   @DisplayName("Test that getGlobalInstance returns a ConcurrentHashMap instance")
-  void testGetGlobalInstanceReturnsMap() {
+  public void testGetGlobalInstanceReturnsMap() {
     PrefixedConcurrentMap<Supplier<MultiType>> map = SupplierMapFactory.getGlobalInstance();
     assertNotNull(map, "getGlobalInstance should return a non-null ConcurrentHashMap instance.");
   }
 
   @Test
   @DisplayName("Test that getGlobalInstance always returns the same ConcurrentHashMap instance")
-  void testGetGlobalInstanceSingletonProperty() {
+  public void testGetGlobalInstanceSingletonProperty() {
     PrefixedConcurrentMap<Supplier<MultiType>> map1 = SupplierMapFactory.getGlobalInstance();
     PrefixedConcurrentMap<Supplier<MultiType>> map2 = SupplierMapFactory.getGlobalInstance();
 

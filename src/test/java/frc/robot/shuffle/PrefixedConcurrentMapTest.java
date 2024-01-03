@@ -22,7 +22,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test adding and retrieving a single item")
-  void testAddAndGetSingleItem() {
+  public void testAddAndGetSingleItem() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
 
@@ -32,7 +32,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test subdirectory functionality")
-  void testSubdirectory() {
+  public void testSubdirectory() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     PrefixedConcurrentMap.Client<String> subClient = client.getSubdirectoryClient("SubTest");
 
@@ -44,7 +44,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test multiple levels of subdirectories")
-  void testMultipleSubdirectories() {
+  public void testMultipleSubdirectories() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Level1");
     PrefixedConcurrentMap.Client<String> subClient1 = client.getSubdirectoryClient("Level2");
     PrefixedConcurrentMap.Client<String> subClient2 = subClient1.getSubdirectoryClient("Level3");
@@ -59,7 +59,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test retrieving all entries")
-  void testGetAllEntries() {
+  public void testGetAllEntries() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
     client.addItem("Key2", "Value2");
@@ -84,7 +84,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test that returned set of entries is read-only")
-  void testReadOnlyEntries() {
+  public void testReadOnlyEntries() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
 
@@ -98,7 +98,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test set reflects current map state")
-  void testSetReflectsMapState() {
+  public void testSetReflectsMapState() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
 
@@ -112,7 +112,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test that duplicate keys cannot be added")
-  void testNoDuplicateKeysAllowed() {
+  public void testNoDuplicateKeysAllowed() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
 
@@ -133,7 +133,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test getClientWithPrefix with null initialPrefix throws IllegalArgumentException")
-  void testGetClientWithNullInitialPrefix() {
+  public void testGetClientWithNullInitialPrefix() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_map.getClientWithPrefix(null);
     });
@@ -145,7 +145,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test getClientWithPrefix with empty initialPrefix throws IllegalArgumentException")
-  void testGetClientWithEmptyInitialPrefix() {
+  public void testGetClientWithEmptyInitialPrefix() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_map.getClientWithPrefix("");
     });
@@ -157,7 +157,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test getSubdirectoryClient with null subdirectory throws IllegalArgumentException")
-  void testGetSubdirectoryClientWithNullSubdirectory() {
+  public void testGetSubdirectoryClientWithNullSubdirectory() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
 
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -171,7 +171,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test getSubdirectoryClient with empty subdirectory throws IllegalArgumentException")
-  void testGetSubdirectoryClientWithEmptySubdirectory() {
+  public void testGetSubdirectoryClientWithEmptySubdirectory() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
 
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -185,7 +185,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test add with null key throws IllegalArgumentException")
-  void testAddWithNullKey() {
+  public void testAddWithNullKey() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
 
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -199,7 +199,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test add with empty key throws IllegalArgumentException")
-  void testAddWithEmptyKey() {
+  public void testAddWithEmptyKey() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
 
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -213,7 +213,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test clearing all entries")
-  void testClear() {
+  public void testClear() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
     client.addItem("Key2", "Value2");
@@ -225,7 +225,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test toString returns correct string")
-  void testToString() {
+  public void testToString() {
     PrefixedConcurrentMap.Client<String> client = m_map.getClientWithPrefix("Test");
     client.addItem("Key1", "Value1");
     client.addItem("Key2", "Value2");
@@ -236,7 +236,7 @@ class PrefixedConcurrentMapTest {
 
   @Test
   @DisplayName("Test toString returns empty string when map is empty")
-  void testToStringEmpty() {
+  public void testToStringEmpty() {
     String expectedString = "[]";
     assertEquals(expectedString, m_map.toString(), "toString should return empty string.");
   }

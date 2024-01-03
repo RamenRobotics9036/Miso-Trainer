@@ -85,7 +85,7 @@ public class MultiTypeTest {
   }
 
   @Test
-  void testSetBoolean() {
+  public void testSetBoolean() {
     MultiType booleanMultiType = MultiType.of(true);
 
     // Test setting a new boolean value
@@ -101,7 +101,7 @@ public class MultiTypeTest {
   }
 
   @Test
-  void testSetDouble() {
+  public void testSetDouble() {
     MultiType doubleMultiType = MultiType.of(1.0);
 
     // Test setting a new double value
@@ -117,7 +117,7 @@ public class MultiTypeTest {
   }
 
   @Test
-  void testSetInteger() {
+  public void testSetInteger() {
     MultiType integerMultiType = MultiType.of(1);
 
     // Test setting a new integer value
@@ -133,7 +133,7 @@ public class MultiTypeTest {
   }
 
   @Test
-  void testSetString() {
+  public void testSetString() {
     MultiType stringMultiType = MultiType.of("test");
 
     // Test setting a new string value
@@ -146,5 +146,82 @@ public class MultiTypeTest {
     // Test setting string on a boolean type (should throw IllegalStateException)
     MultiType booleanMultiType = MultiType.of(true);
     assertThrows(IllegalStateException.class, () -> booleanMultiType.setString("false"));
+  }
+
+  // Unit tests for CopyTo method
+  @Test
+  public void testCopyToBoolean() {
+    MultiType booleanMultiType = MultiType.of(true);
+    MultiType otherBooleanMultiType = MultiType.of(false);
+
+    booleanMultiType.copyTo(otherBooleanMultiType);
+    assertEquals(Optional.of(true), otherBooleanMultiType.getBoolean());
+  }
+
+  @Test
+  public void testCopyToDouble() {
+    MultiType doubleMultiType = MultiType.of(1.0);
+    MultiType otherDoubleMultiType = MultiType.of(2.0);
+
+    doubleMultiType.copyTo(otherDoubleMultiType);
+    assertEquals(Optional.of(1.0), otherDoubleMultiType.getDouble());
+  }
+
+  @Test
+  public void testCopyToInteger() {
+    MultiType integerMultiType = MultiType.of(1);
+    MultiType otherIntegerMultiType = MultiType.of(2);
+
+    integerMultiType.copyTo(otherIntegerMultiType);
+    assertEquals(Optional.of(1), otherIntegerMultiType.getInteger());
+  }
+
+  @Test
+  public void testCopyToString() {
+    MultiType stringMultiType = MultiType.of("test");
+    MultiType otherStringMultiType = MultiType.of("other test");
+
+    stringMultiType.copyTo(otherStringMultiType);
+    assertEquals(Optional.of("test"), otherStringMultiType.getString());
+  }
+
+  @Test
+  public void testCopyToDifferentTypeBool() {
+    MultiType stringMultiType = MultiType.of("test");
+    MultiType booleanMultiType = MultiType.of(true);
+
+    assertThrows(IllegalStateException.class, () -> stringMultiType.copyTo(booleanMultiType));
+  }
+
+  @Test
+  public void testCopyToDifferentTypeDouble() {
+    MultiType stringMultiType = MultiType.of("test");
+    MultiType doubleMultiType = MultiType.of(1.0);
+
+    assertThrows(IllegalStateException.class, () -> stringMultiType.copyTo(doubleMultiType));
+  }
+
+  @Test
+  public void testCopyToDifferentTypeInteger() {
+    MultiType stringMultiType = MultiType.of("test");
+    MultiType integerMultiType = MultiType.of(1);
+
+    assertThrows(IllegalStateException.class, () -> stringMultiType.copyTo(integerMultiType));
+  }
+
+  @Test
+  public void testCopyToDifferentTypeString() {
+    MultiType booleanMultiType = MultiType.of(true);
+    MultiType stringMultiType = MultiType.of("test");
+
+    assertThrows(IllegalStateException.class, () -> booleanMultiType.copyTo(stringMultiType));
+  }
+
+  @Test
+  public void testCopyToNull() {
+    MultiType booleanMultiType = MultiType.of(true);
+    MultiType nullMultiType = null;
+
+    assertThrows(IllegalArgumentException.class, () -> booleanMultiType.copyTo(nullMultiType));
   }
 }

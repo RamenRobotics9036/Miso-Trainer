@@ -17,7 +17,10 @@ public class SampleDashboardPlugin implements DashboardPluginInterface<Integer, 
 
   @Override
   public MultiType[] getDashboardParamsFromInputOutput(Integer input, Integer output) {
-    throw new UnsupportedOperationException(
-        "Unimplemented method 'getDashboardParamsFromInputOutput'");
+    MultiType[] result = new MultiType[1];
+
+    result[0] = MultiType.of(output);
+
+    return result;
   }
 }

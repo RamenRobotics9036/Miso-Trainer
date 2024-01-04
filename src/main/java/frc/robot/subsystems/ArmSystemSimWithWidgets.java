@@ -12,15 +12,21 @@ import frc.robot.commands.ArmToMiddleNodeCone;
 import frc.robot.commands.RetractArmCommand;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap;
+import frc.robot.shuffle.SupplierMapFactory;
+
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * This adds shuffleboard widgets to the ArmSystemSim class.
  */
 public class ArmSystemSimWithWidgets extends ArmSystemSim {
   private DefaultLayout m_defaultLayout = new DefaultLayout();
+  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
 
   private static class SendableArmPosition implements Sendable {
     private DoubleSupplier m_percentRaisedSupplier;
@@ -94,7 +100,11 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
     // Extender motor power
     pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
-    Shuffleboard.getTab("Simulation").addDouble("Extender Motor Power", () -> m_armExtender.get())
+    // $TODO - Move this into a helper to get a Double or default 0.0. Change it so it doesnt throw
+    // too
+    Double extenderMotorPower = m_globalMap.get("ArmSystem/ExtenderMotor/InputPower").get()
+        .getDouble().orElseThrow();
+    Shuffleboard.getTab("Simulation").addDouble("Extender Motor Power", () -> extenderMotorPower)
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

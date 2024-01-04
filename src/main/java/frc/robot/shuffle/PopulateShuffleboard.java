@@ -41,5 +41,13 @@ public class PopulateShuffleboard {
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+
+    // Winch motor power
+    pos = m_defaultLayout.getWidgetPosition("Winch Motor Power");
+    Shuffleboard.getTab("Simulation")
+        .addDouble("Winch Motor Power", getDoubleSupplier("ArmSystem/WinchMotor/InputPower"))
+        .withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 }

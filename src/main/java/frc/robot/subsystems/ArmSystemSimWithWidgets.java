@@ -144,13 +144,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
-    // Winch motor power
-    pos = m_defaultLayout.getWidgetPosition("Winch Motor Power");
-    Shuffleboard.getTab("Simulation").addDouble("Winch Motor Power", () -> m_armWinch.get())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
     // Winch String % extended
     pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
     Shuffleboard.getTab("Simulation")

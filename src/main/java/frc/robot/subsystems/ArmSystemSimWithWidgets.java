@@ -102,9 +102,11 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
     // $TODO - Move this into a helper to get a Double or default 0.0. Change it so it doesnt throw
     // too
-    Double extenderMotorPower = m_globalMap.get("ArmSystem/ExtenderMotor/InputPower").get()
-        .getDouble().orElseThrow();
-    Shuffleboard.getTab("Simulation").addDouble("Extender Motor Power", () -> extenderMotorPower)
+    Supplier<MultiType> extenderMotorPowerSupplier = m_globalMap
+        .get("ArmSystem/ExtenderMotor/InputPower");
+    DoubleSupplier supplierDouble = () -> extenderMotorPowerSupplier.get().getDouble().orElse(0.0);
+
+    Shuffleboard.getTab("Simulation").addDouble("Extender Motor Power", supplierDouble)
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

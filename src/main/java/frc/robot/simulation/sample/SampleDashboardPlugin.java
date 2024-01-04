@@ -12,7 +12,7 @@ public class SampleDashboardPlugin implements DashboardPluginInterface<Integer, 
   @Override
   public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
     return new DashboardItem[] {
-        new DashboardItem("Acumulator", MultiType.of(0))
+        new DashboardItem("Accumulator", MultiType.of(0))
     };
   }
 

@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+import frc.robot.simulation.framework.DashboardPluginInterface;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
+import frc.robot.simulation.sample.SampleDashboardPlugin;
 import frc.robot.simulation.sample.SampleSimModel;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +42,10 @@ public class ShuffleClientTest {
     int ratio = 2;
 
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new SampleDashboardPlugin();
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, null, () -> true);
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
     assertTrue(sampleSimManager != null);
   }
 

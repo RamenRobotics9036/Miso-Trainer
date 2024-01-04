@@ -116,7 +116,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
   /**
    * Returns properties to display in Shuffleboard.
    */
-  public DashboardSupplierItem[] getDashboardItems() {
+  public DashboardSupplierItem[] getDashboardSupplierItems() {
     return null;
   }
 

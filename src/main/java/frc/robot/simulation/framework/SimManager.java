@@ -98,16 +98,17 @@ public class SimManager<InputT, OutputT> {
       return;
     }
 
-    DashboardSupplierItem[] dashboardItems = m_simModelFunc.getDashboardItems();
+    DashboardSupplierItem[] dashboardSupplierItems = m_simModelFunc.getDashboardSupplierItems();
 
-    // A particular SimModel may return null for getDashboardItems(),
+    // A particular SimModel may return null for getDashboardSupplierItems(),
     // in which case we do nothing.
-    if (dashboardItems == null) {
+    if (dashboardSupplierItems == null) {
       return;
     }
 
-    for (DashboardSupplierItem dashboardItem : dashboardItems) {
-      m_shuffleClient.addItem(dashboardItem.getPropertyName(), dashboardItem.getSupplier());
+    for (DashboardSupplierItem dashboardSupplierItem : dashboardSupplierItems) {
+      m_shuffleClient.addItem(dashboardSupplierItem.getPropertyName(),
+          dashboardSupplierItem.getSupplier());
     }
   }
 

@@ -25,7 +25,7 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   /**
    * Returns properties to display in Shuffleboard.
    */
-  public DashboardSupplierItem[] getDashboardItems() {
+  public DashboardSupplierItem[] getDashboardSupplierItems() {
     return new DashboardSupplierItem[] {
         new DashboardSupplierItem("Accumulator", () -> m_dashAccumulator)
     };

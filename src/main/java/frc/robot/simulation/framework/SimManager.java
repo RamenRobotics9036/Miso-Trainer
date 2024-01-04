@@ -15,6 +15,7 @@ public class SimManager<InputT, OutputT> {
   private final Client<Supplier<MultiType>> m_shuffleClient;
   private final DashboardPluginInterface<InputT, OutputT> m_dashboardPlugin;
   private MultiType[] m_dashboardMultiTypeStorage = null;
+  private boolean m_dashboardInitialized = false;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -58,12 +59,13 @@ public class SimManager<InputT, OutputT> {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
 
-    old_queryAndSetDashboardItems();
+    // $TODO old_queryAndSetDashboardItems();
 
     DashboardItem[] dashboardItems = getListOfDashboardPropertiesFromPlugin();
     if (dashboardItems != null) {
       m_dashboardMultiTypeStorage = allocateDashboardMultiTypes(dashboardItems);
       addPropertiesToGlobalHashMap(dashboardItems, m_dashboardMultiTypeStorage);
+      m_dashboardInitialized = true;
     }
   }
 
@@ -100,26 +102,26 @@ public class SimManager<InputT, OutputT> {
   // Add items to the global hashmap, for every dashboard property exposed
   // by the SimModel.
   // $TODO - Get rid of this
-  private void old_queryAndSetDashboardItems() {
-    // No dashboard items are added globally if shuffleClient wasnt passed into
-    // constructor
-    if (m_shuffleClient == null) {
-      return;
-    }
+  // private void old_queryAndSetDashboardItems() {
+  // // No dashboard items are added globally if shuffleClient wasnt passed into
+  // // constructor
+  // if (m_shuffleClient == null) {
+  // return;
+  // }
 
-    DashboardSupplierItem[] dashboardSupplierItems = m_simModelFunc.getDashboardSupplierItems();
+  // DashboardSupplierItem[] dashboardSupplierItems = m_simModelFunc.getDashboardSupplierItems();
 
-    // A particular SimModel may return null for getDashboardSupplierItems(),
-    // in which case we do nothing.
-    if (dashboardSupplierItems == null) {
-      return;
-    }
+  // // A particular SimModel may return null for getDashboardSupplierItems(),
+  // // in which case we do nothing.
+  // if (dashboardSupplierItems == null) {
+  // return;
+  // }
 
-    for (DashboardSupplierItem dashboardSupplierItem : dashboardSupplierItems) {
-      m_shuffleClient.addItem(dashboardSupplierItem.getPropertyName(),
-          dashboardSupplierItem.getSupplier());
-    }
-  }
+  // for (DashboardSupplierItem dashboardSupplierItem : dashboardSupplierItems) {
+  // m_shuffleClient.addItem(dashboardSupplierItem.getPropertyName(),
+  // dashboardSupplierItem.getSupplier());
+  // }
+  // }
 
   private Boolean checkIfDashboardItemsValid(DashboardItem[] dashboardItems) {
     if (dashboardItems == null) {
@@ -202,6 +204,28 @@ public class SimManager<InputT, OutputT> {
     }
   }
 
+  private void updateDashboardValues(MultiType[] newValues) {
+    if (newValues == null) {
+      System.out.println("WARNING: getDashboardPropertiesFromInputOutput() return null");
+      return;
+    }
+
+    // The length of newValues should be the same as the length of the
+    // m_dashboardMultiTypeStorage array
+    if (newValues.length != m_dashboardMultiTypeStorage.length) {
+      System.out.println("WARNING: getDashboardPropertiesFromInputOutput() returned array of "
+          + "different length than expected");
+      return;
+    }
+
+    // Copy the new values into the m_dashboardMultiTypeStorage array
+    for (int i = 0; i < newValues.length; i++) {
+      // We copy into the existing allocated MultiType, so that the lambda that
+      // was passed to Shuffleboard continues to work
+      newValues[i].copyTo(m_dashboardMultiTypeStorage[i]);
+    }
+  }
+
   private void doSimulationWrapper() {
     if (m_inputHandler != null && m_outputHandler != null) {
       // Step 1: Get the input from the input handler
@@ -212,6 +236,12 @@ public class SimManager<InputT, OutputT> {
 
       // Step 3: Write the output to the output handler
       m_outputHandler.setOutput(result);
+
+      // Step 4: Update the dashboard
+      if (m_dashboardInitialized) {
+        updateDashboardValues(
+            m_dashboardPlugin.getDashboardPropertiesFromInputOutput(input, result));
+      }
     }
   }
 

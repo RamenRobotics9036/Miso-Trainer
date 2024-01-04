@@ -59,7 +59,12 @@ public class SimManager<InputT, OutputT> {
     }
 
     old_queryAndSetDashboardItems();
-    setupListOfDashboardProperties();
+
+    DashboardItem[] dashboardItems = getListOfDashboardPropertiesFromPlugin();
+    if (dashboardItems != null) {
+      m_dashboardMultiTypeStorage = allocateDashboardMultiTypes(dashboardItems);
+      addPropertiesToGlobalHashMap(dashboardItems, m_dashboardMultiTypeStorage);
+    }
   }
 
   /**
@@ -116,17 +121,75 @@ public class SimManager<InputT, OutputT> {
     }
   }
 
-  private void setupListOfDashboardProperties() {
+  private Boolean checkIfDashboardItemsValid(DashboardItem[] dashboardItems) {
+    if (dashboardItems == null) {
+      return false;
+    }
+
+    for (DashboardItem dashboardItem : dashboardItems) {
+      if (dashboardItem == null) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private MultiType[] allocateDashboardMultiTypes(DashboardItem[] dashboardItems) {
+    if (dashboardItems == null || dashboardItems.length == 0) {
+      throw new IllegalArgumentException("dashboardItems cannot be null or empty");
+    }
+
+    // Allocate new array with the same len as dashboardItems,
+    // and copy the MultiType objects from dashboardItems into it
+    MultiType[] result = new MultiType[dashboardItems.length];
+    for (int i = 0; i < dashboardItems.length; i++) {
+      result[i] = dashboardItems[i].getValue();
+    }
+
+    return result;
+  }
+
+  private void addPropertiesToGlobalHashMap(DashboardItem[] dashboardItems,
+      MultiType[] multiTypes) {
+    if (dashboardItems == null || dashboardItems.length == 0) {
+      throw new IllegalArgumentException("dashboardItems cannot be null or empty");
+    }
+
+    if (multiTypes == null || multiTypes.length == 0) {
+      throw new IllegalArgumentException("multiTypes cannot be null or empty");
+    }
+
+    if (dashboardItems.length != multiTypes.length) {
+      throw new IllegalArgumentException("dashboardItems and multiTypes must have the same length");
+    }
+
+    for (int i = 0; i < dashboardItems.length; i++) {
+      MultiType multiType = multiTypes[i];
+      m_shuffleClient.addItem(dashboardItems[i].getPropertyName(), () -> multiType);
+    }
+  }
+
+  private DashboardItem[] getListOfDashboardPropertiesFromPlugin() {
     // No dashboard items are added globally if shuffleClient wasnt passed into
     // constructor
     if (m_shuffleClient == null) {
-      return;
+      return null;
     }
 
     // If no dashboard plugin was passed into the constructor, then we do nothing
     if (m_dashboardPlugin == null) {
-      return;
+      return null;
     }
+
+    // Query the dashboard plugin for the list of properties it wants to display
+    DashboardItem[] result = m_dashboardPlugin.queryListOfDashboardPropertiesWithInitValues();
+    if (!checkIfDashboardItemsValid(result)) {
+      System.out.println("WARNING: Dashboard plugin returned null or invalid list of properties");
+      return null;
+    }
+
+    return result;
   }
 
   // Once the input and output handler are both setup, we want to do one run of the

@@ -23,7 +23,7 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
   // $TODO - Need a unit test to check that the sample dashboard value is actually properly updated
   // in lambda returned from getDashboardItems().
   /**
-   * Returns parameters to display in Shuffleboard.
+   * Returns properties to display in Shuffleboard.
    */
   public DashboardSupplierItem[] getDashboardItems() {
     return new DashboardSupplierItem[] {

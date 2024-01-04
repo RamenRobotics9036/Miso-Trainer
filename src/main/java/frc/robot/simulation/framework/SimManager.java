@@ -88,7 +88,7 @@ public class SimManager<InputT, OutputT> {
     return m_isRobotEnabled.get();
   }
 
-  // Add items to the global hashmap, for every dashboard parameter exposed
+  // Add items to the global hashmap, for every dashboard property exposed
   // by the SimModel.
   // $TODO - Get rid of this
   private void old_queryAndSetDashboardItems() {
@@ -107,7 +107,7 @@ public class SimManager<InputT, OutputT> {
     }
 
     for (DashboardSupplierItem dashboardItem : dashboardItems) {
-      m_shuffleClient.addItem(dashboardItem.getParamName(), dashboardItem.getSupplier());
+      m_shuffleClient.addItem(dashboardItem.getPropertyName(), dashboardItem.getSupplier());
     }
   }
 

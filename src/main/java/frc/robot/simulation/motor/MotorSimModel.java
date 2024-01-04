@@ -31,7 +31,7 @@ public class MotorSimModel implements SimModelInterface<Double, Double> {
   }
 
   /**
-   * Returns parameters to display in Shuffleboard.
+   * Returns properties to display in Shuffleboard.
    */
   public DashboardSupplierItem[] getDashboardItems() {
     return new DashboardSupplierItem[] {

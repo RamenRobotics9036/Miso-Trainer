@@ -28,7 +28,7 @@ public class ArmAngleSimModel implements SimModelInterface<Double, ArmAngleState
   }
 
   /**
-   * Returns parameters to display in Shuffleboard.
+   * Returns proerties to display in Shuffleboard.
    */
   public DashboardSupplierItem[] getDashboardItems() {
     return null;

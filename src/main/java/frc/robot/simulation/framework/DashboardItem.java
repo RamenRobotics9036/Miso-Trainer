@@ -12,6 +12,14 @@ public class DashboardItem {
   private final MultiType m_value;
 
   public DashboardItem(String propertyName, MultiType value) {
+    if (propertyName == null) {
+      throw new IllegalArgumentException("propertyName cannot be null");
+    }
+
+    if (value == null) {
+      throw new IllegalArgumentException("value cannot be null");
+    }
+
     m_propertyName = propertyName;
     m_value = value;
   }

@@ -3,9 +3,11 @@ package frc.robot.shuffle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.DashboardPluginInterface;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
@@ -96,6 +98,207 @@ public class ShuffleClientTest {
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
         new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 1 property to be in the global hashmap
+    assertEquals(1, m_globalMap.getAllEntries().size());
+
+    String actualString = m_globalMap.toString();
+    String expectedString = "[Sample sim/Accumulator]";
+    assertEquals(expectedString, actualString);
+  }
+
+  @Test
+  public void validDashboardPluginShouldSucceed() {
+    class ValidDashboardPlugin implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", MultiType.of(0))
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            MultiType.of(0)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new ValidDashboardPlugin();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 1 property to be in the global hashmap
+    assertEquals(1, m_globalMap.getAllEntries().size());
+
+    String actualString = m_globalMap.toString();
+    String expectedString = "[Sample sim/Accumulator]";
+    assertEquals(expectedString, actualString);
+  }
+
+  @Test
+  public void dashboardPluginReturningNullShouldSucceed() {
+    class DashboardPluginReturnsNull implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return null;
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            MultiType.of(0)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginReturnsNull();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 0 properties to be in the global hashmap
+    assertEquals(0, m_globalMap.getAllEntries().size());
+  }
+
+  @Test
+  public void dashboardPluginReturningNullMultitypeShouldThrowException() {
+    class DashboardPluginReturnsNullMultitype
+        implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", null)
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            MultiType.of(0)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginReturnsNullMultitype();
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+          new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+    });
+  }
+
+  @Test
+  public void mismatchedPropertiesAndMultitypeArrayCountsShouldSucceed() {
+    class DashboardPluginMismatchedArrayCounts
+        implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", MultiType.of(0))
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            MultiType.of(0), MultiType.of(1)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginMismatchedArrayCounts();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 1 property to be in the global hashmap
+    assertEquals(1, m_globalMap.getAllEntries().size());
+
+    String actualString = m_globalMap.toString();
+    String expectedString = "[Sample sim/Accumulator]";
+    assertEquals(expectedString, actualString);
+  }
+
+  @Test
+  public void nullMultiTypeArrayShouldSucceed() {
+    class DashboardPluginNullMultitypeArray implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", MultiType.of(0))
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return null;
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginNullMultitypeArray();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 1 property to be in the global hashmap
+    assertEquals(1, m_globalMap.getAllEntries().size());
+
+    String actualString = m_globalMap.toString();
+    String expectedString = "[Sample sim/Accumulator]";
+    assertEquals(expectedString, actualString);
+  }
+
+  @Test
+  public void nullMultiTypeItemShouldSucceed() {
+    class DashboardPluginNullMultitypeItem implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", MultiType.of(0))
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            MultiType.of(0), MultiType.of(1), null, MultiType.of(2)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginNullMultitypeItem();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap

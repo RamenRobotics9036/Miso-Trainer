@@ -55,7 +55,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
         grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
     SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
-        new ArmSimModel(armParams, ramenArmLogic), null, enableTestMode);
+        new ArmSimModel(armParams, ramenArmLogic), null, null, enableTestMode);
     armSimManager.setInputHandler(new LambdaSimInput<Double>(desiredArmAngleSupplier));
     armSimManager.setOutputHandler(new ArmSimOutput(winchAbsoluteEncoderSim));
 

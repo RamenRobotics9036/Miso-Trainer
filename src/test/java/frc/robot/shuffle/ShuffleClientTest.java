@@ -31,7 +31,7 @@ public class ShuffleClientTest {
     int ratio = 2;
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), null, () -> true);
+        new SampleSimModel(ratio), null, null, () -> true);
     assertTrue(sampleSimManager != null);
   }
 
@@ -42,7 +42,7 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, () -> true);
+        new SampleSimModel(ratio), shuffleClient, null, () -> true);
     assertTrue(sampleSimManager != null);
   }
 
@@ -53,7 +53,7 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, () -> true);
+        new SampleSimModel(ratio), shuffleClient, null, () -> true);
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
@@ -72,7 +72,7 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, () -> true);
+        new SampleSimModel(ratio), shuffleClient, null, () -> true);
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
@@ -90,7 +90,7 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, () -> true);
+        new SampleSimModel(ratio), shuffleClient, null, () -> true);
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
@@ -121,7 +121,7 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
 
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
-        new SampleSimModel(ratio), shuffleClient, () -> true);
+        new SampleSimModel(ratio), shuffleClient, null, () -> true);
 
     sampleSimManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
       return inputVariable[0];

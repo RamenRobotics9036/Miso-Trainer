@@ -22,7 +22,7 @@ import frc.robot.shuffle.MultiType;
  * </P>
  */
 public interface DashboardPluginInterface<InputT, OutputT> {
-  public String[] queryListOfDashboardProperties();
+  public DashboardItem[] queryListOfDashboardPropertiesWithInitValues();
 
   public MultiType[] getDashboardPropertiesFromInputOutput(InputT input, OutputT output);
 }

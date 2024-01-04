@@ -1,6 +1,7 @@
 package frc.robot.simulation.sample;
 
 import frc.robot.shuffle.MultiType;
+import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.DashboardPluginInterface;
 
 /**
@@ -9,9 +10,9 @@ import frc.robot.simulation.framework.DashboardPluginInterface;
 public class SampleDashboardPlugin implements DashboardPluginInterface<Integer, Integer> {
 
   @Override
-  public String[] queryListOfDashboardProperties() {
-    return new String[] {
-        "Accumulator"
+  public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+    return new DashboardItem[] {
+        new DashboardItem("Acumulator", MultiType.of(0))
     };
   }
 

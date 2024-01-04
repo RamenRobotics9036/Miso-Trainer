@@ -13,6 +13,7 @@ public class SimManager<InputT, OutputT> {
 
   private final SimModelInterface<InputT, OutputT> m_simModelFunc;
   private final Client<Supplier<MultiType>> m_shuffleClient;
+  private final DashboardPluginInterface<InputT, OutputT> m_dashboardPlugin;
   private MultiType[] m_dashboardMultiTypeStorage = null;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
@@ -31,6 +32,7 @@ public class SimManager<InputT, OutputT> {
    */
   public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
       Client<Supplier<MultiType>> shuffleClient,
+      DashboardPluginInterface<InputT, OutputT> dashboardPlugin,
       boolean enableTestMode) {
     if (simModelFunc == null) {
       throw new IllegalArgumentException("simModelFunc cannot be null");
@@ -45,6 +47,7 @@ public class SimManager<InputT, OutputT> {
 
     m_simModelFunc = simModelFunc;
     m_shuffleClient = shuffleClient;
+    m_dashboardPlugin = dashboardPlugin;
 
     // When the robot is in test mode, we act as if the robot is ALWAYS enabled.
     // Otherwise, we'd get odd results when unit-testing.
@@ -65,8 +68,9 @@ public class SimManager<InputT, OutputT> {
    */
   public SimManager(SimModelInterface<InputT, OutputT> simModelFunc,
       Client<Supplier<MultiType>> shuffleClient,
+      DashboardPluginInterface<InputT, OutputT> dashboardPlugin,
       Supplier<Boolean> isRobotEnabledFunc) {
-    this(simModelFunc, shuffleClient, true);
+    this(simModelFunc, shuffleClient, dashboardPlugin, true);
 
     if (isRobotEnabledFunc == null) {
       throw new IllegalArgumentException("isRobotEnabledFunc cannot be null");
@@ -116,6 +120,11 @@ public class SimManager<InputT, OutputT> {
     // No dashboard items are added globally if shuffleClient wasnt passed into
     // constructor
     if (m_shuffleClient == null) {
+      return;
+    }
+
+    // If no dashboard plugin was passed into the constructor, then we do nothing
+    if (m_dashboardPlugin == null) {
       return;
     }
   }

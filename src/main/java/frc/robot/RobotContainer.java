@@ -13,6 +13,7 @@ import frc.robot.commands.RetractArmCommand;
 import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
 import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PopulateShuffleboard;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
@@ -120,6 +121,9 @@ public class RobotContainer {
     m_driveSystem.updateDashBoard();
     m_armSystem.updateDashBoard();
     m_grabSystem.updateDashBoard();
+
+    PopulateShuffleboard shuffle = new PopulateShuffleboard();
+    shuffle.addShuffleboardWidgets();
   }
 
   private void setDefaultCommands() {

@@ -21,13 +21,6 @@ public class SimManager<InputT, OutputT> {
   private boolean m_outputInitialized = false;
   private Supplier<Boolean> m_isRobotEnabled;
 
-  // $TODO - Need a few unit tests for dashboard
-  // 1) That passing in null for shuffleClient is OK
-  // 2) That if shuffleclient is NON-null, and the sample sim returns null DashboardItems, that the
-  // shuffleboard global hashmap is properly empty
-  // 3) If shuffleclient is NON-null, and the sample sim returns DashboardItems, that they properly
-  // show-up in shuffleboard global hashmap
-
   /**
    * Constructor.
    */
@@ -58,8 +51,6 @@ public class SimManager<InputT, OutputT> {
     else {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
-
-    // $TODO old_queryAndSetDashboardItems();
 
     DashboardItem[] dashboardItems = getListOfDashboardPropertiesFromPlugin();
     if (dashboardItems != null) {
@@ -98,30 +89,6 @@ public class SimManager<InputT, OutputT> {
   private boolean isRobotEnabled() {
     return m_isRobotEnabled.get();
   }
-
-  // Add items to the global hashmap, for every dashboard property exposed
-  // by the SimModel.
-  // $TODO - Get rid of this
-  // private void old_queryAndSetDashboardItems() {
-  // // No dashboard items are added globally if shuffleClient wasnt passed into
-  // // constructor
-  // if (m_shuffleClient == null) {
-  // return;
-  // }
-
-  // DashboardSupplierItem[] dashboardSupplierItems = m_simModelFunc.getDashboardSupplierItems();
-
-  // // A particular SimModel may return null for getDashboardSupplierItems(),
-  // // in which case we do nothing.
-  // if (dashboardSupplierItems == null) {
-  // return;
-  // }
-
-  // for (DashboardSupplierItem dashboardSupplierItem : dashboardSupplierItems) {
-  // m_shuffleClient.addItem(dashboardSupplierItem.getPropertyName(),
-  // dashboardSupplierItem.getSupplier());
-  // }
-  // }
 
   private Boolean checkIfDashboardItemsValid(DashboardItem[] dashboardItems) {
     if (dashboardItems == null) {

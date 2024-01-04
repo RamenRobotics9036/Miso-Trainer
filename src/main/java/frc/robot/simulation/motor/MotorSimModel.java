@@ -3,7 +3,7 @@ package frc.robot.simulation.motor;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.shuffle.MultiType;
-import frc.robot.simulation.framework.DashboardItem;
+import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -31,11 +31,11 @@ public class MotorSimModel implements SimModelInterface<Double, Double> {
   }
 
   /**
-   * Returns parameters to display in Shuffleboard.
+   * Returns properties to display in Shuffleboard.
    */
-  public DashboardItem[] getDashboardItems() {
-    return new DashboardItem[] {
-        new DashboardItem("Motor Rotations", () -> m_dashMotorRotations)
+  public DashboardSupplierItem[] getDashboardSupplierItems() {
+    return new DashboardSupplierItem[] {
+        new DashboardSupplierItem("Motor Rotations", () -> m_dashMotorRotations)
     };
   }
 

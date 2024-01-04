@@ -1,27 +1,26 @@
 package frc.robot.simulation.framework;
 
 import frc.robot.shuffle.MultiType;
-import java.util.function.Supplier;
 
 /**
- * Class that holds two values:
- * 1. The name of the Parameter, as a String
- * 2. A supplier for a MultiType object that holds the value of the Parameter
+ * Holds two values:
+ * 1. The name of the Property, as a String
+ * 2. Value (of type MultiType)
  */
 public class DashboardItem {
-  private final String m_paramName;
-  private final Supplier<MultiType> m_supplier;
+  private final String m_propertyName;
+  private final MultiType m_value;
 
-  public DashboardItem(String paramName, Supplier<MultiType> supplier) {
-    m_paramName = paramName;
-    m_supplier = supplier;
+  public DashboardItem(String propertyName, MultiType value) {
+    m_propertyName = propertyName;
+    m_value = value;
   }
 
-  public String getParamName() {
-    return m_paramName;
+  public String getPropertyName() {
+    return m_propertyName;
   }
 
-  public Supplier<MultiType> getSupplier() {
-    return m_supplier;
+  public MultiType getValue() {
+    return m_value;
   }
 }

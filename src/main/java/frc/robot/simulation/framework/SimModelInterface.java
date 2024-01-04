@@ -4,7 +4,7 @@ package frc.robot.simulation.framework;
  * updateSimulation() is called ever 20ms.
  */
 public interface SimModelInterface<InputT, OutputT> {
-  DashboardItem[] getDashboardItems();
+  DashboardSupplierItem[] getDashboardSupplierItems();
 
   OutputT updateSimulation(InputT input);
 

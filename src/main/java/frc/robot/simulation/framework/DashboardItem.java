@@ -11,6 +11,9 @@ public class DashboardItem {
   private final String m_propertyName;
   private final MultiType m_value;
 
+  /**
+   * Constructor.
+   */
   public DashboardItem(String propertyName, MultiType value) {
     if (propertyName == null) {
       throw new IllegalArgumentException("propertyName cannot be null");

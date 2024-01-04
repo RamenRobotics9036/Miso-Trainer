@@ -50,6 +50,25 @@ public class PrefixedConcurrentMap<T> {
   }
 
   /**
+   * For every keyset, print the name of the key on a separate line, and return as a string.
+   * Add a header, "Available Dashboard Properties:".
+   * If there are 0 available properties, instead just return the string "0 Dashboard Properties
+   * available".
+   */
+  public void prettyPrint() {
+    if (m_map.keySet().size() == 0) {
+      System.out.println("0 Dashboard Properties available");
+    }
+    else {
+      System.out.println("Available Dashboard Properties:");
+
+      for (String key : m_map.keySet()) {
+        System.out.println("  " + key);
+      }
+    }
+  }
+
+  /**
    * Client interface for adding items.
    */
   public interface Client<T> {

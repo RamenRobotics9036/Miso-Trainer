@@ -12,6 +12,9 @@ import frc.robot.commands.Auto;
 import frc.robot.commands.RetractArmCommand;
 import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap;
+import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
 import frc.robot.subsystems.ArmSystemSim;
 import frc.robot.subsystems.GrabberSystem;
@@ -19,6 +22,7 @@ import frc.robot.subsystems.GrabberSystemSim;
 import frc.robot.subsystems.TankDriveSystem;
 import frc.robot.subsystems.TankDriveSystemSim;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -57,6 +61,15 @@ public class RobotContainer {
     setDefaultCommands();
 
     setupGrabberNotificationsToArm();
+
+    // Now that all subsystems are created, print out the list of properties
+    // available for display in Shuffleboard.
+    printAvailableDashboardProperties();
+  }
+
+  private void printAvailableDashboardProperties() {
+    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+    globalMap.prettyPrint();
   }
 
   /**
@@ -86,7 +99,7 @@ public class RobotContainer {
       throw new IllegalArgumentException("Chooser cannot be null");
     }
 
-    //System.out.println("Auto command scheduled container");
+    // System.out.println("Auto command scheduled container");
     return Auto.getAutoCommand(chooser, m_driveSystem, m_armSystem, m_grabSystem);
   }
 

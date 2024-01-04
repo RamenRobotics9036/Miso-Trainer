@@ -10,6 +10,10 @@ import frc.robot.Constants;
 import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap;
+import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.simulation.ExtenderSimulation;
 import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
@@ -17,6 +21,7 @@ import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.motor.MotorDashboardPlugin;
 import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.motor.MotorSimOutput;
 import frc.robot.simulation.motor.MotorSparkMaxSimInput;
@@ -91,9 +96,10 @@ public class ArmSystemSim extends ArmSystem {
       return;
     }
 
-    createWinchSimParts();
-    createExtenderSimParts();
-    createArmAngleSimParts();
+    Client<Supplier<MultiType>> shuffleClient = createShuffleboardClientForSubsystem("ArmSystem");
+    createWinchSimParts(shuffleClient);
+    createExtenderSimParts(shuffleClient);
+    createArmAngleSimParts(shuffleClient);
 
     m_sensorSim = new DIOSim(m_sensor);
 
@@ -127,7 +133,12 @@ public class ArmSystemSim extends ArmSystem {
     m_ramenArmSimLogic = createResult.getSecond();
   }
 
-  private void createArmAngleSimParts() {
+  private Client<Supplier<MultiType>> createShuffleboardClientForSubsystem(String subsystemName) {
+    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+    return globalMap.getClientWithPrefix(subsystemName);
+  }
+
+  private void createArmAngleSimParts(Client<Supplier<MultiType>> shuffleClient) {
     // Create a DoubleSupplier that gets the value m_winchState.getStringUnspooledLen()
     Supplier<Double> stringUnspooledLenSupplier = () -> {
       return m_winchState.getStringUnspooledLen();
@@ -145,7 +156,7 @@ public class ArmSystemSim extends ArmSystem {
     m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
   }
 
-  private void createWinchSimParts() {
+  private void createWinchSimParts(Client<Supplier<MultiType>> shuffleClient) {
     // Create winch simulated encoder
     m_winchEncoderSim = new RelativeEncoderSim(m_winchEncoder);
 
@@ -153,7 +164,8 @@ public class ArmSystemSim extends ArmSystem {
 
     // Create the motor simulation for the winch motor
     m_winchMotorSimManager = new SimManager<Double, Double>(
-        new MotorSimModel(Constants.SimConstants.kwinchSimGearRatio), null, null, false);
+        new MotorSimModel(Constants.SimConstants.kwinchSimGearRatio),
+        shuffleClient.getSubdirectoryClient("WinchMotor"), new MotorDashboardPlugin(), false);
     m_winchMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armWinch));
     m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
 
@@ -169,13 +181,14 @@ public class ArmSystemSim extends ArmSystem {
     m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }
 
-  private void createExtenderSimParts() {
+  private void createExtenderSimParts(Client<Supplier<MultiType>> shuffleClient) {
     // Create extender simulated encoder
     m_extenderEncoderSim = new RelativeEncoderSim(m_extenderEncoder);
 
     // Create the motor simulation for the extender motor
     m_extenderMotorSimManager = new SimManager<Double, Double>(
-        new MotorSimModel(Constants.SimConstants.kextenderSimGearRatio), null, null, false);
+        new MotorSimModel(Constants.SimConstants.kextenderSimGearRatio),
+        shuffleClient.getSubdirectoryClient("ExtenderMotor"), new MotorDashboardPlugin(), false);
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 

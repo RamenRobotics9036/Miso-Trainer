@@ -198,6 +198,7 @@ public class ShuffleClientTest {
     DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginReturnsNullMultitype();
 
     assertThrows(IllegalArgumentException.class, () -> {
+      @SuppressWarnings("unused")
       SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
           new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
     });

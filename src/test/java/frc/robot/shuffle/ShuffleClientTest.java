@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
  */
 public class ShuffleClientTest {
   PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
+  private final Integer m_numDefaultProperties = 1;
 
   @BeforeEach
   public void setUp() {
@@ -62,7 +63,7 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     // For the sample sim, we expect to see the following properties on the Shuffleboard:
     // Accumulator
@@ -82,7 +83,7 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     // We do NOT expect to have a bogus property Accumulator2
     Supplier<MultiType> accumulatorSupplier = m_globalMap.get("Sample sim/Accumulator2");
@@ -101,10 +102,10 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
   }
 
@@ -136,10 +137,10 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
   }
 
@@ -170,7 +171,7 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 0 properties to be in the global hashmap
-    assertEquals(0, m_globalMap.getAllEntries().size());
+    assertEquals(0 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
   }
 
   @Test
@@ -233,10 +234,10 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
   }
 
@@ -267,10 +268,10 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
   }
 
@@ -303,10 +304,10 @@ public class ShuffleClientTest {
     assertTrue(sampleSimManager != null);
 
     // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1, m_globalMap.getAllEntries().size());
+    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
   }
 

@@ -15,7 +15,8 @@ public class SimManager<InputT, OutputT> {
   private final Client<Supplier<MultiType>> m_shuffleClient;
   private final DashboardPluginInterface<InputT, OutputT> m_dashboardPlugin;
   private MultiType[] m_dashboardMultiTypeStorage = null;
-  private boolean m_dashboardInitialized = false;
+  private MultiType[] m_defaultDashStorage = null;
+  private boolean m_pluginDashItemsInitialized = false;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -52,11 +53,16 @@ public class SimManager<InputT, OutputT> {
       m_isRobotEnabled = () -> RobotState.isEnabled();
     }
 
-    DashboardItem[] dashboardItems = getListOfDashboardPropertiesFromPlugin();
-    if (dashboardItems != null) {
-      m_dashboardMultiTypeStorage = allocateDashboardMultiTypes(dashboardItems);
-      addPropertiesToGlobalHashMap(dashboardItems, m_dashboardMultiTypeStorage);
-      m_dashboardInitialized = true;
+    // No dashboard items are added globally if shuffleClient wasnt passed into
+    // constructor
+    if (m_shuffleClient != null) {
+      DashboardItem[] dashboardItems = getListOfDashboardPropertiesFromPlugin();
+      if (dashboardItems != null) {
+        m_dashboardMultiTypeStorage = allocateDashboardMultiTypes(dashboardItems);
+        addPropertiesToGlobalHashMap(dashboardItems, m_dashboardMultiTypeStorage);
+        m_pluginDashItemsInitialized = true;
+      }
+      addDefaultDashboardItems();
     }
   }
 
@@ -139,13 +145,20 @@ public class SimManager<InputT, OutputT> {
     }
   }
 
-  private DashboardItem[] getListOfDashboardPropertiesFromPlugin() {
-    // No dashboard items are added globally if shuffleClient wasnt passed into
-    // constructor
-    if (m_shuffleClient == null) {
-      return null;
-    }
+  private void addDefaultDashboardItems() {
+    // We store one default value: IsBroken
+    m_defaultDashStorage = new MultiType[] {
+        MultiType.of(false)
+    };
 
+    DashboardItem[] defaultDashItems = new DashboardItem[] {
+        new DashboardItem("IsBroken", MultiType.of(false))
+    };
+
+    addPropertiesToGlobalHashMap(defaultDashItems, m_defaultDashStorage);
+  }
+
+  private DashboardItem[] getListOfDashboardPropertiesFromPlugin() {
     // If no dashboard plugin was passed into the constructor, then we do nothing
     if (m_dashboardPlugin == null) {
       return null;
@@ -205,7 +218,7 @@ public class SimManager<InputT, OutputT> {
       m_outputHandler.setOutput(result);
 
       // Step 4: Update the dashboard
-      if (m_dashboardInitialized) {
+      if (m_pluginDashItemsInitialized) {
         updateDashboardValues(
             m_dashboardPlugin.getDashboardPropertiesFromInputOutput(input, result));
       }

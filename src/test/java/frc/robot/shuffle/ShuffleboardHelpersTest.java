@@ -2,6 +2,7 @@ package frc.robot.shuffle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 
@@ -55,22 +56,38 @@ public class ShuffleboardHelpersTest {
 
   @Test
   public void getmissingDoubleKeyShouldThrow() {
-    throw new RuntimeException("Not implemented");
+    assertThrows(IllegalArgumentException.class, () -> {
+      m_helpers.getDoubleSupplier("Test/BogusKey");
+    });
   }
 
   @Test
   public void getmissingBooleanKeyShouldThrow() {
-    throw new RuntimeException("Not implemented");
+    assertThrows(IllegalArgumentException.class, () -> {
+      m_helpers.getBooleanSupplier("Test/BogusKey");
+    });
   }
 
   @Test
   public void getWrongTypeDoubleKeyShouldThrow() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Double value = 2.0;
+    shuffleClient.addItem("DoubleKey", () -> MultiType.of(value));
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      m_helpers.getBooleanSupplier("Test/DoubleKey");
+    });
   }
 
   @Test
   public void getWrongTypeBooleanKeyShouldThrow() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Boolean value = true;
+    shuffleClient.addItem("BooleanKey", () -> MultiType.of(value));
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      m_helpers.getDoubleSupplier("Test/BooleanKey");
+    });
   }
 
   @Test

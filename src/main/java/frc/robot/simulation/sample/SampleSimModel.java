@@ -20,8 +20,6 @@ public class SampleSimModel implements SimModelInterface<Integer, Integer> {
     m_accumulator = 0;
   }
 
-  // $TODO - Need a unit test to check that the sample dashboard value is actually properly updated
-  // in lambda returned from getDashboardItems().
   /**
    * Returns properties to display in Shuffleboard.
    */

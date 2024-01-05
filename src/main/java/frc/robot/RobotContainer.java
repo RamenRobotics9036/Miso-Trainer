@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -12,7 +13,9 @@ import frc.robot.commands.Auto;
 import frc.robot.commands.RetractArmCommand;
 import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
+import frc.robot.helpers.DefaultLayout;
 import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PopulateShuffleboard;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
@@ -111,6 +114,10 @@ public class RobotContainer {
     m_driveSystem.initDashBoard();
     m_armSystem.initDashBoard();
     m_grabSystem.initDashBoard();
+
+    PopulateShuffleboard shuffle = new PopulateShuffleboard(SupplierMapFactory.getGlobalInstance(),
+        new DefaultLayout(), Shuffleboard.getTab("Simulation"));
+    shuffle.addShuffleboardWidgets();
   }
 
   /**

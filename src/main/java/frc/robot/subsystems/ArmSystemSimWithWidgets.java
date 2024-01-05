@@ -15,7 +15,6 @@ import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.SupplierMapFactory;
-
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -98,19 +97,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
-    // Extender motor power
-    pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
-    // $TODO - Move this into a helper to get a Double or default 0.0. Change it so it doesnt throw
-    // too
-    Supplier<MultiType> extenderMotorPowerSupplier = m_globalMap
-        .get("ArmSystem/ExtenderMotor/InputPower");
-    DoubleSupplier supplierDouble = () -> extenderMotorPowerSupplier.get().getDouble().orElse(0.0);
-
-    Shuffleboard.getTab("Simulation").addDouble("Extender Motor Power", supplierDouble)
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
     // Extender percent extended
     pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
     Shuffleboard.getTab("Simulation")
@@ -149,23 +135,8 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
   }
 
   private void addShuffleboardWinchList() {
-    // Winch functional display
-    Widget pos = m_defaultLayout.getWidgetPosition("Winch Functional");
-    Shuffleboard.getTab("Simulation")
-        .addBoolean("Winch Functional", () -> !m_winchState.getIsBroken())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Winch motor power
-    pos = m_defaultLayout.getWidgetPosition("Winch Motor Power");
-    Shuffleboard.getTab("Simulation").addDouble("Winch Motor Power", () -> m_armWinch.get())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
     // Winch String % extended
-    pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
+    Widget pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
     Shuffleboard.getTab("Simulation")
         .addDouble("Winch String % Extended", () -> m_winchState.getStringUnspooledPercent())
         .withWidget(BuiltInWidgets.kNumberBar)

@@ -2,10 +2,10 @@ package frc.robot.shuffle;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -16,34 +16,20 @@ import java.util.function.Supplier;
 public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
   PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap;
+  ShuffleboardTab m_tab;
+  ShuffleboardHelpers m_helpers;
 
   /**
    * Constructor.
    */
-  public PopulateShuffleboard() {
-    m_globalMap = SupplierMapFactory.getGlobalInstance();
-    m_defaultLayout = new DefaultLayout();
-  }
+  public PopulateShuffleboard(PrefixedConcurrentMap<Supplier<MultiType>> globalMap,
+      DefaultLayout defaultLayout,
+      ShuffleboardTab tab) {
 
-  // $TODO Unit tests
-  private DoubleSupplier getDoubleSupplier(String key) {
-    Supplier<MultiType> supplier = m_globalMap.get(key);
-
-    if (supplier == null || supplier.get().getDouble().isEmpty()) {
-      throw new IllegalArgumentException("Key missing or wrong type: " + key);
-    }
-
-    return () -> supplier.get().getDouble().orElse(0.0);
-  }
-
-  private BooleanSupplier getBooleanSupplier(String key) {
-    Supplier<MultiType> supplier = m_globalMap.get(key);
-
-    if (supplier == null || supplier.get().getBoolean().isEmpty()) {
-      throw new IllegalArgumentException("Key missing or wrong type: " + key);
-    }
-
-    return () -> supplier.get().getBoolean().orElse(false);
+    m_globalMap = globalMap;
+    m_helpers = new ShuffleboardHelpers(globalMap);
+    m_defaultLayout = defaultLayout;
+    m_tab = tab;
   }
 
   /**
@@ -53,7 +39,8 @@ public class PopulateShuffleboard {
     // Extender motor power
     Widget pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
     Shuffleboard.getTab("Simulation")
-        .addDouble("Extender Motor Power", getDoubleSupplier("ArmSystem/ExtenderMotor/InputPower"))
+        .addDouble("Extender Motor Power",
+            m_helpers.getDoubleSupplier("ArmSystem/ExtenderMotor/InputPower"))
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
@@ -61,7 +48,8 @@ public class PopulateShuffleboard {
     // Winch motor power
     pos = m_defaultLayout.getWidgetPosition("Winch Motor Power");
     Shuffleboard.getTab("Simulation")
-        .addDouble("Winch Motor Power", getDoubleSupplier("ArmSystem/WinchMotor/InputPower"))
+        .addDouble("Winch Motor Power",
+            m_helpers.getDoubleSupplier("ArmSystem/WinchMotor/InputPower"))
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

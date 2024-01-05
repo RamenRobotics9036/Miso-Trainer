@@ -15,7 +15,6 @@ import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.SupplierMapFactory;
-
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;

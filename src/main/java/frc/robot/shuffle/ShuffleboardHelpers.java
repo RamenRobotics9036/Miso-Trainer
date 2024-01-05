@@ -4,7 +4,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-// $TODO Add unit tests for this class
 /**
  * Helper class for populating Shuffleboard.
  */

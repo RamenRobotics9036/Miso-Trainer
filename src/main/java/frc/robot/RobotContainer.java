@@ -112,6 +112,9 @@ public class RobotContainer {
     m_driveSystem.initDashBoard();
     m_armSystem.initDashBoard();
     m_grabSystem.initDashBoard();
+
+    PopulateShuffleboard shuffle = new PopulateShuffleboard();
+    shuffle.addShuffleboardWidgets();
   }
 
   /**
@@ -121,9 +124,6 @@ public class RobotContainer {
     m_driveSystem.updateDashBoard();
     m_armSystem.updateDashBoard();
     m_grabSystem.updateDashBoard();
-
-    PopulateShuffleboard shuffle = new PopulateShuffleboard();
-    shuffle.addShuffleboardWidgets();
   }
 
   private void setDefaultCommands() {

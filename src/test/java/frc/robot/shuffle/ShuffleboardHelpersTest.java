@@ -8,12 +8,20 @@ import org.junit.jupiter.api.Test;
  * Unit tests for ShuffleboardHelpers.
  */
 public class ShuffleboardHelpersTest {
-  private PrefixedConcurrentMap<Supplier<MultiType>> m_mapMock;
+  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
   private ShuffleboardHelpers m_helpers;
+
+  /**
+   * Constructor.
+   */
+  public ShuffleboardHelpersTest() {
+    m_helpers = new ShuffleboardHelpers(m_globalMap);
+  }
 
   @BeforeEach
   public void setUp() {
-    m_helpers = new ShuffleboardHelpers(m_mapMock);
+    // Reset the global cache of dashboard items before each test
+    m_globalMap.clear();
   }
 
   @Test

@@ -135,16 +135,8 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
   }
 
   private void addShuffleboardWinchList() {
-    // Winch functional display
-    Widget pos = m_defaultLayout.getWidgetPosition("Winch Functional");
-    Shuffleboard.getTab("Simulation")
-        .addBoolean("Winch Functional", () -> !m_winchState.getIsBroken())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
     // Winch String % extended
-    pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
+    Widget pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
     Shuffleboard.getTab("Simulation")
         .addDouble("Winch String % Extended", () -> m_winchState.getStringUnspooledPercent())
         .withWidget(BuiltInWidgets.kNumberBar)

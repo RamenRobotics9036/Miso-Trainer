@@ -17,6 +17,7 @@ public class SimManager<InputT, OutputT> {
   private MultiType[] m_dashboardMultiTypeStorage = null;
   private MultiType[] m_defaultDashStorage = null;
   private boolean m_pluginDashItemsInitialized = false;
+  private boolean m_defaultDashItemsInitialized = false;
   private SimInputInterface<InputT> m_inputHandler = null;
   private SimOutputInterface<OutputT> m_outputHandler = null;
   private boolean m_outputInitialized = false;
@@ -63,6 +64,7 @@ public class SimManager<InputT, OutputT> {
         m_pluginDashItemsInitialized = true;
       }
       addDefaultDashboardItems();
+      m_defaultDashItemsInitialized = true;
     }
   }
 
@@ -221,6 +223,11 @@ public class SimManager<InputT, OutputT> {
       if (m_pluginDashItemsInitialized) {
         updateDashboardValues(
             m_dashboardPlugin.getDashboardPropertiesFromInputOutput(input, result));
+      }
+
+      if (m_defaultDashItemsInitialized) {
+        // And update the IsBroken value
+        m_defaultDashStorage[0].setBoolean(isBroken());
       }
     }
   }

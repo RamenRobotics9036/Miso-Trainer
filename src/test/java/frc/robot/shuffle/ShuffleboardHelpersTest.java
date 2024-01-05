@@ -53,4 +53,14 @@ public class ShuffleboardHelpersTest {
   public void getWrongTypeBooleanKeyShouldThrow() {
     throw new RuntimeException("Not implemented");
   }
+
+  @Test
+  public void doubleValueSetShouldBeCorrectValue() {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Test
+  public void booleanValueSetShouldBeCorrectValue() {
+    throw new RuntimeException("Not implemented");
+  }
 }

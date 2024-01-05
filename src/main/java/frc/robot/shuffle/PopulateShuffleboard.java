@@ -34,17 +34,13 @@ public class PopulateShuffleboard {
    * Adds Shuffleboard widgets.
    */
   public void addShuffleboardWidgets() {
-    // Extender motor power
-    Widget pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Extender Motor Power",
-            m_helpers.getDoubleSupplier("ArmSystem/ExtenderMotor/InputPower"))
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+    addWinchWidgets();
+    addExtenderWidgets();
+  }
 
+  private void addWinchWidgets() {
     // Winch functional display
-    pos = m_defaultLayout.getWidgetPosition("Winch Functional");
+    Widget pos = m_defaultLayout.getWidgetPosition("Winch Functional");
     Shuffleboard.getTab("Simulation")
         .addBoolean("Winch Functional",
             () -> !m_helpers.getBooleanSupplier("ArmSystem/Winch/IsBroken").getAsBoolean())
@@ -57,6 +53,17 @@ public class PopulateShuffleboard {
     Shuffleboard.getTab("Simulation")
         .addDouble("Winch Motor Power",
             m_helpers.getDoubleSupplier("ArmSystem/WinchMotor/InputPower"))
+        .withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  private void addExtenderWidgets() {
+    // Extender motor power
+    Widget pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
+    Shuffleboard.getTab("Simulation")
+        .addDouble("Extender Motor Power",
+            m_helpers.getDoubleSupplier("ArmSystem/ExtenderMotor/InputPower"))
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

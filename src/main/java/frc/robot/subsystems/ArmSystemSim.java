@@ -175,8 +175,8 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.kTotalStringLenMeters - Constants.SimConstants.kCurrentLenSpooled,
         WindingOrientation.BackOfRobot), true);
 
-    m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams), null,
-        null, false);
+    m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams),
+        shuffleClient.getSubdirectoryClient("Winch"), null, false);
     m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }

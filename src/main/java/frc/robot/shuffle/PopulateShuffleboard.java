@@ -47,7 +47,7 @@ public class PopulateShuffleboard {
     pos = m_defaultLayout.getWidgetPosition("Winch Functional");
     Shuffleboard.getTab("Simulation")
         .addBoolean("Winch Functional",
-            m_helpers.getBooleanSupplier("ArmSystem/ExtenderMotor/IsBroken"))
+            () -> !m_helpers.getBooleanSupplier("ArmSystem/Winch/IsBroken").getAsBoolean())
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

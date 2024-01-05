@@ -1,5 +1,12 @@
 package frc.robot.shuffle;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +33,24 @@ public class ShuffleboardHelpersTest {
 
   @Test
   public void getDoubleSupplierShouldSucceed() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Double value = 2.0;
+    shuffleClient.addItem("DoubleKey", () -> MultiType.of(value));
+
+    DoubleSupplier result = m_helpers.getDoubleSupplier("Test/DoubleKey");
+    assertNotNull(result);
+    assertEquals(2.0, result.getAsDouble());
   }
 
   @Test
   public void getBooleanDoubleSupplierShouldSucceed() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Boolean value = true;
+    shuffleClient.addItem("BooleanKey", () -> MultiType.of(value));
+
+    BooleanSupplier result = m_helpers.getBooleanSupplier("Test/BooleanKey");
+    assertNotNull(result);
+    assertEquals(true, result.getAsBoolean());
   }
 
   @Test
@@ -56,11 +75,33 @@ public class ShuffleboardHelpersTest {
 
   @Test
   public void doubleValueSetShouldBeCorrectValue() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Double[] valueArray = {
+        2.0
+    };
+    shuffleClient.addItem("DoubleKey", () -> MultiType.of(valueArray[0]));
+
+    DoubleSupplier result = m_helpers.getDoubleSupplier("Test/DoubleKey");
+    assertNotNull(result);
+    assertEquals(2.0, result.getAsDouble());
+
+    valueArray[0] = 4.0;
+    assertEquals(4.0, result.getAsDouble());
   }
 
   @Test
   public void booleanValueSetShouldBeCorrectValue() {
-    throw new RuntimeException("Not implemented");
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
+    Boolean[] valueArray = {
+        true
+    };
+    shuffleClient.addItem("BooleanKey", () -> MultiType.of(valueArray[0]));
+
+    BooleanSupplier result = m_helpers.getBooleanSupplier("Test/BooleanKey");
+    assertNotNull(result);
+    assertEquals(true, result.getAsBoolean());
+
+    valueArray[0] = false;
+    assertEquals(false, result.getAsBoolean());
   }
 }

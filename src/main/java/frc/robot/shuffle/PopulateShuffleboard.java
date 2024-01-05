@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -23,11 +25,25 @@ public class PopulateShuffleboard {
     m_defaultLayout = new DefaultLayout();
   }
 
+  // $TODO Unit tests
   private DoubleSupplier getDoubleSupplier(String key) {
     Supplier<MultiType> supplier = m_globalMap.get(key);
 
-    // $TODO - What if supplier is null? What if we call getDouble and it's actually a string?
+    if (supplier == null || supplier.get().getDouble().isEmpty()) {
+      throw new IllegalArgumentException("Key missing or wrong type: " + key);
+    }
+
     return () -> supplier.get().getDouble().orElse(0.0);
+  }
+
+  private BooleanSupplier getBooleanSupplier(String key) {
+    Supplier<MultiType> supplier = m_globalMap.get(key);
+
+    if (supplier == null || supplier.get().getBoolean().isEmpty()) {
+      throw new IllegalArgumentException("Key missing or wrong type: " + key);
+    }
+
+    return () -> supplier.get().getBoolean().orElse(false);
   }
 
   /**

@@ -1,32 +1,29 @@
 package frc.robot.shuffle;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
 
 /**
  * Adds Shuffleboard widgets to Simulation tab.
  */
 public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
-  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap;
   ShuffleboardTab m_tab;
   ShuffleboardHelpers m_helpers;
 
   /**
    * Constructor.
    */
-  public PopulateShuffleboard(PrefixedConcurrentMap<Supplier<MultiType>> globalMap,
+  public PopulateShuffleboard(ShuffleboardHelpers helpers,
       DefaultLayout defaultLayout,
       ShuffleboardTab tab) {
 
-    m_globalMap = globalMap;
-    m_helpers = new ShuffleboardHelpers(globalMap);
+    m_helpers = helpers;
     m_defaultLayout = defaultLayout;
     m_tab = tab;
   }
@@ -35,38 +32,44 @@ public class PopulateShuffleboard {
    * Adds Shuffleboard widgets.
    */
   public void addShuffleboardWidgets() {
-    addWinchWidgets();
-    addExtenderWidgets();
+    addBooleanWidget("Winch Functional", "Winch Functional", "ArmSystem/Winch/IsBroken", true);
+
+    addWidgetNegative1To1("Winch Motor Power",
+        "Winch Motor Power",
+        "ArmSystem/WinchMotor/InputPower");
+
+    addWidgetNegative1To1("Extender Motor Power",
+        "Extender Motor Power",
+        "ArmSystem/ExtenderMotor/InputPower");
   }
 
-  private void addWinchWidgets() {
-    // Winch functional display
-    BooleanSupplier winchHealthy = () -> !m_helpers.getBooleanSupplier("ArmSystem/Winch/IsBroken")
-        .getAsBoolean();
-    Widget pos = m_defaultLayout.getWidgetPosition("Winch Functional");
-    Shuffleboard.getTab("Simulation").addBoolean("Winch Functional", winchHealthy)
-        .withWidget(BuiltInWidgets.kBooleanBox)
+  /**
+   * Adds a widget that shows a range of -1 to 1, with a particular value selected.
+   */
+  private void addWidgetNegative1To1(String title, String layoutId, String dashItemKey) {
+    DoubleSupplier supplier = m_helpers.getDoubleSupplier(dashItemKey);
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+
+    m_tab.addDouble(title, supplier).withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  /**
+   * Adds a boolean widget to the Shuffleboard.
+   */
+  private void addBooleanWidget(String title,
+      String layoutId,
+      String dashItemKey,
+      boolean invertBoolValue) {
+
+    BooleanSupplier supplier = invertBoolValue
+        ? () -> !m_helpers.getBooleanSupplier(dashItemKey).getAsBoolean()
+        : m_helpers.getBooleanSupplier(dashItemKey);
+
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+    m_tab.addBoolean(title, supplier).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Winch motor power
-    pos = m_defaultLayout.getWidgetPosition("Winch Motor Power");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Winch Motor Power",
-            m_helpers.getDoubleSupplier("ArmSystem/WinchMotor/InputPower"))
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-  }
-
-  private void addExtenderWidgets() {
-    // Extender motor power
-    Widget pos = m_defaultLayout.getWidgetPosition("Extender Motor Power");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Extender Motor Power",
-            m_helpers.getDoubleSupplier("ArmSystem/ExtenderMotor/InputPower"))
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 }

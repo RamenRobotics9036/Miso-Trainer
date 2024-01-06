@@ -17,6 +17,7 @@ import frc.robot.helpers.DefaultLayout;
 import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PopulateShuffleboard;
 import frc.robot.shuffle.PrefixedConcurrentMap;
+import frc.robot.shuffle.ShuffleboardHelpers;
 import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
 import frc.robot.subsystems.ArmSystemSim;
@@ -115,8 +116,9 @@ public class RobotContainer {
     m_armSystem.initDashBoard();
     m_grabSystem.initDashBoard();
 
-    PopulateShuffleboard shuffle = new PopulateShuffleboard(SupplierMapFactory.getGlobalInstance(),
-        new DefaultLayout(), Shuffleboard.getTab("Simulation"));
+    PopulateShuffleboard shuffle = new PopulateShuffleboard(
+        new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
+        Shuffleboard.getTab("Simulation"));
     shuffle.addShuffleboardWidgets();
   }
 

@@ -70,7 +70,7 @@ public class ExtenderSimModel {
     m_initialMotorRotations = m_motorEncoderSim.getPosition();
 
     // Call this to initialize m_currentExtendedLen
-    updateNewExtendedLen();
+    m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
   }
 
   public double getExtendedLen() {
@@ -85,14 +85,14 @@ public class ExtenderSimModel {
     return m_isBroken;
   }
 
-  private void updateNewExtendedLen() {
+  private double updateNewExtendedLen(double currentRotations) {
     // If the extender is broken, there's nothing to update
     if (m_isBroken) {
-      return;
+      return m_currentExtendedLen;
     }
 
     // How much has the motor turned since extender initialized?
-    double currentRotations = m_motorEncoderSim.getPosition() * m_motorPolarity;
+    currentRotations *= m_motorPolarity;
     double deltaRotations = currentRotations - m_initialMotorRotations;
 
     double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
@@ -108,10 +108,10 @@ public class ExtenderSimModel {
       m_isBroken = true;
     }
 
-    m_currentExtendedLen = newCurrentLen;
+    return newCurrentLen;
   }
 
   public void simulationPeriodic() {
-    updateNewExtendedLen();
+    m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
   }
 }

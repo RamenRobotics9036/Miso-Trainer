@@ -1,4 +1,4 @@
-package frc.robot.simulation;
+package frc.robot.simulation.extender;
 
 import frc.robot.helpers.RelativeEncoderSim;
 
@@ -9,7 +9,7 @@ import frc.robot.helpers.RelativeEncoderSim;
  * total extender length, the current extended length, and whether the extender is broken or not.
  * </p>
  */
-public class ExtenderSimulation {
+public class ExtenderSimModel {
   private RelativeEncoderSim m_motorEncoderSim;
   private double m_totalExtenderLengthMeters = 0.5;
   private double m_minExtendLength = 0;
@@ -31,7 +31,7 @@ public class ExtenderSimulation {
    *
    * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  public ExtenderSimulation(RelativeEncoderSim motorEncoderSim,
+  public ExtenderSimModel(RelativeEncoderSim motorEncoderSim,
       double cylinderDiameterMeters,
       double totalExtenderLengthMeters,
       double initialExtendedLen,

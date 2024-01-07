@@ -1,6 +1,5 @@
 package frc.robot.simulation.winch;
 
-import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -111,13 +110,6 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     }
 
     return currentRotationsWithPolarity - m_initialMotorRotations;
-  }
-
-  /**
-   * Returns properties to display in Shuffleboard.
-   */
-  public DashboardSupplierItem[] getDashboardSupplierItems() {
-    return null;
   }
 
   public boolean isModelBroken() {

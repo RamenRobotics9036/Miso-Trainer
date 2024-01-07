@@ -2,7 +2,6 @@ package frc.robot.simulation.simplearm;
 
 import edu.wpi.first.math.Pair;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.framework.DashboardSupplierItem;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -119,13 +118,6 @@ public class ArmSimModel implements SimModelInterface<Double, Double> {
     // Now check general cases for arm stuck
 
     return isValid ? null : new Pair<Boolean, Double>(isValid, resetPositionTo);
-  }
-
-  /**
-   * Returns properties to display in Shuffleboard.
-   */
-  public DashboardSupplierItem[] getDashboardSupplierItems() {
-    return null;
   }
 
   public boolean isModelBroken() {

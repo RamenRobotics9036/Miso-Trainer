@@ -1,6 +1,7 @@
 package frc.robot.simulation.extender;
 
 import frc.robot.helpers.RelativeEncoderSim;
+import frc.robot.simulation.framework.SimModelInterface;
 
 /**
  * This class represents a simulation of an extender.
@@ -9,7 +10,8 @@ import frc.robot.helpers.RelativeEncoderSim;
  * total extender length, the current extended length, and whether the extender is broken or not.
  * </p>
  */
-public class ExtenderSimModel {
+public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState> {
+  // $TODO - Remove motorEncoderSim
   private RelativeEncoderSim m_motorEncoderSim;
   private double m_totalExtenderLengthMeters = 0.5;
   private double m_minExtendLength = 0;
@@ -23,7 +25,7 @@ public class ExtenderSimModel {
   /**
    * Constructs a new ExtenderSimulation instance with the provided parameters.
    *
-   * @param motorEncoderSim           The encoder simulation for the motor.
+   * @param motorEncoderSim           The encoder simulation for the motor. $TODO goes away
    * @param cylinderDiameterMeters    The diameter of the cylinder in meters.
    * @param totalExtenderLengthMeters The total length of the extender in meters.
    * @param initialExtendedLen        The initial length of the extender.
@@ -31,6 +33,7 @@ public class ExtenderSimModel {
    *
    * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
+  // $TODO - Remove motorEncoderSim
   public ExtenderSimModel(RelativeEncoderSim motorEncoderSim,
       double cylinderDiameterMeters,
       double totalExtenderLengthMeters,
@@ -69,20 +72,28 @@ public class ExtenderSimModel {
     // Take a snapshot of current DCMotor position
     m_initialMotorRotations = m_motorEncoderSim.getPosition();
 
-    // Call this to initialize m_currentExtendedLen
+    // $TODO - Shouldnt need to call this - Call this to initialize m_currentExtendedLen
     m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
   }
 
+  // $TODO - Not needed?
   public double getExtendedLen() {
     return m_currentExtendedLen;
   }
 
+  // $TODO - Not needed?
   public double getExtendedPercent() {
     return getExtendedLen() / m_totalExtenderLengthMeters;
   }
 
+  // $TODO - This can go away
   public boolean getIsBroken() {
     return m_isBroken;
+  }
+
+  @Override
+  public boolean isModelBroken() {
+    return getIsBroken();
   }
 
   private double updateNewExtendedLen(double currentRotations) {
@@ -111,7 +122,13 @@ public class ExtenderSimModel {
     return newCurrentLen;
   }
 
+  // $TODO - This goes away
   public void simulationPeriodic() {
     m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
+  }
+
+  @Override
+  public ExtenderState updateSimulation(Double currentMotorRotations) {
+    throw new UnsupportedOperationException("Not implemented");
   }
 }

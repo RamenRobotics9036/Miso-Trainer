@@ -11,19 +11,23 @@ public class ExtenderDashboardPlugin implements DashboardPluginInterface<Integer
 
   @Override
   public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
-/*     return new DashboardItem[] {
-        new DashboardItem("Accumulator", MultiType.of(0))
-    }; */
+    /*
+     * return new DashboardItem[] {
+     * new DashboardItem("Accumulator", MultiType.of(0))
+     * };
+     */
     return null;
   }
 
   @Override
   public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
-/*     MultiType[] result = new MultiType[1];
-
-    result[0] = MultiType.of(output);
-
-    return result; */
+    /*
+     * MultiType[] result = new MultiType[1];
+     * 
+     * result[0] = MultiType.of(output);
+     * 
+     * return result;
+     */
     return null;
   }
 }

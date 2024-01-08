@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
-import frc.robot.simulation.DriveSimulation;
+import frc.robot.simulation.tankdrive.TankdriveSimulationHelper;
 import java.util.Map;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Map;
  * the robot is not running in simulation mode.
  */
 public class TankDriveSystemSim extends TankDriveSystem {
-  private DriveSimulation m_driveSimulation = null;
+  private TankdriveSimulationHelper m_driveSimulation = null;
   private DefaultLayout m_defaultLayout = new DefaultLayout();
 
   /**
@@ -53,7 +53,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // But just in-case someone tries to instantiate it otherwise, we do an extra
     // check here.
     if (RobotBase.isSimulation()) {
-      m_driveSimulation = new DriveSimulation(
+      m_driveSimulation = new TankdriveSimulationHelper(
           Constants.OperatorConstants.kWheelDiameterMetersDrive / 2);
       resetSimulationRobotPosition();
     }

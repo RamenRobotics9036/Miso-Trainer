@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.simulation;
+package frc.robot.simulation.tankdrive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -31,7 +31,7 @@ import frc.robot.helpers.RelEncoderWrapper;
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown
  * on the field.
  */
-public class DriveSimulation {
+public class TankdriveSimulationHelper {
   // 3 meters per second.
   public static final double kMaxSpeed = 3.0;
   // 1/2 rotation per second.
@@ -102,7 +102,7 @@ public class DriveSimulation {
   }
 
   /** Subsystem constructor. */
-  public DriveSimulation(double wheelRadiusMeters) {
+  public TankdriveSimulationHelper(double wheelRadiusMeters) {
     m_wheelRadius = wheelRadiusMeters;
 
     m_drivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem, DCMotor.getCIM(2), 8,

@@ -18,6 +18,11 @@ public class ExtenderParams {
 
   /**
    * Constructor.
+   *
+   * @param cylinderDiameterMetersInput    The diameter of the cylinder in meters.
+   * @param totalExtenderLengthMetersInput The total length of the extender in meters.
+   * @param initialExtendedLenInput        The initial length of the extender.
+   * @param invertMotorInput               Whether the motor should be inverted.
    */
   public ExtenderParams(double cylinderDiameterMetersInput,
       double totalExtenderLengthMetersInput,

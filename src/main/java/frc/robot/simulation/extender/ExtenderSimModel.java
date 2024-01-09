@@ -1,6 +1,5 @@
 package frc.robot.simulation.extender;
 
-import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -11,124 +10,87 @@ import frc.robot.simulation.framework.SimModelInterface;
  * </p>
  */
 public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState> {
-  // $TODO - Remove motorEncoderSim
-  private RelativeEncoderSim m_motorEncoderSim;
-  private double m_totalExtenderLengthMeters = 0.5;
-  private double m_minExtendLength = 0;
-  private double m_cylinderDiameterMeters;
-  private double m_currentExtendedLen;
+  private final double m_totalExtenderLengthMeters;
+  private final double m_cylinderDiameterMeters;
   private boolean m_isBroken;
-  private double m_initialMotorRotations;
-  private double m_initialExtendedLen;
-  private double m_motorPolarity;
+  private double m_initialMotorRotations = 0;
+  private double m_currentMotorRotations = 0;
+  private boolean m_initialMotorRotationsSet = false;
+  private final double m_initialExtendedLen;
+  private final double m_motorPolarity;
 
   /**
    * Constructs a new ExtenderSimulation instance with the provided parameters.
-   *
-   * @param motorEncoderSim           The encoder simulation for the motor. $TODO goes away
-   * @param cylinderDiameterMeters    The diameter of the cylinder in meters.
-   * @param totalExtenderLengthMeters The total length of the extender in meters.
-   * @param initialExtendedLen        The initial length of the extender.
-   * @param invertMotor               Whether the motor should be inverted.
-   *
-   * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  // $TODO - Remove motorEncoderSim
-  public ExtenderSimModel(RelativeEncoderSim motorEncoderSim,
-      double cylinderDiameterMeters,
-      double totalExtenderLengthMeters,
-      double initialExtendedLen,
-      boolean invertMotor) {
+  public ExtenderSimModel(ExtenderParams params) {
 
     // Sanity checks
-    if (motorEncoderSim == null) {
-      throw new IllegalArgumentException("motorEncoderSim is null");
-    }
-
-    if (cylinderDiameterMeters <= 0) {
+    if (params.cylinderDiameterMeters <= 0) {
       throw new IllegalArgumentException("CylinderDiameterMeters must be >0");
     }
 
-    if (totalExtenderLengthMeters <= 0) {
+    if (params.totalExtenderLengthMeters <= 0) {
       throw new IllegalArgumentException("TotalExtenderLengthMeters must be >0");
     }
 
-    if (initialExtendedLen < 0) {
+    if (params.initialExtendedLen < 0) {
       throw new IllegalArgumentException("InitialExtendedLen must be >=0");
     }
 
-    if (initialExtendedLen > totalExtenderLengthMeters) {
+    if (params.initialExtendedLen > params.totalExtenderLengthMeters) {
       throw new IllegalArgumentException("InitialExtendedLen must be <= TotalExtenderLengthMeters");
     }
 
-    m_motorEncoderSim = motorEncoderSim;
-    m_cylinderDiameterMeters = cylinderDiameterMeters;
-    m_totalExtenderLengthMeters = totalExtenderLengthMeters;
-    m_initialExtendedLen = initialExtendedLen;
-    m_motorPolarity = invertMotor ? -1 : 1;
+    m_cylinderDiameterMeters = params.cylinderDiameterMeters;
+    m_totalExtenderLengthMeters = params.totalExtenderLengthMeters;
+    m_initialExtendedLen = params.initialExtendedLen;
+    m_motorPolarity = params.invertMotor ? -1 : 1;
 
     m_isBroken = false;
-
-    // Take a snapshot of current DCMotor position
-    m_initialMotorRotations = m_motorEncoderSim.getPosition();
-
-    // $TODO - Shouldnt need to call this - Call this to initialize m_currentExtendedLen
-    m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
-  }
-
-  // $TODO - Not needed?
-  public double getExtendedLen() {
-    return m_currentExtendedLen;
-  }
-
-  // $TODO - Not needed?
-  public double getExtendedPercent() {
-    return getExtendedLen() / m_totalExtenderLengthMeters;
-  }
-
-  // $TODO - This can go away
-  public boolean getIsBroken() {
-    return m_isBroken;
   }
 
   @Override
   public boolean isModelBroken() {
-    return getIsBroken();
+    return m_isBroken;
   }
 
-  private double updateNewExtendedLen(double currentRotations) {
+  @Override
+  public ExtenderState updateSimulation(Double newMotorRotations) {
+    // Snapshot the initial motor rotations
+    if (!m_initialMotorRotationsSet) {
+      m_initialMotorRotations = m_currentMotorRotations = newMotorRotations;
+      m_initialMotorRotationsSet = true;
+    }
+
     // If the extender is broken, there's nothing to update
     if (m_isBroken) {
-      return m_currentExtendedLen;
+      newMotorRotations = m_currentMotorRotations;
     }
 
     // How much has the motor turned since extender initialized?
-    currentRotations *= m_motorPolarity;
-    double deltaRotations = currentRotations - m_initialMotorRotations;
+    newMotorRotations *= m_motorPolarity;
+    double deltaRotations = newMotorRotations - m_initialMotorRotations;
 
     double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
     double newCurrentLen = m_initialExtendedLen + deltaLenMeters;
 
     // Check for bounds
+    double minExtendLength = 0;
     if (newCurrentLen > m_totalExtenderLengthMeters) {
       newCurrentLen = m_totalExtenderLengthMeters;
       m_isBroken = true;
     }
-    else if (newCurrentLen < m_minExtendLength) {
-      newCurrentLen = m_minExtendLength;
+    else if (newCurrentLen < minExtendLength) {
+      newCurrentLen = minExtendLength;
       m_isBroken = true;
     }
 
-    return newCurrentLen;
-  }
+    m_currentMotorRotations = newMotorRotations;
 
-  // $TODO - This goes away
-  public void simulationPeriodic() {
-    m_currentExtendedLen = updateNewExtendedLen(m_motorEncoderSim.getPosition());
-  }
+    ExtenderState extenderStateResult = new ExtenderState();
+    extenderStateResult.setExtendedLen(newCurrentLen);
+    extenderStateResult.setExtendedPercent(newCurrentLen / m_totalExtenderLengthMeters);
 
-  @Override
-  public ExtenderState updateSimulation(Double currentMotorRotations) {
-    throw new UnsupportedOperationException("Not implemented");
+    return extenderStateResult;
   }
 }

@@ -1,5 +1,6 @@
 package frc.robot.simulation.extender;
 
+import edu.wpi.first.math.Pair;
 import frc.robot.simulation.framework.SimModelInterface;
 
 /**
@@ -67,30 +68,48 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
       newMotorRotations = m_currentMotorRotations;
     }
 
+    // Save value
+    m_currentMotorRotations = newMotorRotations;
+
+    double newMotorRotationsWithPolarity = newMotorRotations * m_motorPolarity;
+
     // How much has the motor turned since extender initialized?
-    newMotorRotations *= m_motorPolarity;
-    double deltaRotations = newMotorRotations - m_initialMotorRotations;
+    double deltaRotations = newMotorRotationsWithPolarity - m_initialMotorRotations;
 
     double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
-    double newCurrentLen = m_initialExtendedLen + deltaLenMeters;
+    if (isExtenderAboutToBreak(m_initialExtendedLen + deltaLenMeters)) {
+      m_isBroken = true;
+    }
+
+    double newExtenderLen = getExtenderLen(m_initialExtendedLen + deltaLenMeters);
+    ExtenderState extenderStateResult = new ExtenderState();
+    extenderStateResult.setExtendedLen(newExtenderLen);
+    extenderStateResult.setExtendedPercent(newExtenderLen / m_totalExtenderLengthMeters);
+
+    return extenderStateResult;
+  }
+
+  private double getExtenderLen(double lenMeters) {
+    return getExtenderLenAndStatus(lenMeters).getFirst();
+  }
+
+  private boolean isExtenderAboutToBreak(double lenMeters) {
+    return getExtenderLenAndStatus(lenMeters).getSecond();
+  }
+
+  private Pair<Double, Boolean> getExtenderLenAndStatus(double lenMeters) {
+    Boolean aboutToBreak = false;
 
     // Check for bounds
     double minExtendLength = 0;
-    if (newCurrentLen > m_totalExtenderLengthMeters) {
-      newCurrentLen = m_totalExtenderLengthMeters;
-      m_isBroken = true;
+    if (lenMeters > m_totalExtenderLengthMeters) {
+      lenMeters = m_totalExtenderLengthMeters;
+      aboutToBreak = true;
     }
-    else if (newCurrentLen < minExtendLength) {
-      newCurrentLen = minExtendLength;
-      m_isBroken = true;
+    else if (lenMeters < minExtendLength) {
+      lenMeters = minExtendLength;
+      aboutToBreak = true;
     }
-
-    m_currentMotorRotations = newMotorRotations;
-
-    ExtenderState extenderStateResult = new ExtenderState();
-    extenderStateResult.setExtendedLen(newCurrentLen);
-    extenderStateResult.setExtendedPercent(newCurrentLen / m_totalExtenderLengthMeters);
-
-    return extenderStateResult;
+    return new Pair<Double, Boolean>(lenMeters, aboutToBreak);
   }
 }

@@ -87,9 +87,36 @@ class ExtenderSimModelTest {
   }
 
   @Test
+  public void updateNewExtenderLen_OverExtension_ShouldHaveExpectedLen() {
+    m_extender.updateNewExtendedLen(10.0);
+    assertEquals(0.5, m_extender.getExtendedLen());
+  }
+
+  @Test
   public void updateNewExtendedLen_UnderExtension_ShouldSetIsBrokenTrue() {
     m_extender.updateNewExtendedLen(-10.0);
     assertTrue(m_extender.getIsBroken());
+  }
+
+  @Test
+  public void updateNewExtenderLen_UnderExtension_ShouldHaveExpectedLen() {
+    m_extender.updateNewExtendedLen(-10.0);
+    assertEquals(0.0, m_extender.getExtendedLen());
+  }
+
+  @Test
+  public void updateNewExtenderLen_MaxLen_ShouldSucceed() {
+    m_extender.updateNewExtendedLen(0.952);
+    assertEquals(0.5, m_extender.getExtendedLen(), 0.001);
+    assertFalse(m_extender.getIsBroken());
+  }
+
+  @Test
+  public void updateNewExtenderLen_InitialLenHalfWay_RotatingToMinLen_ShouldSucceed() {
+    ExtenderSimModel invertedExtender = new ExtenderSimModel(0, 0.1, 1, 0.3, false);
+    invertedExtender.updateNewExtendedLen(-0.952);
+    assertEquals(0.0, invertedExtender.getExtendedLen(), 0.001);
+    assertFalse(invertedExtender.getIsBroken());
   }
 
   @Test

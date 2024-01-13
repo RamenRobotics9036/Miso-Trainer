@@ -192,11 +192,7 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 
-    Supplier<Double> encoderRotationsSupplier = () -> {
-      return m_extenderEncoderSim.getPosition();
-    };
-
-    m_extenderSimulation = new ExtenderSimulation(encoderRotationsSupplier,
+    m_extenderSimulation = new ExtenderSimulation(m_extenderEncoderSim.getPosition(),
         Constants.SimConstants.kcylinderDiameterMeters,
         Constants.SimConstants.kTotalExtenderLenMeters, Constants.SimConstants.kInitialExtendedLen,
         true);

@@ -1,7 +1,5 @@
 package frc.robot.simulation;
 
-import java.util.function.Supplier;
-
 /**
  * This class represents a simulation of an extender.
  * <p>
@@ -10,7 +8,6 @@ import java.util.function.Supplier;
  * </p>
  */
 public class ExtenderSimulation {
-  private Supplier<Double> m_encoderRotationsSupplier;
   private double m_totalExtenderLengthMeters = 0.5;
   private double m_minExtendLength = 0;
   private double m_cylinderDiameterMeters;
@@ -23,7 +20,7 @@ public class ExtenderSimulation {
   /**
    * Constructs a new ExtenderSimulation instance with the provided parameters.
    *
-   * @param encoderRotationsSupplier  The encoder position for motor.
+   * @param initialMotorRotations     The initial encoder position for motor.
    * @param cylinderDiameterMeters    The diameter of the cylinder in meters.
    * @param totalExtenderLengthMeters The total length of the extender in meters.
    * @param initialExtendedLen        The initial length of the extender.
@@ -31,17 +28,13 @@ public class ExtenderSimulation {
    *
    * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  public ExtenderSimulation(Supplier<Double> encoderRotationsSupplier,
+  public ExtenderSimulation(double initialMotorRotations,
       double cylinderDiameterMeters,
       double totalExtenderLengthMeters,
       double initialExtendedLen,
       boolean invertMotor) {
 
     // Sanity checks
-    if (encoderRotationsSupplier == null) {
-      throw new IllegalArgumentException("encoderRotationsSupplier is null");
-    }
-
     if (cylinderDiameterMeters <= 0) {
       throw new IllegalArgumentException("CylinderDiameterMeters must be >0");
     }
@@ -58,7 +51,6 @@ public class ExtenderSimulation {
       throw new IllegalArgumentException("InitialExtendedLen must be <= TotalExtenderLengthMeters");
     }
 
-    m_encoderRotationsSupplier = encoderRotationsSupplier;
     m_cylinderDiameterMeters = cylinderDiameterMeters;
     m_totalExtenderLengthMeters = totalExtenderLengthMeters;
     m_initialExtendedLen = initialExtendedLen;
@@ -67,10 +59,10 @@ public class ExtenderSimulation {
     m_isBroken = false;
 
     // Take a snapshot of current DCMotor position
-    m_initialMotorRotations = m_encoderRotationsSupplier.get();
+    m_initialMotorRotations = initialMotorRotations;
 
     // Call this to initialize m_currentExtendedLen
-    updateNewExtendedLen(m_encoderRotationsSupplier.get());
+    updateNewExtendedLen(initialMotorRotations);
   }
 
   public double getExtendedLen() {

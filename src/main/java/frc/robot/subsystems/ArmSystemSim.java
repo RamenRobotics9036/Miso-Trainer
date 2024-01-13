@@ -240,7 +240,7 @@ public class ArmSystemSim extends ArmSystem {
       m_extenderMotorSimManager.simulationPeriodic();
       m_winchSimManager.simulationPeriodic();
 
-      m_extenderSimulation.simulationPeriodic();
+      m_extenderSimulation.updateNewExtendedLen(m_extenderEncoderSim.getPosition());
       simulatePeriodicStringAndArm(m_angleSimManager, m_armSimManager);
 
       boolean isExtenderSensorOn = m_extenderSimulation

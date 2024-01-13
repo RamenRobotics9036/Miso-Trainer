@@ -85,7 +85,10 @@ public class ExtenderSimulation {
     return m_isBroken;
   }
 
-  private double updateNewExtendedLen(double currentRotations) {
+  /**
+   * Updates the current extended length of the extender based on the current motor rotations.
+   */
+  public double updateNewExtendedLen(double currentRotations) {
     // If the extender is broken, there's nothing to update
     if (m_isBroken) {
       return m_currentExtendedLen;
@@ -111,9 +114,5 @@ public class ExtenderSimulation {
     m_currentExtendedLen = newCurrentLen;
 
     return m_currentExtendedLen;
-  }
-
-  public void simulationPeriodic() {
-    updateNewExtendedLen(m_encoderRotationsSupplier.get());
   }
 }

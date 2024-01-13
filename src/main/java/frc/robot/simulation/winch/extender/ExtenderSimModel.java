@@ -7,7 +7,7 @@ package frc.robot.simulation.winch.extender;
  * total extender length, the current extended length, and whether the extender is broken or not.
  * </p>
  */
-public class ExtenderSimulation {
+public class ExtenderSimModel {
   private double m_totalExtenderLengthMeters = 0.5;
   private double m_minExtendLength = 0;
   private double m_cylinderDiameterMeters;
@@ -28,7 +28,7 @@ public class ExtenderSimulation {
    *
    * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  public ExtenderSimulation(double initialMotorRotations,
+  public ExtenderSimModel(double initialMotorRotations,
       double cylinderDiameterMeters,
       double totalExtenderLengthMeters,
       double initialExtendedLen,

@@ -31,7 +31,7 @@ import frc.robot.simulation.winch.WinchParams;
 import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
-import frc.robot.simulation.winch.extender.ExtenderSimulation;
+import frc.robot.simulation.winch.extender.ExtenderSimModel;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -53,7 +53,7 @@ public class ArmSystemSim extends ArmSystem {
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
-  protected ExtenderSimulation m_extenderSimulation;
+  protected ExtenderSimModel m_extenderSimulation;
 
   protected DIOSim m_sensorSim;
 
@@ -192,7 +192,7 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 
-    m_extenderSimulation = new ExtenderSimulation(m_extenderEncoderSim.getPosition(),
+    m_extenderSimulation = new ExtenderSimModel(m_extenderEncoderSim.getPosition(),
         Constants.SimConstants.kcylinderDiameterMeters,
         Constants.SimConstants.kTotalExtenderLenMeters, Constants.SimConstants.kInitialExtendedLen,
         true);

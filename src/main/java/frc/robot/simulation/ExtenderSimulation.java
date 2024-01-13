@@ -1,6 +1,6 @@
 package frc.robot.simulation;
 
-import frc.robot.helpers.RelativeEncoderSim;
+import java.util.function.Supplier;
 
 /**
  * This class represents a simulation of an extender.
@@ -10,7 +10,7 @@ import frc.robot.helpers.RelativeEncoderSim;
  * </p>
  */
 public class ExtenderSimulation {
-  private RelativeEncoderSim m_motorEncoderSim;
+  private Supplier<Double> m_encoderRotationsSupplier;
   private double m_totalExtenderLengthMeters = 0.5;
   private double m_minExtendLength = 0;
   private double m_cylinderDiameterMeters;
@@ -23,7 +23,7 @@ public class ExtenderSimulation {
   /**
    * Constructs a new ExtenderSimulation instance with the provided parameters.
    *
-   * @param motorEncoderSim           The encoder simulation for the motor.
+   * @param encoderRotationsSupplier  The encoder position for motor.
    * @param cylinderDiameterMeters    The diameter of the cylinder in meters.
    * @param totalExtenderLengthMeters The total length of the extender in meters.
    * @param initialExtendedLen        The initial length of the extender.
@@ -31,15 +31,15 @@ public class ExtenderSimulation {
    *
    * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  public ExtenderSimulation(RelativeEncoderSim motorEncoderSim,
+  public ExtenderSimulation(Supplier<Double> encoderRotationsSupplier,
       double cylinderDiameterMeters,
       double totalExtenderLengthMeters,
       double initialExtendedLen,
       boolean invertMotor) {
 
     // Sanity checks
-    if (motorEncoderSim == null) {
-      throw new IllegalArgumentException("motorEncoderSim is null");
+    if (encoderRotationsSupplier == null) {
+      throw new IllegalArgumentException("encoderRotationsSupplier is null");
     }
 
     if (cylinderDiameterMeters <= 0) {
@@ -58,7 +58,7 @@ public class ExtenderSimulation {
       throw new IllegalArgumentException("InitialExtendedLen must be <= TotalExtenderLengthMeters");
     }
 
-    m_motorEncoderSim = motorEncoderSim;
+    m_encoderRotationsSupplier = encoderRotationsSupplier;
     m_cylinderDiameterMeters = cylinderDiameterMeters;
     m_totalExtenderLengthMeters = totalExtenderLengthMeters;
     m_initialExtendedLen = initialExtendedLen;
@@ -67,10 +67,10 @@ public class ExtenderSimulation {
     m_isBroken = false;
 
     // Take a snapshot of current DCMotor position
-    m_initialMotorRotations = m_motorEncoderSim.getPosition();
+    m_initialMotorRotations = m_encoderRotationsSupplier.get();
 
     // Call this to initialize m_currentExtendedLen
-    updateNewExtendedLen(m_motorEncoderSim.getPosition());
+    updateNewExtendedLen(m_encoderRotationsSupplier.get());
   }
 
   public double getExtendedLen() {
@@ -114,6 +114,6 @@ public class ExtenderSimulation {
   }
 
   public void simulationPeriodic() {
-    updateNewExtendedLen(m_motorEncoderSim.getPosition());
+    updateNewExtendedLen(m_encoderRotationsSupplier.get());
   }
 }

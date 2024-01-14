@@ -52,7 +52,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected WinchState m_winchState;
   private ArmAngleState m_armAngleState;
-  private ExtenderState m_extenderState;
+  protected ExtenderState m_extenderState;
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;

@@ -1,6 +1,5 @@
 package frc.robot.simulation.extender;
 
-// $TODO - This class isnt used yet!
 /**
  * Class that holds paramaters for the extender.
  */

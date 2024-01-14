@@ -2,7 +2,6 @@ package frc.robot.simulation.extender;
 
 import frc.robot.simulation.framework.inputoutputs.Copyable;
 
-// $TODO - This class isnt used yet!
 /**
  * Holds output state of ExtenderSimModel.
  */

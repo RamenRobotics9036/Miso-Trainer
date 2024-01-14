@@ -100,16 +100,15 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     // .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
     // Extender percent extended
-    // $TODO - Hiding old widget for now
-    // pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
-    // Shuffleboard.getTab("Simulation")
-    // .addDouble("Extender % Extended", () -> m_extenderSimulation.getExtendedPercent())
-    // .withWidget(BuiltInWidgets.kNumberBar)
-    // .withProperties(Map.of("min", 0.0, "max", 1.0, "show text", false))
-    // .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+    Widget pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
+    Shuffleboard.getTab("Simulation")
+        .addDouble("Extender % Extended", () -> m_extenderState.getExtendedPercent())
+        .withWidget(BuiltInWidgets.kNumberBar)
+        .withProperties(Map.of("min", 0.0, "max", 1.0, "show text", false))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
     // Extender sensor display
-    Widget pos = m_defaultLayout.getWidgetPosition("Extender Sensor");
+    pos = m_defaultLayout.getWidgetPosition("Extender Sensor");
     Shuffleboard.getTab("Simulation").addBoolean("Extender Sensor", () -> !m_sensorSim.getValue())
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#FFFFFF"))
@@ -169,12 +168,9 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
     // Add Robot Arm widget
     // $LATER Don't hardcode name of the widget and location
-    Shuffleboard.getTab("Simulation")
-        .add("Happy",
-            new SendableArmPosition(() -> getArmPercentRaised(), () -> 0.0, // $TODO - Fix this ()
-                                                                            // ->
-                                                                            // m_extenderSimulation.getExtendedPercent(),
-                () -> m_ramenArmSimLogic.getGrabberOpen()))
+    Shuffleboard.getTab("Simulation").add("Happy",
+        new SendableArmPosition(() -> getArmPercentRaised(),
+            () -> m_extenderState.getExtendedPercent(), () -> m_ramenArmSimLogic.getGrabberOpen()))
         .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
   }
 

@@ -62,6 +62,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     super(controller);
   }
 
+  // $TODO - Command buttons can now be moved over to the new shuffleboard population code
   private void addCommandButtons() {
     // Move to to middle node cone
     Widget pos = m_defaultLayout.getWidgetPosition("Arm Middle node");

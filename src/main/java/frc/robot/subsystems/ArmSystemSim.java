@@ -14,7 +14,6 @@ import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import frc.robot.shuffle.SupplierMapFactory;
-import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
@@ -23,6 +22,7 @@ import frc.robot.simulation.extender.ExtenderSimModel;
 import frc.robot.simulation.extender.ExtenderState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.framework.inputoutputs.MotorSparkMaxSimInput;
 import frc.robot.simulation.framework.inputoutputs.RelEncoderSimInput;
 import frc.robot.simulation.framework.inputoutputs.RelEncoderSimOutput;
@@ -154,7 +154,7 @@ public class ArmSystemSim extends ArmSystem {
 
     m_angleSimManager = new SimManager<Double, ArmAngleState>(new ArmAngleSimModel(pivotMechanism),
         null, null, false);
-    m_angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    m_angleSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
     m_angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(m_armAngleState));
   }
 

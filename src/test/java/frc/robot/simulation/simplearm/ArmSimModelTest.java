@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
 import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
@@ -149,7 +148,7 @@ public class ArmSimModelTest {
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
         new ArmAngleSimModel(pivotMechanism), null, null, true);
-    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    angleSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(armAngleState));
 
     double offsetRotations = 0;
@@ -540,7 +539,7 @@ public class ArmSimModelTest {
 
     SimManager<Double, ArmAngleState> angleSimManager = new SimManager<Double, ArmAngleState>(
         new ArmAngleSimModel(pivotMechanism), null, null, true);
-    angleSimManager.setInputHandler(new ArmAngleSimInput(stringUnspooledLenSupplier));
+    angleSimManager.setInputHandler(new LambdaSimInput<Double>(stringUnspooledLenSupplier));
     angleSimManager.setOutputHandler(new CopySimOutput<ArmAngleState>(tempArmAngleState));
 
     double offsetRotations = 0.25;

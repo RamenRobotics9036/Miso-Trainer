@@ -109,6 +109,7 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
   /**
    * Updates the current extended length of the extender based on the current motor rotations.
    */
+  // $TODO - This should become private
   public double updateNewExtendedLen(double newMotorRotations) {
     // Snapshot the initial motor rotations
     if (!m_initialMotorRotationsSet) {

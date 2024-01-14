@@ -4,9 +4,9 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
 import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.AbsEncoderSimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.simplearm.ArmSimModel;
-import frc.robot.simulation.simplearm.ArmSimOutput;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
 import java.util.function.BooleanSupplier;
@@ -57,7 +57,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
     SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
         new ArmSimModel(armParams, ramenArmLogic), null, null, enableTestMode);
     armSimManager.setInputHandler(new LambdaSimInput<Double>(desiredArmAngleSupplier));
-    armSimManager.setOutputHandler(new ArmSimOutput(winchAbsoluteEncoderSim));
+    armSimManager.setOutputHandler(new AbsEncoderSimOutput(winchAbsoluteEncoderSim));
 
     return new Pair<SimManager<Double, Double>, RamenArmSimLogic>(armSimManager, ramenArmLogic);
   }

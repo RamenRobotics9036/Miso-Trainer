@@ -62,6 +62,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     super(controller);
   }
 
+  // $TODO - Command buttons can now be moved over to the new shuffleboard population code
   private void addCommandButtons() {
     // Move to to middle node cone
     Widget pos = m_defaultLayout.getWidgetPosition("Arm Middle node");
@@ -92,7 +93,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     // Extender functional
     Widget pos = m_defaultLayout.getWidgetPosition("Extender Functional");
     Shuffleboard.getTab("Simulation")
-        .addBoolean("Extender Functional", () -> !m_extenderSimulation.getIsBroken())
+        .addBoolean("Extender Functional", () -> !m_extenderSimManager.isBroken())
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
@@ -100,7 +101,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     // Extender percent extended
     pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
     Shuffleboard.getTab("Simulation")
-        .addDouble("Extender % Extended", () -> m_extenderSimulation.getExtendedPercent())
+        .addDouble("Extender % Extended", () -> m_extenderState.getExtendedPercent())
         .withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", 0.0, "max", 1.0, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
@@ -166,11 +167,9 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
     // Add Robot Arm widget
     // $LATER Don't hardcode name of the widget and location
-    Shuffleboard.getTab("Simulation")
-        .add("Happy",
-            new SendableArmPosition(() -> getArmPercentRaised(),
-                () -> m_extenderSimulation.getExtendedPercent(),
-                () -> m_ramenArmSimLogic.getGrabberOpen()))
+    Shuffleboard.getTab("Simulation").add("Happy",
+        new SendableArmPosition(() -> getArmPercentRaised(),
+            () -> m_extenderState.getExtendedPercent(), () -> m_ramenArmSimLogic.getGrabberOpen()))
         .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
   }
 

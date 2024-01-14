@@ -7,7 +7,7 @@ import frc.robot.simulation.framework.SimOutputInterface;
  * This makes it easy for caller, since lifetime of the object
  * is managed by the caller.
  */
-public class CopySimOutput<T extends Copyable<T>> implements SimOutputInterface<T> {
+public class CopySimOutput<T extends CopyableInterface<T>> implements SimOutputInterface<T> {
   private final T m_targetState;
 
   /**

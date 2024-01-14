@@ -1,4 +1,4 @@
-package frc.robot.simulation.winch.extender;
+package frc.robot.simulation.extender;
 
 /**
  * This class represents a simulation of an extender.

@@ -8,12 +8,14 @@ package frc.robot.simulation.extender;
  * </p>
  */
 public class ExtenderSimModel {
-  private double m_totalExtenderLengthMeters = 0.5;
+  private double m_totalExtenderLengthMeters;
   private double m_minExtendLength = 0;
   private double m_cylinderDiameterMeters;
-  private double m_currentExtendedLen;
+  private double m_currentExtendedLen; // $TODO - Get rid of this
   private boolean m_isBroken;
-  private double m_initialMotorRotations;
+  private double m_currentMotorRotations = 0;
+  private double m_initialMotorRotations = 0;
+  private boolean m_initialMotorRotationsSet = false;
   private double m_initialExtendedLen;
   private double m_motorPolarity;
 
@@ -58,9 +60,6 @@ public class ExtenderSimModel {
 
     m_isBroken = false;
 
-    // Take a snapshot of current DCMotor position
-    m_initialMotorRotations = initialMotorRotations;
-
     // Call this to initialize m_currentExtendedLen
     updateNewExtendedLen(initialMotorRotations);
   }
@@ -80,30 +79,40 @@ public class ExtenderSimModel {
   /**
    * Updates the current extended length of the extender based on the current motor rotations.
    */
-  public double updateNewExtendedLen(double currentRotations) {
+  public double updateNewExtendedLen(double newMotorRotations) {
+    // Snapshot the initial motor rotations
+    if (!m_initialMotorRotationsSet) {
+      m_currentMotorRotations = m_initialMotorRotations = newMotorRotations;
+      m_initialMotorRotationsSet = true;
+    }
+
     // If the extender is broken, there's nothing to update
     if (m_isBroken) {
-      return m_currentExtendedLen;
+      newMotorRotations = m_currentMotorRotations;
     }
+
+    // Save value
+    m_currentMotorRotations = newMotorRotations;
 
     // How much has the motor turned since extender initialized?
-    double currentRotationsWithPolarity = currentRotations * m_motorPolarity;
-    double deltaRotations = currentRotationsWithPolarity - m_initialMotorRotations;
+    double newRotationsWithPolarity = newMotorRotations * m_motorPolarity;
+    double initialRotationsWithPolarity = m_initialMotorRotations * m_motorPolarity;
+    double deltaRotations = newRotationsWithPolarity - initialRotationsWithPolarity;
 
     double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
-    double newCurrentLen = m_initialExtendedLen + deltaLenMeters;
+    double newLen = m_initialExtendedLen + deltaLenMeters;
 
     // Check for bounds
-    if (newCurrentLen > m_totalExtenderLengthMeters) {
-      newCurrentLen = m_totalExtenderLengthMeters;
+    if (newLen > m_totalExtenderLengthMeters) {
+      newLen = m_totalExtenderLengthMeters;
       m_isBroken = true;
     }
-    else if (newCurrentLen < m_minExtendLength) {
-      newCurrentLen = m_minExtendLength;
+    else if (newLen < m_minExtendLength) {
+      newLen = m_minExtendLength;
       m_isBroken = true;
     }
 
-    m_currentExtendedLen = newCurrentLen;
+    m_currentExtendedLen = newLen;
 
     return m_currentExtendedLen;
   }

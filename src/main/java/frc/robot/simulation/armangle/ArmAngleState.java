@@ -1,12 +1,12 @@
 package frc.robot.simulation.armangle;
 
-import frc.robot.simulation.framework.inputoutputs.Copyable;
+import frc.robot.simulation.framework.inputoutputs.CopyableInterface;
 
 // $LATER - Note that we're now only returning a single DOUBLE, so no point in all this complexity
 /**
  * Holds the angle that arm is currently positioned.
  */
-public class ArmAngleState implements Copyable<ArmAngleState> {
+public class ArmAngleState implements CopyableInterface<ArmAngleState> {
   private double m_angleSignedDegrees;
 
   /**

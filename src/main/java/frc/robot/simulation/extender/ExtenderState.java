@@ -1,11 +1,11 @@
 package frc.robot.simulation.extender;
 
-import frc.robot.simulation.framework.inputoutputs.Copyable;
+import frc.robot.simulation.framework.inputoutputs.CopyableInterface;
 
 /**
  * Holds output state of ExtenderSimModel.
  */
-public class ExtenderState implements Copyable<ExtenderState> {
+public class ExtenderState implements CopyableInterface<ExtenderState> {
   private double m_extendedLen;
   private double m_extendedPercent;
 

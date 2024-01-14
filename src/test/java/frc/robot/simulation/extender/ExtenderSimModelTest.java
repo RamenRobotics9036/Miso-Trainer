@@ -6,18 +6,28 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.function.Supplier;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimInput;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+
 class ExtenderSimModelTest {
-  private ExtenderSimModel m_extender;
+  private ExtenderSimModel m_extenderSimModel_old;
+  private SimManager<Double, ExtenderState> m_simManager;
 
   @BeforeEach
   void setup() {
     // Initialize with some default values
     // $TODO - Need to change this to use SimManager throughout this file
-    m_extender = new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
+    m_extenderSimModel_old = new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
+
+    m_simManager = new SimManager<Double, ExtenderState>(
+        new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false)), null, null, true);
   }
 
   @Test
@@ -60,55 +70,55 @@ class ExtenderSimModelTest {
 
   @Test
   public void getExtendedLen_AfterConstruction_ShouldReturnInitialExtendedLength() {
-    assertEquals(0.2, m_extender.getExtendedLen());
+    assertEquals(0.2, m_extenderSimModel_old.getExtendedLen());
   }
 
   @Test
   public void getExtendedPercent_WithKnownValues_ShouldReturnCorrectPercentage() {
-    double extendedPercent = m_extender.getExtendedPercent();
+    double extendedPercent = m_extenderSimModel_old.getExtendedPercent();
     assertEquals(0.4, extendedPercent); // 0.2 / 0.5
   }
 
   @Test
   public void getIsBroken_NewInstance_ShouldReturnFalse() {
-    assertFalse(m_extender.getIsBroken());
+    assertFalse(m_extenderSimModel_old.getIsBroken());
   }
 
   @Test
   public void updateNewExtendedLen_NormalOperation_ShouldUpdateLength() {
-    m_extender.updateNewExtendedLen(1.0);
-    assertTrue(m_extender.getExtendedLen() > 0.2); // $TODO
+    m_extenderSimModel_old.updateNewExtendedLen(1.0);
+    assertTrue(m_extenderSimModel_old.getExtendedLen() > 0.2); // $TODO
   }
 
   @Test
   public void updateNewExtendedLen_OverExtension_ShouldSetIsBrokenTrue() {
-    m_extender.updateNewExtendedLen(10.0);
-    assertTrue(m_extender.getIsBroken());
+    m_extenderSimModel_old.updateNewExtendedLen(10.0);
+    assertTrue(m_extenderSimModel_old.getIsBroken());
   }
 
   @Test
   public void updateNewExtenderLen_OverExtension_ShouldHaveExpectedLen() {
-    m_extender.updateNewExtendedLen(10.0);
-    assertEquals(0.5, m_extender.getExtendedLen());
+    m_extenderSimModel_old.updateNewExtendedLen(10.0);
+    assertEquals(0.5, m_extenderSimModel_old.getExtendedLen());
   }
 
   @Test
   public void updateNewExtendedLen_UnderExtension_ShouldSetIsBrokenTrue() {
-    m_extender.updateNewExtendedLen(-10.0);
-    assertTrue(m_extender.getIsBroken());
+    m_extenderSimModel_old.updateNewExtendedLen(-10.0);
+    assertTrue(m_extenderSimModel_old.getIsBroken());
   }
 
   @Test
   public void updateNewExtenderLen_UnderExtension_ShouldHaveExpectedLen() {
-    m_extender.updateNewExtendedLen(-10.0);
-    assertEquals(0.0, m_extender.getExtendedLen());
+    m_extenderSimModel_old.updateNewExtendedLen(-10.0);
+    assertEquals(0.0, m_extenderSimModel_old.getExtendedLen());
   }
 
   @Test
   public void updateNewExtenderLen_MaxLen_ShouldSucceed() {
-    m_extender.updateNewExtendedLen(0.952);
-    assertEquals(0.5, m_extender.getExtendedLen(), 0.001);
-    assertFalse(m_extender.getIsBroken());
+    m_extenderSimModel_old.updateNewExtendedLen(0.952);
+    assertEquals(0.5, m_extenderSimModel_old.getExtendedLen(), 0.001);
+    assertFalse(m_extenderSimModel_old.getIsBroken());
   }
 
   @Test
@@ -120,25 +130,45 @@ class ExtenderSimModelTest {
     assertFalse(invertedExtender.getIsBroken());
   }
 
+  private void setInputsAndOutputs(SimManager<Double, ExtenderState> simManager,
+      Double input,
+      ExtenderState output) {
+
+    m_simManager.setInputHandler(new CopySimInput<Double>(input));
+    m_simManager.setOutputHandler(new CopySimOutput<ExtenderState>(output));
+  }
+
   @Test
   public void updateNewExtendedLen_WhenBroken_ShouldNotChangeLength() {
-    m_extender.updateNewExtendedLen(10.0); // This should break the extender
-    double lengthAfterBreak = m_extender.getExtendedLen();
-    m_extender.updateNewExtendedLen(5.0); // This should not change the length
-    assertEquals(lengthAfterBreak, m_extender.getExtendedLen());
+    Double inputMotorRotations = 0.0;
+    ExtenderState outputState = new ExtenderState();
+
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+    assertEquals(0.2, outputState.getExtendedLen());
+    assertFalse(m_simManager.isBroken());
+
+    inputMotorRotations = 10.0; // This should break the extender
+    m_simManager.simulationPeriodic();
+
+    double lengthAfterBreak = outputState.getExtendedLen();
+
+    inputMotorRotations = 5.0; // This should break the extender
+    m_simManager.simulationPeriodic(); // This should not change the length
+
+    assertEquals(lengthAfterBreak, outputState.getExtendedLen());
   }
 
   @Test
   public void testUpdateNewExtendedLenGivesExpectedLength() {
-    assertEquals(0.2, m_extender.getExtendedLen(), 0.001);
-    m_extender.updateNewExtendedLen(0.1);
-    assertEquals(0.231, m_extender.getExtendedLen(), 0.001);
+    assertEquals(0.2, m_extenderSimModel_old.getExtendedLen(), 0.001);
+    m_extenderSimModel_old.updateNewExtendedLen(0.1);
+    assertEquals(0.231, m_extenderSimModel_old.getExtendedLen(), 0.001);
   }
 
   @Test
   public void testUpdateNewExtendedLenValidNegativeValue() {
-    m_extender.updateNewExtendedLen(-0.1);
-    assertEquals(0.168, m_extender.getExtendedLen(), 0.001);
+    m_extenderSimModel_old.updateNewExtendedLen(-0.1);
+    assertEquals(0.168, m_extenderSimModel_old.getExtendedLen(), 0.001);
   }
 
   @Test
@@ -151,8 +181,8 @@ class ExtenderSimModelTest {
 
   @Test
   public void testUpdateNewExtenderLenTwoTimesExtendsCorrectValue() {
-    m_extender.updateNewExtendedLen(0.1);
-    m_extender.updateNewExtendedLen(0.1);
-    assertEquals(0.231, m_extender.getExtendedLen(), 0.001);
+    m_extenderSimModel_old.updateNewExtendedLen(0.1);
+    m_extenderSimModel_old.updateNewExtendedLen(0.1);
+    assertEquals(0.231, m_extenderSimModel_old.getExtendedLen(), 0.001);
   }
 }

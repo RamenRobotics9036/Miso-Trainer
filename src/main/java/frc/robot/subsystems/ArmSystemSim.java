@@ -18,7 +18,9 @@ import frc.robot.simulation.armangle.ArmAngleSimInput;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
+import frc.robot.simulation.extender.ExtenderParams;
 import frc.robot.simulation.extender.ExtenderSimModel;
+import frc.robot.simulation.extender.ExtenderState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 import frc.robot.simulation.motor.MotorDashboardPlugin;
@@ -53,7 +55,8 @@ public class ArmSystemSim extends ArmSystem {
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
-  protected ExtenderSimModel m_extenderSimulation;
+  protected ExtenderSimModel m_extenderSimulation; // $TODO - This should go away
+  private SimManager<Double, ExtenderState> m_extenderSimManager;
 
   protected DIOSim m_sensorSim;
 
@@ -192,10 +195,13 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 
-    m_extenderSimulation = new ExtenderSimModel(m_extenderEncoderSim.getPosition(),
+    // $TODO Change the way extender simulation is created
+    ExtenderParams extenderParams = new ExtenderParams(
         Constants.SimConstants.kcylinderDiameterMeters,
         Constants.SimConstants.kTotalExtenderLenMeters, Constants.SimConstants.kInitialExtendedLen,
         true);
+
+    m_extenderSimulation = new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams);
   }
 
   // $LATER Get rid of isRobotEnabled

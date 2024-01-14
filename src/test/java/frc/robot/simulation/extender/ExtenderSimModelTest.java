@@ -16,42 +16,42 @@ class ExtenderSimModelTest {
   @BeforeEach
   void setup() {
     // Initialize with some default values
-    m_extender = new ExtenderSimModel(0.0, 0.1, 0.5, 0.2, false);
+    m_extender = new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
   }
 
   @Test
   public void constructor_ValidParameters_ShouldNotThrow() {
-    Executable action = () -> new ExtenderSimModel(0.0, 0.1, 0.5, 0.2, false);
+    Executable action = () -> new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
     assertDoesNotThrow(action);
   }
 
   @Test
   public void constructor_InvalidCylinderDiameter_ShouldThrowIllegalArgumentException() {
-    Executable action = () -> new ExtenderSimModel(0.0, -0.1, 0.5, 0.2, false);
+    Executable action = () -> new ExtenderSimModel(0.0, new ExtenderParams(-0.1, 0.5, 0.2, false));
     assertThrows(IllegalArgumentException.class, action);
   }
 
   @Test
   public void constructor_InvalidTotalExtenderLength_ShouldThrowIllegalArgumentException() {
-    Executable action = () -> new ExtenderSimModel(0.0, 0.1, -0.5, 0.2, false);
+    Executable action = () -> new ExtenderSimModel(0.0, new ExtenderParams(0.1, -0.5, 0.2, false));
     assertThrows(IllegalArgumentException.class, action);
   }
 
   @Test
   public void constructor_InvalidInitialExtendedLen_ShouldThrowIllegalArgumentException() {
-    Executable action = () -> new ExtenderSimModel(0.0, 0.1, 0.5, -0.2, false);
+    Executable action = () -> new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, -0.2, false));
     assertThrows(IllegalArgumentException.class, action);
   }
 
   @Test
   public void constructor_InitialLenGreaterThanTotalExtenderLength_ShouldThrow() {
-    Executable action = () -> new ExtenderSimModel(0.0, 0.1, 0.5, 0.6, false);
+    Executable action = () -> new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.6, false));
     assertThrows(IllegalArgumentException.class, action);
   }
 
   @Test
   void constructor_InitialMotorRotationsCanBeNegative() {
-    Executable action = () -> new ExtenderSimModel(-0.1, 0.1, 0.5, 0.2, false);
+    Executable action = () -> new ExtenderSimModel(-0.1, new ExtenderParams(0.1, 0.5, 0.2, false));
     assertDoesNotThrow(action);
   }
 
@@ -112,7 +112,8 @@ class ExtenderSimModelTest {
 
   @Test
   public void updateNewExtenderLen_InitialLenHalfWay_RotatingToMinLen_ShouldSucceed() {
-    ExtenderSimModel invertedExtender = new ExtenderSimModel(0, 0.1, 1, 0.3, false);
+    ExtenderSimModel invertedExtender = new ExtenderSimModel(0.0,
+        new ExtenderParams(0.1, 1, 0.3, false));
     invertedExtender.updateNewExtendedLen(-0.952);
     assertEquals(0.0, invertedExtender.getExtendedLen(), 0.001);
     assertFalse(invertedExtender.getIsBroken());
@@ -141,7 +142,8 @@ class ExtenderSimModelTest {
 
   @Test
   public void testInvertedMotor() {
-    ExtenderSimModel invertedExtender = new ExtenderSimModel(0, 0.1, 1, 0.5, true);
+    ExtenderSimModel invertedExtender = new ExtenderSimModel(0,
+        new ExtenderParams(0.1, 1, 0.5, true));
     invertedExtender.updateNewExtendedLen(0.1);
     assertEquals(0.468, invertedExtender.getExtendedLen(), 0.001);
   }

@@ -10,53 +10,35 @@ import frc.robot.simulation.framework.SimModelInterface;
  * </p>
  */
 public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState> {
-  private double m_totalExtenderLengthMeters;
-  private double m_cylinderDiameterMeters;
+  private final ExtenderParams m_extenderParams;
   private boolean m_isBroken;
   private double m_initialMotorRotations = 0;
   private double m_currentExtendedLen = 0;
   private boolean m_initialMotorRotationsSet = false;
-  private double m_initialExtendedLen;
-  private double m_motorPolarity;
 
   /**
    * Constructs a new ExtenderSimulation instance with the provided parameters.
-   *
-   * @param initialMotorRotations     The initial encoder position for motor.
-   * @param cylinderDiameterMeters    The diameter of the cylinder in meters.
-   * @param totalExtenderLengthMeters The total length of the extender in meters.
-   * @param initialExtendedLen        The initial length of the extender.
-   * @param invertMotor               Whether the motor should be inverted.
-   *
-   * @throws IllegalArgumentException If any input parameter does not meet the requirements.
    */
-  public ExtenderSimModel(double initialMotorRotations,
-      double cylinderDiameterMeters,
-      double totalExtenderLengthMeters,
-      double initialExtendedLen,
-      boolean invertMotor) {
+  public ExtenderSimModel(double initialMotorRotations, ExtenderParams extenderParams) {
 
     // Sanity checks
-    if (cylinderDiameterMeters <= 0) {
+    if (extenderParams.cylinderDiameterMeters <= 0) {
       throw new IllegalArgumentException("CylinderDiameterMeters must be >0");
     }
 
-    if (totalExtenderLengthMeters <= 0) {
+    if (extenderParams.totalExtenderLengthMeters <= 0) {
       throw new IllegalArgumentException("TotalExtenderLengthMeters must be >0");
     }
 
-    if (initialExtendedLen < 0) {
+    if (extenderParams.initialExtendedLen < 0) {
       throw new IllegalArgumentException("InitialExtendedLen must be >=0");
     }
 
-    if (initialExtendedLen > totalExtenderLengthMeters) {
+    if (extenderParams.initialExtendedLen > extenderParams.totalExtenderLengthMeters) {
       throw new IllegalArgumentException("InitialExtendedLen must be <= TotalExtenderLengthMeters");
     }
 
-    m_cylinderDiameterMeters = cylinderDiameterMeters;
-    m_totalExtenderLengthMeters = totalExtenderLengthMeters;
-    m_initialExtendedLen = initialExtendedLen;
-    m_motorPolarity = invertMotor ? -1 : 1;
+    m_extenderParams = extenderParams;
 
     m_isBroken = false;
 
@@ -71,7 +53,7 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
 
   // $TODO - This should go away
   public double getExtendedPercent() {
-    return getExtendedLen() / m_totalExtenderLengthMeters;
+    return getExtendedLen() / m_extenderParams.totalExtenderLengthMeters;
   }
 
   // $TODO - This should go away
@@ -81,22 +63,23 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
 
   private double calcExtenderLen(double newRotationsWithoutPolarity) {
     // How much has the motor turned since extender initialized?
-    double newRotationsWithPolarity = newRotationsWithoutPolarity * m_motorPolarity;
-    double initialRotationsWithPolarity = m_initialMotorRotations * m_motorPolarity;
+    double motorPolarity = m_extenderParams.invertMotor ? -1 : 1;
+    double newRotationsWithPolarity = newRotationsWithoutPolarity * motorPolarity;
+    double initialRotationsWithPolarity = m_initialMotorRotations * motorPolarity;
     double deltaRotations = newRotationsWithPolarity - initialRotationsWithPolarity;
 
-    double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
+    double deltaLenMeters = deltaRotations * (Math.PI * m_extenderParams.cylinderDiameterMeters);
 
-    return m_initialExtendedLen + deltaLenMeters;
+    return m_extenderParams.initialExtendedLen + deltaLenMeters;
   }
 
   private boolean isExtenderLenOutsideBounds(double len) {
-    return len > m_totalExtenderLengthMeters || len < 0;
+    return len > m_extenderParams.totalExtenderLengthMeters || len < 0;
   }
 
   private double clampExtenderLen(double len) {
-    if (len > m_totalExtenderLengthMeters) {
-      return m_totalExtenderLengthMeters;
+    if (len > m_extenderParams.totalExtenderLengthMeters) {
+      return m_extenderParams.totalExtenderLengthMeters;
     }
     else if (len < 0) {
       return 0;
@@ -144,7 +127,7 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
 
     ExtenderState result = new ExtenderState();
     result.setExtendedLen(newLen);
-    result.setExtendedPercent(newLen / m_totalExtenderLengthMeters);
+    result.setExtendedPercent(newLen / m_extenderParams.totalExtenderLengthMeters);
 
     return result;
   }

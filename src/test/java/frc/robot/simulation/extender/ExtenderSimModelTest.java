@@ -15,15 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 class ExtenderSimModelTest {
-  private ExtenderSimModel m_extenderSimModel_old;
   private SimManager<Double, ExtenderState> m_simManager;
 
   @BeforeEach
   void setup() {
-    // Initialize with some default values
-    // $TODO - Need to change this to use SimManager throughout this file
-    m_extenderSimModel_old = new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
-
     m_simManager = new SimManager<Double, ExtenderState>(
         new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false)), null, null, true);
   }
@@ -68,64 +63,135 @@ class ExtenderSimModelTest {
 
   @Test
   public void getExtendedLen_AfterConstruction_ShouldReturnInitialExtendedLength() {
-    assertEquals(0.2, m_extenderSimModel_old.getExtendedLen());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    assertEquals(0.2, outputState.getExtendedLen());
   }
 
   @Test
   public void getExtendedPercent_WithKnownValues_ShouldReturnCorrectPercentage() {
-    double extendedPercent = m_extenderSimModel_old.getExtendedPercent();
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    double extendedPercent = outputState.getExtendedPercent();
     assertEquals(0.4, extendedPercent); // 0.2 / 0.5
   }
 
   @Test
   public void getIsBroken_NewInstance_ShouldReturnFalse() {
-    assertFalse(m_extenderSimModel_old.getIsBroken());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    assertFalse(m_simManager.isBroken());
   }
 
   @Test
   public void updateNewExtendedLen_NormalOperation_ShouldUpdateLength() {
-    m_extenderSimModel_old.updateNewExtendedLen(1.0);
-    assertTrue(m_extenderSimModel_old.getExtendedLen() > 0.2); // $TODO
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 1.0;
+    m_simManager.simulationPeriodic();
+    assertEquals(0.5, outputState.getExtendedLen(), 0.001);
   }
 
   @Test
   public void updateNewExtendedLen_OverExtension_ShouldSetIsBrokenTrue() {
-    m_extenderSimModel_old.updateNewExtendedLen(10.0);
-    assertTrue(m_extenderSimModel_old.getIsBroken());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 10.0;
+    m_simManager.simulationPeriodic();
+    assertTrue(m_simManager.isBroken());
   }
 
   @Test
   public void updateNewExtenderLen_OverExtension_ShouldHaveExpectedLen() {
-    m_extenderSimModel_old.updateNewExtendedLen(10.0);
-    assertEquals(0.5, m_extenderSimModel_old.getExtendedLen());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 10.0;
+    m_simManager.simulationPeriodic();
+    assertEquals(0.5, outputState.getExtendedLen());
   }
 
   @Test
   public void updateNewExtendedLen_UnderExtension_ShouldSetIsBrokenTrue() {
-    m_extenderSimModel_old.updateNewExtendedLen(-10.0);
-    assertTrue(m_extenderSimModel_old.getIsBroken());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = -10.0;
+    m_simManager.simulationPeriodic();
+    assertTrue(m_simManager.isBroken());
   }
 
   @Test
   public void updateNewExtenderLen_UnderExtension_ShouldHaveExpectedLen() {
-    m_extenderSimModel_old.updateNewExtendedLen(-10.0);
-    assertEquals(0.0, m_extenderSimModel_old.getExtendedLen());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = -10.0;
+    m_simManager.simulationPeriodic();
+    assertEquals(0.0, outputState.getExtendedLen());
   }
 
   @Test
   public void updateNewExtenderLen_MaxLen_ShouldSucceed() {
-    m_extenderSimModel_old.updateNewExtendedLen(0.952);
-    assertEquals(0.5, m_extenderSimModel_old.getExtendedLen(), 0.001);
-    assertFalse(m_extenderSimModel_old.getIsBroken());
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 0.952;
+    m_simManager.simulationPeriodic();
+    assertEquals(0.5, outputState.getExtendedLen(), 0.001);
+    assertFalse(m_simManager.isBroken());
   }
 
   @Test
   public void updateNewExtenderLen_InitialLenHalfWay_RotatingToMinLen_ShouldSucceed() {
-    ExtenderSimModel invertedExtender = new ExtenderSimModel(0.0,
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+
+    ExtenderSimModel extenderModelLocal = new ExtenderSimModel(0.0,
         new ExtenderParams(0.1, 1, 0.3, false));
-    invertedExtender.updateNewExtendedLen(-0.952);
-    assertEquals(0.0, invertedExtender.getExtendedLen(), 0.001);
-    assertFalse(invertedExtender.getIsBroken());
+    SimManager<Double, ExtenderState> simManagerLocal = new SimManager<Double, ExtenderState>(
+        extenderModelLocal, null, null, true);
+
+    setInputsAndOutputs(simManagerLocal, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = -0.952;
+    simManagerLocal.simulationPeriodic();
+    assertEquals(0.0, outputState.getExtendedLen(), 0.001);
+    assertFalse(simManagerLocal.isBroken());
   }
 
   private void setInputsAndOutputs(SimManager<Double, ExtenderState> simManager,
@@ -139,8 +205,8 @@ class ExtenderSimModelTest {
 
     Supplier<Double> inputSupplier = () -> inputArray[0];
 
-    m_simManager.setInputHandler(new LambdaSimInput<Double>(inputSupplier));
-    m_simManager.setOutputHandler(new CopySimOutput<ExtenderState>(output));
+    simManager.setInputHandler(new LambdaSimInput<Double>(inputSupplier));
+    simManager.setOutputHandler(new CopySimOutput<ExtenderState>(output));
   }
 
   @Test
@@ -183,22 +249,50 @@ class ExtenderSimModelTest {
 
   @Test
   public void testUpdateNewExtendedLenValidNegativeValue() {
-    m_extenderSimModel_old.updateNewExtendedLen(-0.1);
-    assertEquals(0.168, m_extenderSimModel_old.getExtendedLen(), 0.001);
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = -0.1;
+    m_simManager.simulationPeriodic();
+    assertEquals(0.168, outputState.getExtendedLen(), 0.001);
   }
 
   @Test
   public void testInvertedMotor() {
-    ExtenderSimModel invertedExtender = new ExtenderSimModel(0,
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+
+    ExtenderSimModel extenderModelLocal = new ExtenderSimModel(0,
         new ExtenderParams(0.1, 1, 0.5, true));
-    invertedExtender.updateNewExtendedLen(0.1);
-    assertEquals(0.468, invertedExtender.getExtendedLen(), 0.001);
+    SimManager<Double, ExtenderState> simManagerLocal = new SimManager<Double, ExtenderState>(
+        extenderModelLocal, null, null, true);
+
+    setInputsAndOutputs(simManagerLocal, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 0.1;
+    simManagerLocal.simulationPeriodic();
+    assertEquals(0.468, outputState.getExtendedLen(), 0.001);
   }
 
   @Test
   public void testUpdateNewExtenderLenTwoTimesExtendsCorrectValue() {
-    m_extenderSimModel_old.updateNewExtendedLen(0.1);
-    m_extenderSimModel_old.updateNewExtendedLen(0.1);
-    assertEquals(0.231, m_extenderSimModel_old.getExtendedLen(), 0.001);
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    inputMotorRotations[0] = 0.1;
+    m_simManager.simulationPeriodic();
+
+    inputMotorRotations[0] = 0.1;
+    m_simManager.simulationPeriodic();
+
+    assertEquals(0.231, outputState.getExtendedLen(), 0.001);
   }
 }

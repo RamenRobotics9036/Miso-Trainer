@@ -16,6 +16,7 @@ class ExtenderSimModelTest {
   @BeforeEach
   void setup() {
     // Initialize with some default values
+    // $TODO - Need to change this to use SimManager throughout this file
     m_extender = new ExtenderSimModel(0.0, new ExtenderParams(0.1, 0.5, 0.2, false));
   }
 

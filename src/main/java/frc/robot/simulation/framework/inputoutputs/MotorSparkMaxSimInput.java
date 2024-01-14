@@ -1,4 +1,4 @@
-package frc.robot.simulation.motor;
+package frc.robot.simulation.framework.inputoutputs;
 
 import com.revrobotics.CANSparkMax;
 import frc.robot.simulation.framework.SimInputInterface;

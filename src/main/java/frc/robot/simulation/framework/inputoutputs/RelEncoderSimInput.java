@@ -1,18 +1,18 @@
-package frc.robot.simulation.winch;
+package frc.robot.simulation.framework.inputoutputs;
 
 import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.simulation.framework.SimInputInterface;
 
 /**
- * Winch input is the number of rotations on winch motor encoder.
+ * Input is the number of rotations on relative motor encoder.
  */
-public class WinchSimInput implements SimInputInterface<Double> {
+public class RelEncoderSimInput implements SimInputInterface<Double> {
   private final RelativeEncoderSim m_encoderRealWrapper;
 
   /**
    * Constructor.
    */
-  public WinchSimInput(RelativeEncoderSim encoderRealWrapper) {
+  public RelEncoderSimInput(RelativeEncoderSim encoderRealWrapper) {
     if (encoderRealWrapper == null) {
       throw new IllegalArgumentException("encoderRealWrapper cannot be null");
     }

@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 /**
  * Helper class to implement input interface.
  */
+// $TODO - Delete this file, and use LambdaSimInput.java instead
 public class ArmAngleSimInput implements SimInputInterface<Double> {
   private Supplier<Double> m_stringLengthSupplier;
 

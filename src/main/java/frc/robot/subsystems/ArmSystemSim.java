@@ -23,15 +23,15 @@ import frc.robot.simulation.extender.ExtenderSimModel;
 import frc.robot.simulation.extender.ExtenderState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.MotorSparkMaxSimInput;
+import frc.robot.simulation.framework.inputoutputs.RelEncoderSimInput;
+import frc.robot.simulation.framework.inputoutputs.RelEncoderSimOutput;
 import frc.robot.simulation.motor.MotorDashboardPlugin;
 import frc.robot.simulation.motor.MotorSimModel;
-import frc.robot.simulation.motor.MotorSimOutput;
-import frc.robot.simulation.motor.MotorSparkMaxSimInput;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchCable;
 import frc.robot.simulation.winch.WinchParams;
-import frc.robot.simulation.winch.WinchSimInput;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchState;
@@ -169,7 +169,7 @@ public class ArmSystemSim extends ArmSystem {
         new MotorSimModel(Constants.SimConstants.kwinchSimGearRatio),
         shuffleClient.getSubdirectoryClient("WinchMotor"), new MotorDashboardPlugin(), false);
     m_winchMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armWinch));
-    m_winchMotorSimManager.setOutputHandler(new MotorSimOutput(m_winchEncoderSim));
+    m_winchMotorSimManager.setOutputHandler(new RelEncoderSimOutput(m_winchEncoderSim));
 
     // Create the winch simulation
     WinchParams winchParams = new WinchParams(0.0254, new WinchCable(
@@ -179,7 +179,7 @@ public class ArmSystemSim extends ArmSystem {
 
     m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams),
         shuffleClient.getSubdirectoryClient("Winch"), null, false);
-    m_winchSimManager.setInputHandler(new WinchSimInput(m_winchEncoderSim));
+    m_winchSimManager.setInputHandler(new RelEncoderSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }
 
@@ -192,7 +192,7 @@ public class ArmSystemSim extends ArmSystem {
         new MotorSimModel(Constants.SimConstants.kextenderSimGearRatio),
         shuffleClient.getSubdirectoryClient("ExtenderMotor"), new MotorDashboardPlugin(), false);
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
-    m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
+    m_extenderMotorSimManager.setOutputHandler(new RelEncoderSimOutput(m_extenderEncoderSim));
 
     ExtenderParams extenderParams = new ExtenderParams(
         Constants.SimConstants.kcylinderDiameterMeters,

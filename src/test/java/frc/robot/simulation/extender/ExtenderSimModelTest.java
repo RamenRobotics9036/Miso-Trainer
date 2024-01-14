@@ -6,15 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import java.util.function.Supplier;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import frc.robot.simulation.framework.SimManager;
-import frc.robot.simulation.framework.inputoutputs.CopySimInput;
-import frc.robot.simulation.framework.inputoutputs.CopySimOutput;
 
 class ExtenderSimModelTest {
   private ExtenderSimModel m_extenderSimModel_old;
@@ -131,28 +129,37 @@ class ExtenderSimModelTest {
   }
 
   private void setInputsAndOutputs(SimManager<Double, ExtenderState> simManager,
-      Double input,
+      Double[] inputArray,
       ExtenderState output) {
 
-    m_simManager.setInputHandler(new CopySimInput<Double>(input));
+    // inputArray should not be null, and must be exactly len == 1
+    if (inputArray == null || inputArray.length != 1) {
+      throw new IllegalArgumentException("inputArray must be exactly len == 1");
+    }
+
+    Supplier<Double> inputSupplier = () -> inputArray[0];
+
+    m_simManager.setInputHandler(new LambdaSimInput<Double>(inputSupplier));
     m_simManager.setOutputHandler(new CopySimOutput<ExtenderState>(output));
   }
 
   @Test
   public void updateNewExtendedLen_WhenBroken_ShouldNotChangeLength() {
-    Double inputMotorRotations = 0.0;
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
     ExtenderState outputState = new ExtenderState();
-
     setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
     assertEquals(0.2, outputState.getExtendedLen());
     assertFalse(m_simManager.isBroken());
 
-    inputMotorRotations = 10.0; // This should break the extender
+    inputMotorRotations[0] = 10.0; // This should break the extender
     m_simManager.simulationPeriodic();
 
     double lengthAfterBreak = outputState.getExtendedLen();
 
-    inputMotorRotations = 5.0; // This should break the extender
+    inputMotorRotations[0] = 5.0; // This should break the extender
     m_simManager.simulationPeriodic(); // This should not change the length
 
     assertEquals(lengthAfterBreak, outputState.getExtendedLen());
@@ -160,9 +167,18 @@ class ExtenderSimModelTest {
 
   @Test
   public void testUpdateNewExtendedLenGivesExpectedLength() {
-    assertEquals(0.2, m_extenderSimModel_old.getExtendedLen(), 0.001);
-    m_extenderSimModel_old.updateNewExtendedLen(0.1);
-    assertEquals(0.231, m_extenderSimModel_old.getExtendedLen(), 0.001);
+    Double[] inputMotorRotations = new Double[] {
+        0.0
+    };
+    ExtenderState outputState = new ExtenderState();
+    setInputsAndOutputs(m_simManager, inputMotorRotations, outputState);
+
+    assertEquals(0.2, outputState.getExtendedLen(), 0.001);
+
+    inputMotorRotations[0] = 0.1;
+    m_simManager.simulationPeriodic();
+
+    assertEquals(0.231, outputState.getExtendedLen(), 0.001);
   }
 
   @Test

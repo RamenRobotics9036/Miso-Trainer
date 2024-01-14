@@ -9,12 +9,10 @@ package frc.robot.simulation.extender;
  */
 public class ExtenderSimModel {
   private double m_totalExtenderLengthMeters;
-  private double m_minExtendLength = 0;
   private double m_cylinderDiameterMeters;
-  private double m_currentExtendedLen; // $TODO - Get rid of this
   private boolean m_isBroken;
-  private double m_currentMotorRotations = 0;
   private double m_initialMotorRotations = 0;
+  private double m_currentExtendedLen = 0;
   private boolean m_initialMotorRotationsSet = false;
   private double m_initialExtendedLen;
   private double m_motorPolarity;
@@ -76,42 +74,59 @@ public class ExtenderSimModel {
     return m_isBroken;
   }
 
+  private double calcExtenderLen(double newRotationsWithoutPolarity) {
+    // How much has the motor turned since extender initialized?
+    double newRotationsWithPolarity = newRotationsWithoutPolarity * m_motorPolarity;
+    double initialRotationsWithPolarity = m_initialMotorRotations * m_motorPolarity;
+    double deltaRotations = newRotationsWithPolarity - initialRotationsWithPolarity;
+
+    double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
+
+    return m_initialExtendedLen + deltaLenMeters;
+  }
+
+  private boolean isExtenderLenOutsideBounds(double len) {
+    return len > m_totalExtenderLengthMeters || len < 0;
+  }
+
+  private double clampExtenderLen(double len) {
+    if (len > m_totalExtenderLengthMeters) {
+      return m_totalExtenderLengthMeters;
+    }
+    else if (len < 0) {
+      return 0;
+    }
+    else {
+      return len;
+    }
+  }
+
   /**
    * Updates the current extended length of the extender based on the current motor rotations.
    */
   public double updateNewExtendedLen(double newMotorRotations) {
     // Snapshot the initial motor rotations
     if (!m_initialMotorRotationsSet) {
-      m_currentMotorRotations = m_initialMotorRotations = newMotorRotations;
+      m_initialMotorRotations = newMotorRotations;
       m_initialMotorRotationsSet = true;
     }
 
-    // If the extender is broken, there's nothing to update
+    // If the extender is broken, we return the LAST valid extender len.
+    // We don't recalculate it since the extender should just stop moving once broken.
     if (m_isBroken) {
-      newMotorRotations = m_currentMotorRotations;
+      return m_currentExtendedLen;
+    }
+
+    // How much has the motor turned since extender initialized?
+    double newLen = calcExtenderLen(newMotorRotations);
+
+    // Check for bounds
+    if (isExtenderLenOutsideBounds(newLen)) {
+      m_isBroken = true;
+      newLen = clampExtenderLen(newLen);
     }
 
     // Save value
-    m_currentMotorRotations = newMotorRotations;
-
-    // How much has the motor turned since extender initialized?
-    double newRotationsWithPolarity = newMotorRotations * m_motorPolarity;
-    double initialRotationsWithPolarity = m_initialMotorRotations * m_motorPolarity;
-    double deltaRotations = newRotationsWithPolarity - initialRotationsWithPolarity;
-
-    double deltaLenMeters = deltaRotations * (Math.PI * m_cylinderDiameterMeters);
-    double newLen = m_initialExtendedLen + deltaLenMeters;
-
-    // Check for bounds
-    if (newLen > m_totalExtenderLengthMeters) {
-      newLen = m_totalExtenderLengthMeters;
-      m_isBroken = true;
-    }
-    else if (newLen < m_minExtendLength) {
-      newLen = m_minExtendLength;
-      m_isBroken = true;
-    }
-
     m_currentExtendedLen = newLen;
 
     return m_currentExtendedLen;

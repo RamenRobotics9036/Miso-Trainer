@@ -56,7 +56,7 @@ public class ArmSystemSim extends ArmSystem {
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
-  private SimManager<Double, ExtenderState> m_extenderSimManager;
+  protected SimManager<Double, ExtenderState> m_extenderSimManager;
 
   protected DIOSim m_sensorSim;
 
@@ -252,13 +252,8 @@ public class ArmSystemSim extends ArmSystem {
 
       simulatePeriodicStringAndArm(m_angleSimManager, m_armSimManager);
 
-      // $TODO - Fix this
-      boolean isExtenderSensorOn = false;
-      /*
-       * m_extenderSimulation
-       * .getExtendedLen() <=
-       * Constants.SimConstants.kextenderFullyRetractedLen;
-       */
+      boolean isExtenderSensorOn = m_extenderState
+          .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;
       m_sensorSim.setValue(!isExtenderSensorOn);
     }
   }

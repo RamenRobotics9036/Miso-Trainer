@@ -91,16 +91,15 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
   private void addShuffleboardExtenderList() {
     // Extender functional
-    // $TODO - Hiding old widget for now
-    // Widget pos = m_defaultLayout.getWidgetPosition("Extender Functional");
-    // Shuffleboard.getTab("Simulation")
-    // .addBoolean("Extender Functional", () -> !m_extenderSimulation.getIsBroken())
-    // .withWidget(BuiltInWidgets.kBooleanBox)
-    // .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-    // .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+    Widget pos = m_defaultLayout.getWidgetPosition("Extender Functional");
+    Shuffleboard.getTab("Simulation")
+        .addBoolean("Extender Functional", () -> !m_extenderSimManager.isBroken())
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
     // Extender percent extended
-    Widget pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
+    pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
     Shuffleboard.getTab("Simulation")
         .addDouble("Extender % Extended", () -> m_extenderState.getExtendedPercent())
         .withWidget(BuiltInWidgets.kNumberBar)

@@ -46,21 +46,6 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
     updateNewExtendedLen(initialMotorRotations);
   }
 
-  // $TODO - This should go away
-  public double getExtendedLen() {
-    return m_currentExtendedLen;
-  }
-
-  // $TODO - This should go away
-  public double getExtendedPercent() {
-    return getExtendedLen() / m_extenderParams.totalExtenderLengthMeters;
-  }
-
-  // $TODO - This should go away
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
   private double calcExtenderLen(double newRotationsWithoutPolarity) {
     // How much has the motor turned since extender initialized?
     double motorPolarity = m_extenderParams.invertMotor ? -1 : 1;
@@ -89,11 +74,8 @@ public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState
     }
   }
 
-  /**
-   * Updates the current extended length of the extender based on the current motor rotations.
-   */
-  // $TODO - This should become private
-  public double updateNewExtendedLen(double newMotorRotations) {
+  // Updates the current extended length of the extender based on the current motor rotations.
+  private double updateNewExtendedLen(double newMotorRotations) {
     // Snapshot the initial motor rotations
     if (!m_initialMotorRotationsSet) {
       m_initialMotorRotations = newMotorRotations;

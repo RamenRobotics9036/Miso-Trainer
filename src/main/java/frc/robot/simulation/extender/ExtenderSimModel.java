@@ -1,5 +1,7 @@
 package frc.robot.simulation.extender;
 
+import frc.robot.simulation.framework.SimModelInterface;
+
 /**
  * This class represents a simulation of an extender.
  * <p>
@@ -7,7 +9,7 @@ package frc.robot.simulation.extender;
  * total extender length, the current extended length, and whether the extender is broken or not.
  * </p>
  */
-public class ExtenderSimModel {
+public class ExtenderSimModel implements SimModelInterface<Double, ExtenderState> {
   private double m_totalExtenderLengthMeters;
   private double m_cylinderDiameterMeters;
   private boolean m_isBroken;
@@ -133,5 +135,21 @@ public class ExtenderSimModel {
     m_currentExtendedLen = newLen;
 
     return m_currentExtendedLen;
+  }
+
+  @Override
+  public ExtenderState updateSimulation(Double inputMotorRotations) {
+    double newLen = updateNewExtendedLen(inputMotorRotations);
+
+    ExtenderState result = new ExtenderState();
+    result.setExtendedLen(newLen);
+    result.setExtendedPercent(newLen / m_totalExtenderLengthMeters);
+
+    return result;
+  }
+
+  @Override
+  public boolean isModelBroken() {
+    return m_isBroken;
   }
 }

@@ -171,8 +171,9 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     // $LATER Don't hardcode name of the widget and location
     Shuffleboard.getTab("Simulation")
         .add("Happy",
-            new SendableArmPosition(() -> getArmPercentRaised(),
-                () -> m_extenderSimulation.getExtendedPercent(),
+            new SendableArmPosition(() -> getArmPercentRaised(), () -> 0.0, // $TODO - Fix this ()
+                                                                            // ->
+                                                                            // m_extenderSimulation.getExtendedPercent(),
                 () -> m_ramenArmSimLogic.getGrabberOpen()))
         .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
   }

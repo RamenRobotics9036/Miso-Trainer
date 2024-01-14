@@ -55,7 +55,6 @@ public class ArmSystemSim extends ArmSystem {
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
-  protected ExtenderSimModel m_extenderSimulation; // $TODO - This should go away
   private SimManager<Double, ExtenderState> m_extenderSimManager;
 
   protected DIOSim m_sensorSim;
@@ -195,13 +194,15 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new MotorSimOutput(m_extenderEncoderSim));
 
-    // $TODO Change the way extender simulation is created
     ExtenderParams extenderParams = new ExtenderParams(
         Constants.SimConstants.kcylinderDiameterMeters,
         Constants.SimConstants.kTotalExtenderLenMeters, Constants.SimConstants.kInitialExtendedLen,
         true);
 
-    m_extenderSimulation = new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams);
+    m_extenderSimManager = new SimManager<Double, ExtenderState>(
+        new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams), null, null,
+        false);
+    // $TODO - Add input and output: m_extenderEncoderSim.getPosition()
   }
 
   // $LATER Get rid of isRobotEnabled
@@ -241,12 +242,17 @@ public class ArmSystemSim extends ArmSystem {
       m_winchMotorSimManager.simulationPeriodic();
       m_extenderMotorSimManager.simulationPeriodic();
       m_winchSimManager.simulationPeriodic();
+      m_extenderSimManager.simulationPeriodic();
 
-      m_extenderSimulation.updateNewExtendedLen(m_extenderEncoderSim.getPosition());
       simulatePeriodicStringAndArm(m_angleSimManager, m_armSimManager);
 
-      boolean isExtenderSensorOn = m_extenderSimulation
-          .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;
+      // $TODO - Fix this
+      boolean isExtenderSensorOn = false;
+      /*
+       * m_extenderSimulation
+       * .getExtendedLen() <=
+       * Constants.SimConstants.kextenderFullyRetractedLen;
+       */
       m_sensorSim.setValue(!isExtenderSensorOn);
     }
   }

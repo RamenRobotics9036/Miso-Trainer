@@ -52,6 +52,7 @@ public class ArmSystemSim extends ArmSystem {
 
   protected WinchState m_winchState;
   private ArmAngleState m_armAngleState;
+  private ExtenderState m_extenderState;
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
@@ -194,6 +195,9 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderMotorSimManager.setInputHandler(new MotorSparkMaxSimInput(m_armExtender));
     m_extenderMotorSimManager.setOutputHandler(new RelEncoderSimOutput(m_extenderEncoderSim));
 
+    // Create the extender simulation
+    m_extenderState = new ExtenderState();
+
     ExtenderParams extenderParams = new ExtenderParams(
         Constants.SimConstants.kcylinderDiameterMeters,
         Constants.SimConstants.kTotalExtenderLenMeters, Constants.SimConstants.kInitialExtendedLen,
@@ -202,7 +206,9 @@ public class ArmSystemSim extends ArmSystem {
     m_extenderSimManager = new SimManager<Double, ExtenderState>(
         new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams), null, null,
         false);
-    // $TODO - Add input and output: m_extenderEncoderSim.getPosition()
+
+    m_extenderSimManager.setInputHandler(new RelEncoderSimInput(m_extenderEncoderSim));
+    m_extenderSimManager.setOutputHandler(new CopySimOutput<ExtenderState>(m_extenderState));
   }
 
   // $LATER Get rid of isRobotEnabled

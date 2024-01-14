@@ -62,14 +62,17 @@ public class ExtenderSimModel {
     updateNewExtendedLen(initialMotorRotations);
   }
 
+  // $TODO - This should go away
   public double getExtendedLen() {
     return m_currentExtendedLen;
   }
 
+  // $TODO - This should go away
   public double getExtendedPercent() {
     return getExtendedLen() / m_totalExtenderLengthMeters;
   }
 
+  // $TODO - This should go away
   public boolean getIsBroken() {
     return m_isBroken;
   }

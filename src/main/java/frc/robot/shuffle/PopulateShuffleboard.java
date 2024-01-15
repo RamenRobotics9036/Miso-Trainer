@@ -71,7 +71,7 @@ public class PopulateShuffleboard {
         0.0,
         1.0);
 
-    addBooleanWidget("Extender Sensor", "Extender Sensor", "ArmSystem/Extender/Sensor", false);
+    addSwitchDisplay("Extender Sensor", "Extender Sensor", "ArmSystem/Extender/Sensor");
   }
 
   /**
@@ -90,6 +90,10 @@ public class PopulateShuffleboard {
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 
+  private BooleanSupplier constructSupplier(BooleanSupplier supplier, boolean invertBoolValue) {
+    return invertBoolValue ? () -> !supplier.getAsBoolean() : supplier;
+  }
+
   /**
    * Adds a boolean widget to the Shuffleboard.
    */
@@ -98,13 +102,23 @@ public class PopulateShuffleboard {
       String dashItemKey,
       boolean invertBoolValue) {
 
-    BooleanSupplier supplier = invertBoolValue
-        ? () -> !m_helpers.getBooleanSupplier(dashItemKey).getAsBoolean()
-        : m_helpers.getBooleanSupplier(dashItemKey);
+    BooleanSupplier supplier = constructSupplier(m_helpers.getBooleanSupplier(dashItemKey),
+        invertBoolValue);
 
     Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
     m_tab.addBoolean(title, supplier).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  private void addSwitchDisplay(String title, String layoutId, String dashItemKey) {
+
+    BooleanSupplier supplier = constructSupplier(m_helpers.getBooleanSupplier(dashItemKey), false);
+
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+    Shuffleboard.getTab("Simulation").addBoolean("Extender Sensor", supplier)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#FFFFFF"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 

@@ -74,25 +74,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .withSize(pos.width, pos.height);
   }
 
-  private void addShuffleboardWinchList() {
-    // Winch String % extended
-    // $TODO - This needs to be removed
-    Widget pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Winch String % Extended", () -> m_winchState.getStringUnspooledPercent())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", 0.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Winch string location
-    // $TODO - This needs to be removed
-    pos = m_defaultLayout.getWidgetPosition("Winch string location");
-    Shuffleboard.getTab("Simulation")
-        .addString("Winch string location", () -> m_winchState.getWindingOrientationName())
-        .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-  }
-
   private double getArmPercentRaised() {
     double lowerLimit = Constants.OperatorConstants.kWinchEncoderLowerLimit;
     double upperLimit = Constants.OperatorConstants.kWinchEncoderUpperLimit;
@@ -102,7 +83,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
   }
 
   private void addShuffleboardWidgets() {
-    addShuffleboardWinchList();
     addShuffleboardArmList();
 
     // Add Robot Arm widget

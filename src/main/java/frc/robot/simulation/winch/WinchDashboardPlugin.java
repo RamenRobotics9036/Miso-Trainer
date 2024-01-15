@@ -12,17 +12,17 @@ public class WinchDashboardPlugin implements DashboardPluginInterface<Double, Wi
   @Override
   public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
     return new DashboardItem[] {
-        // $TODO - Replace with UnspooledPercent AND winding orientation name
-        new DashboardItem("Accumulator", MultiType.of(0))
+        new DashboardItem("UnspooledLen", MultiType.of(0.0)),
+        new DashboardItem("UnspooledPercent", MultiType.of(0.0))
     };
   }
 
   @Override
   public MultiType[] getDashboardPropertiesFromInputOutput(Double input, WinchState output) {
-    MultiType[] result = new MultiType[1];
+    MultiType[] result = new MultiType[2];
 
-    // $TODO - Replace with UnspooledPercent AND winding orientation name
-    // result[0] = MultiType.of(output);
+    result[0] = MultiType.of(output.getStringUnspooledLen());
+    result[1] = MultiType.of(output.getStringUnspooledPercent());
 
     return result;
   }

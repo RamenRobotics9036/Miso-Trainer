@@ -10,7 +10,6 @@ import frc.robot.commands.RetractArmCommand;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.subsystems.ArmSystem;
-
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;

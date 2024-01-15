@@ -168,7 +168,7 @@ public class ArmSystemSim extends ArmSystem {
     // Create winch simulated encoder
     m_winchEncoderSim = new RelativeEncoderSim(m_winchEncoder);
 
-    m_winchState = new WinchState(Constants.SimConstants.kTotalStringLenMeters);
+    m_winchState = new WinchState();
 
     // Create the motor simulation for the winch motor
     m_winchMotorSimManager = new SimManager<Double, Double>(

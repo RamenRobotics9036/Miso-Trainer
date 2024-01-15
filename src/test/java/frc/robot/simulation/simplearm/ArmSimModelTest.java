@@ -126,7 +126,7 @@ public class ArmSimModelTest {
 
     // Local variable used to hold the winch output. It exists outside of this
     // function since the lambdas capture it.
-    WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
+    WinchState winchState = new WinchState();
 
     WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
         new WinchCable(m_winchTotalStringLenMeters,
@@ -515,7 +515,7 @@ public class ArmSimModelTest {
 
     // Local variable used to hold the winch output. It exists outside of this
     // function since the lambdas capture it.
-    WinchState winchState = new WinchState(m_winchTotalStringLenMeters);
+    WinchState winchState = new WinchState();
 
     WinchParams winchParams = new WinchParams(m_winchSpoolDiameterMeters,
         new WinchCable(m_winchTotalStringLenMeters,

@@ -121,13 +121,14 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
    * during simulation to update the state of the winch.
    */
   public WinchState updateSimulation(Double currentRotations) {
-    WinchState winchStateResult = new WinchState(getTotalLenMeters());
+    WinchState winchStateResult = new WinchState();
     double currentRotationsWithPolarity = currentRotations * m_motorPolarity;
     double deltaRotations;
 
     // If the winch is broken, there's nothing to update
     if (m_isBroken) {
       winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
+      winchStateResult.setStringUnspooledPercent(getCableUnspooledLen() / getTotalLenMeters());
       winchStateResult.setWindingOrientation(getWindingOrientation());
       winchStateResult.setIsBroken(true);
       return winchStateResult;
@@ -154,6 +155,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     m_winchCable = calcWinchCableFromSignedSpooledLen(newCurrentSignedLenSpooled);
 
     winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
+    winchStateResult.setStringUnspooledPercent(getCableUnspooledLen() / getTotalLenMeters());
     winchStateResult.setWindingOrientation(getWindingOrientation());
     winchStateResult.setIsBroken(m_isBroken);
 

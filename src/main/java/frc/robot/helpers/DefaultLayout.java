@@ -89,7 +89,16 @@ public class DefaultLayout {
         Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
   }
 
+  /**
+   * Returns the position of a widget by its name.
+   */
   public Widget getWidgetPosition(String widgetName) {
-    return widgetMap.get(widgetName);
+    Widget result = widgetMap.get(widgetName);
+
+    if (result == null) {
+      throw new IllegalArgumentException("Widget layout not found: " + widgetName);
+    }
+
+    return result;
   }
 }

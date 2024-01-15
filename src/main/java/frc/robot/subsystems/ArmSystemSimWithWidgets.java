@@ -89,31 +89,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .withSize(pos.width, pos.height);
   }
 
-  private void addShuffleboardExtenderList() {
-    // Extender functional
-    Widget pos = m_defaultLayout.getWidgetPosition("Extender Functional");
-    Shuffleboard.getTab("Simulation")
-        .addBoolean("Extender Functional", () -> !m_extenderSimManager.isBroken())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Extender percent extended
-    pos = m_defaultLayout.getWidgetPosition("Extender % Extended");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Extender % Extended", () -> m_extenderState.getExtendedPercent())
-        .withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", 0.0, "max", 1.0, "show text", false))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Extender sensor display
-    pos = m_defaultLayout.getWidgetPosition("Extender Sensor");
-    Shuffleboard.getTab("Simulation").addBoolean("Extender Sensor", () -> !m_sensorSim.getValue())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#FFFFFF"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-  }
-
   private void addShuffleboardArmList() {
     // Arm functional display
     Widget pos = m_defaultLayout.getWidgetPosition("Arm Functional");
@@ -162,7 +137,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
   private void addShuffleboardWidgets() {
     addShuffleboardWinchList();
-    addShuffleboardExtenderList();
     addShuffleboardArmList();
 
     // Add Robot Arm widget

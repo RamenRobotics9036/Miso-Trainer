@@ -32,26 +32,54 @@ public class PopulateShuffleboard {
    * Adds Shuffleboard widgets.
    */
   public void addShuffleboardWidgets() {
+    addWinchToDash();
+    addExtenderToDash();
+  }
+
+  private void addWinchToDash() {
     addBooleanWidget("Winch Functional", "Winch Functional", "ArmSystem/Winch/IsBroken", true);
 
-    addWidgetNegative1To1("Winch Motor Power",
+    addWidgetRange("Winch Motor Power",
         "Winch Motor Power",
-        "ArmSystem/WinchMotor/InputPower");
+        "ArmSystem/WinchMotor/InputPower",
+        -1.0,
+        1.0);
+  }
 
-    addWidgetNegative1To1("Extender Motor Power",
+  private void addExtenderToDash() {
+    addBooleanWidget("Extender Functional",
+        "Extender Functional",
+        "ArmSystem/Extender/IsBroken",
+        true);
+
+    addWidgetRange("Extender Motor Power",
         "Extender Motor Power",
-        "ArmSystem/ExtenderMotor/InputPower");
+        "ArmSystem/ExtenderMotor/InputPower",
+        -1.0,
+        1.0);
+
+    addWidgetRange("Extender % Extended",
+        "Extender % Extended",
+        "ArmSystem/Extender/PercentExtended",
+        0.0,
+        1.0);
+
+    addBooleanWidget("Extender Sensor", "Extender Sensor", "ArmSystem/Extender/Sensor", false);
   }
 
   /**
    * Adds a widget that shows a range of -1 to 1, with a particular value selected.
    */
-  private void addWidgetNegative1To1(String title, String layoutId, String dashItemKey) {
+  private void addWidgetRange(String title,
+      String layoutId,
+      String dashItemKey,
+      double min,
+      double max) {
     DoubleSupplier supplier = m_helpers.getDoubleSupplier(dashItemKey);
     Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
 
     m_tab.addDouble(title, supplier).withWidget(BuiltInWidgets.kNumberBar)
-        .withProperties(Map.of("min", -1.0, "max", 1.0, "show text", false))
+        .withProperties(Map.of("min", min, "max", max, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 

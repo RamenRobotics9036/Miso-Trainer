@@ -43,7 +43,7 @@ public class ShuffleboardHelpersTest {
   }
 
   @Test
-  public void getBooleanDoubleSupplierShouldSucceed() {
+  public void getBooleanSupplierShouldSucceed() {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Test");
     Boolean value = true;
     shuffleClient.addItem("BooleanKey", () -> MultiType.of(value));
@@ -55,16 +55,26 @@ public class ShuffleboardHelpersTest {
 
   @Test
   public void getmissingDoubleKeyShouldThrow() {
-    assertThrows(IllegalArgumentException.class, () -> {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_helpers.getDoubleSupplier("Test/BogusKey");
     });
+
+    String expectedMessage = "Key missing: Test/BogusKey";
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test
   public void getmissingBooleanKeyShouldThrow() {
-    assertThrows(IllegalArgumentException.class, () -> {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_helpers.getBooleanSupplier("Test/BogusKey");
     });
+
+    String expectedMessage = "Key missing: Test/BogusKey";
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test
@@ -73,9 +83,14 @@ public class ShuffleboardHelpersTest {
     Double value = 2.0;
     shuffleClient.addItem("DoubleKey", () -> MultiType.of(value));
 
-    assertThrows(IllegalArgumentException.class, () -> {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_helpers.getBooleanSupplier("Test/DoubleKey");
     });
+
+    String expectedMessage = "Key wrong type: Test/DoubleKey";
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test
@@ -84,9 +99,14 @@ public class ShuffleboardHelpersTest {
     Boolean value = true;
     shuffleClient.addItem("BooleanKey", () -> MultiType.of(value));
 
-    assertThrows(IllegalArgumentException.class, () -> {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       m_helpers.getDoubleSupplier("Test/BooleanKey");
     });
+
+    String expectedMessage = "Key wrong type: Test/BooleanKey";
+    String actualMessage = exception.getMessage();
+
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test

@@ -25,8 +25,12 @@ public class ShuffleboardHelpers {
   public DoubleSupplier getDoubleSupplier(String key) {
     Supplier<MultiType> supplier = m_globalMap.get(key);
 
-    if (supplier == null || supplier.get().getDouble().isEmpty()) {
-      throw new IllegalArgumentException("Key missing or wrong type: " + key);
+    if (supplier == null) {
+      throw new IllegalArgumentException("Key missing: " + key);
+    }
+
+    if (!supplier.get().getType().equals("Double")) {
+      throw new IllegalArgumentException("Key wrong type: " + key);
     }
 
     return () -> supplier.get().getDouble().orElse(0.0);
@@ -38,8 +42,12 @@ public class ShuffleboardHelpers {
   public BooleanSupplier getBooleanSupplier(String key) {
     Supplier<MultiType> supplier = m_globalMap.get(key);
 
-    if (supplier == null || supplier.get().getBoolean().isEmpty()) {
-      throw new IllegalArgumentException("Key missing or wrong type: " + key);
+    if (supplier == null) {
+      throw new IllegalArgumentException("Key missing: " + key);
+    }
+
+    if (!supplier.get().getType().equals("Boolean")) {
+      throw new IllegalArgumentException("Key wrong type: " + key);
     }
 
     return () -> supplier.get().getBoolean().orElse(false);

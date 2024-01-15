@@ -16,11 +16,11 @@ public class DashboardItem {
    */
   public DashboardItem(String propertyName, MultiType value) {
     if (propertyName == null) {
-      throw new IllegalArgumentException("propertyName cannot be null");
+      throw new IllegalArgumentException("DashboardItem propertyName cannot be null");
     }
 
     if (value == null) {
-      throw new IllegalArgumentException("value cannot be null");
+      throw new IllegalArgumentException("DashboardItem value cannot be null");
     }
 
     m_propertyName = propertyName;

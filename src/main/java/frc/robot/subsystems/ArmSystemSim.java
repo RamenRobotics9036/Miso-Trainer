@@ -17,6 +17,7 @@ import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
+import frc.robot.simulation.extender.ExtenderDashboardPlugin;
 import frc.robot.simulation.extender.ExtenderParams;
 import frc.robot.simulation.extender.ExtenderSimModel;
 import frc.robot.simulation.extender.ExtenderState;
@@ -105,6 +106,10 @@ public class ArmSystemSim extends ArmSystem {
     createArmAngleSimParts(shuffleClient);
 
     m_sensorSim = new DIOSim(m_sensor);
+
+    // $LATER - Eventually, move this into PopulateDashboard class
+    shuffleClient.getSubdirectoryClient("Extender").addItem("Sensor",
+        () -> MultiType.of(!m_sensorSim.getValue()));
 
     // Create simulated absolute encoder
     m_winchAbsoluteEncoderSim = new DutyCycleEncoderSim2(m_winchAbsoluteEncoder);
@@ -204,8 +209,8 @@ public class ArmSystemSim extends ArmSystem {
         true);
 
     m_extenderSimManager = new SimManager<Double, ExtenderState>(
-        new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams), null, null,
-        false);
+        new ExtenderSimModel(m_extenderEncoderSim.getPosition(), extenderParams),
+        shuffleClient.getSubdirectoryClient("Extender"), new ExtenderDashboardPlugin(), false);
 
     m_extenderSimManager.setInputHandler(new RelEncoderSimInput(m_extenderEncoderSim));
     m_extenderSimManager.setOutputHandler(new CopySimOutput<ExtenderState>(m_extenderState));

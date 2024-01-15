@@ -202,6 +202,17 @@ public class SimManager<InputT, OutputT> {
 
     // Copy the new values into the m_dashboardMultiTypeStorage array
     for (int i = 0; i < newValues.length; i++) {
+      if (newValues[i] == null) {
+        throw new IllegalStateException(
+            "getDashboardPropertiesFromInputOutput() has at least one null value in array");
+      }
+
+      // Check if newValues[i] type is different from m_dashboardMultiTypeStorage[i] type
+      if (newValues[i].getType() != m_dashboardMultiTypeStorage[i].getType()) {
+        throw new IllegalStateException("getDashboardPropertiesFromInputOutput() returned "
+            + "array with different types than expected");
+      }
+
       // We copy into the existing allocated MultiType, so that the lambda that
       // was passed to Shuffleboard continues to work
       newValues[i].copyTo(m_dashboardMultiTypeStorage[i]);
@@ -214,15 +225,26 @@ public class SimManager<InputT, OutputT> {
       InputT input = m_inputHandler.getInput();
 
       // Step 2: Do simulation
-      OutputT result = m_simModelFunc.updateSimulation(input);
+      OutputT output = m_simModelFunc.updateSimulation(input);
 
       // Step 3: Write the output to the output handler
-      m_outputHandler.setOutput(result);
+      m_outputHandler.setOutput(output);
 
       // Step 4: Update the dashboard
       if (m_pluginDashItemsInitialized) {
-        updateDashboardValues(
-            m_dashboardPlugin.getDashboardPropertiesFromInputOutput(input, result));
+        MultiType[] newDashValues = m_dashboardPlugin.getDashboardPropertiesFromInputOutput(input,
+            output);
+
+        if (newDashValues == null) {
+          throw new IllegalStateException("getDashboardPropertiesFromInputOutput() returned null");
+        }
+
+        if (newDashValues.length != m_dashboardMultiTypeStorage.length) {
+          throw new IllegalStateException(
+              "getDashboardPropertiesFromInputOutput() returned wrong number of items");
+        }
+
+        updateDashboardValues(newDashValues);
       }
 
       if (m_defaultDashItemsInitialized) {

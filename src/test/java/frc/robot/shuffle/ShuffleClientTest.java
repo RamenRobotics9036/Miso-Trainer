@@ -38,6 +38,8 @@ public class ShuffleClientTest {
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
         new SampleSimModel(ratio), null, null, () -> true);
     assertTrue(sampleSimManager != null);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -49,6 +51,8 @@ public class ShuffleClientTest {
     SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
         new SampleSimModel(ratio), shuffleClient, null, () -> true);
     assertTrue(sampleSimManager != null);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -69,6 +73,8 @@ public class ShuffleClientTest {
     // Accumulator
     Supplier<MultiType> accumulatorSupplier = m_globalMap.get("Sample sim/Accumulator");
     assertNotNull(accumulatorSupplier);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -88,6 +94,8 @@ public class ShuffleClientTest {
     // We do NOT expect to have a bogus property Accumulator2
     Supplier<MultiType> accumulatorSupplier = m_globalMap.get("Sample sim/Accumulator2");
     assertNull(accumulatorSupplier);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -107,6 +115,8 @@ public class ShuffleClientTest {
     String actualString = m_globalMap.toString();
     String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -142,6 +152,8 @@ public class ShuffleClientTest {
     String actualString = m_globalMap.toString();
     String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
@@ -172,10 +184,12 @@ public class ShuffleClientTest {
 
     // We expect exactly 0 properties to be in the global hashmap
     assertEquals(0 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
+
+    forceRunOneCycle(sampleSimManager);
   }
 
   @Test
-  public void dashboardPluginReturningNullMultitypeShouldThrowException() {
+  public void dashboardPluginReturningNullMultitypeValueShouldThrowException() {
     class DashboardPluginReturnsNullMultitype
         implements DashboardPluginInterface<Integer, Integer> {
       @Override
@@ -198,15 +212,30 @@ public class ShuffleClientTest {
     Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
     DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginReturnsNullMultitype();
 
-    assertThrows(IllegalArgumentException.class, () -> {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       @SuppressWarnings("unused")
       SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
           new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
     });
+
+    String expectedMessage = "DashboardItem value cannot be null";
+    String actualMessage = exception.getMessage();
+    assertEquals(expectedMessage, actualMessage);
+  }
+
+  // Adding input and output will force run one cycle
+  private void forceRunOneCycle(SimManager<Integer, Integer> simManager) {
+    simManager.setInputHandler(new LambdaSimInput<Integer>(() -> {
+      return 1;
+    }));
+
+    simManager.setOutputHandler(new LambdaSimOutput<Integer>((numOutput) -> {
+      // No op
+    }));
   }
 
   @Test
-  public void mismatchedPropertiesAndMultitypeArrayCountsShouldSucceed() {
+  public void mismatchedPropertiesAndMultitypeArrayCountsShouldThrow() {
     class DashboardPluginMismatchedArrayCounts
         implements DashboardPluginInterface<Integer, Integer> {
       @Override
@@ -239,10 +268,19 @@ public class ShuffleClientTest {
     String actualString = m_globalMap.toString();
     String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
+
+    Exception exception = assertThrows(IllegalStateException.class, () -> {
+      forceRunOneCycle(sampleSimManager);
+    });
+
+    String expectedMessage = "getDashboardPropertiesFromInputOutput() returned "
+        + "wrong number of items";
+    String actualMessage = exception.getMessage();
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test
-  public void nullMultiTypeArrayShouldSucceed() {
+  public void nullMultiTypeArrayShouldThrow() {
     class DashboardPluginNullMultitypeArray implements DashboardPluginInterface<Integer, Integer> {
       @Override
       public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
@@ -273,21 +311,33 @@ public class ShuffleClientTest {
     String actualString = m_globalMap.toString();
     String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
     assertEquals(expectedString, actualString);
+
+    Exception exception = assertThrows(IllegalStateException.class, () -> {
+      forceRunOneCycle(sampleSimManager);
+    });
+
+    String expectedMessage = "getDashboardPropertiesFromInputOutput() returned null";
+    String actualMessage = exception.getMessage();
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test
-  public void nullMultiTypeItemShouldSucceed() {
+  public void nullMultiTypeItemShouldThrow() {
     class DashboardPluginNullMultitypeItem implements DashboardPluginInterface<Integer, Integer> {
       @Override
       public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
         return new DashboardItem[] {
-            new DashboardItem("Accumulator", MultiType.of(0))
+            new DashboardItem("Accumulator", MultiType.of(0)),
+            new DashboardItem("Accumulator2", MultiType.of(0)),
+            new DashboardItem("Accumulator3", MultiType.of(0)),
+            new DashboardItem("Accumulator4", MultiType.of(0))
         };
       }
 
       @Override
       public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
         return new MultiType[] {
+            // Note the third item in this array is null
             MultiType.of(0), MultiType.of(1), null, MultiType.of(2)
         };
       }
@@ -303,12 +353,72 @@ public class ShuffleClientTest {
 
     assertTrue(sampleSimManager != null);
 
-    // We expect exactly 1 property to be in the global hashmap
-    assertEquals(1 + m_numDefaultProperties, m_globalMap.getAllEntries().size());
+    // We expect exactly 5 properties to be in the global hashmap
+    assertEquals(5, m_globalMap.getAllEntries().size());
 
     String actualString = m_globalMap.toString();
-    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator]";
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator4, "
+        + "Sample sim/Accumulator3, Sample sim/Accumulator, Sample sim/Accumulator2]";
     assertEquals(expectedString, actualString);
+
+    Exception exception = assertThrows(IllegalStateException.class, () -> {
+      forceRunOneCycle(sampleSimManager);
+    });
+
+    String expectedMessage = "getDashboardPropertiesFromInputOutput() "
+        + "has at least one null value in array";
+    String actualMessage = exception.getMessage();
+    assertEquals(expectedMessage, actualMessage);
+  }
+
+  @Test
+  public void wrongTypedMultiTypeItemShouldThrow() {
+    class DashboardPluginNullMultitypeItem implements DashboardPluginInterface<Integer, Integer> {
+      @Override
+      public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
+        return new DashboardItem[] {
+            new DashboardItem("Accumulator", MultiType.of(0)),
+            new DashboardItem("Accumulator2", MultiType.of(0)),
+            new DashboardItem("Accumulator3", MultiType.of(0)),
+            new DashboardItem("Accumulator4", MultiType.of(0))
+        };
+      }
+
+      @Override
+      public MultiType[] getDashboardPropertiesFromInputOutput(Integer input, Integer output) {
+        return new MultiType[] {
+            // Note the third item in this array is BOOLEAN instead of Double
+            MultiType.of(0), MultiType.of(1), MultiType.of(true), MultiType.of(2)
+        };
+      }
+    }
+
+    int ratio = 2;
+
+    Client<Supplier<MultiType>> shuffleClient = m_globalMap.getClientWithPrefix("Sample sim");
+    DashboardPluginInterface<Integer, Integer> plugin = new DashboardPluginNullMultitypeItem();
+
+    SimManager<Integer, Integer> sampleSimManager = new SimManager<Integer, Integer>(
+        new SampleSimModel(ratio), shuffleClient, plugin, () -> true);
+
+    assertTrue(sampleSimManager != null);
+
+    // We expect exactly 5 properties to be in the global hashmap
+    assertEquals(5, m_globalMap.getAllEntries().size());
+
+    String actualString = m_globalMap.toString();
+    String expectedString = "[Sample sim/IsBroken, Sample sim/Accumulator4, "
+        + "Sample sim/Accumulator3, Sample sim/Accumulator, Sample sim/Accumulator2]";
+    assertEquals(expectedString, actualString);
+
+    Exception exception = assertThrows(IllegalStateException.class, () -> {
+      forceRunOneCycle(sampleSimManager);
+    });
+
+    String expectedMessage = "getDashboardPropertiesFromInputOutput() returned "
+        + "array with different types than expected";
+    String actualMessage = exception.getMessage();
+    assertEquals(expectedMessage, actualMessage);
   }
 
   @Test

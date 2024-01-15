@@ -80,6 +80,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
 
   private void addShuffleboardWinchList() {
     // Winch String % extended
+    // $TODO - This needs to be removed
     Widget pos = m_defaultLayout.getWidgetPosition("Winch String % Extended");
     Shuffleboard.getTab("Simulation")
         .addDouble("Winch String % Extended", () -> m_winchState.getStringUnspooledPercent())
@@ -88,6 +89,7 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
     // Winch string location
+    // $TODO - This needs to be removed
     pos = m_defaultLayout.getWidgetPosition("Winch string location");
     Shuffleboard.getTab("Simulation")
         .addString("Winch string location", () -> m_winchState.getWindingOrientationName())

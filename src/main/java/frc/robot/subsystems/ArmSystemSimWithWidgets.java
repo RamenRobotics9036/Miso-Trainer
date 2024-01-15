@@ -62,33 +62,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     super(controller);
   }
 
-  // $TODO - Command buttons can now be moved over to the new shuffleboard population code
-  private void addCommandButtons() {
-    // Move to to middle node cone
-    Widget pos = m_defaultLayout.getWidgetPosition("Arm Middle node");
-    Shuffleboard.getTab("Simulation").add("Arm Middle node", new ArmToMiddleNodeCone(this))
-        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-
-    // Lower arm to ground
-    pos = m_defaultLayout.getWidgetPosition("Arm to ground");
-    Shuffleboard.getTab("Simulation").add("Arm to ground", new ArmToGround(this))
-        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-
-    // Extend arm
-    pos = m_defaultLayout.getWidgetPosition("Extend");
-    Shuffleboard.getTab("Simulation").add("Extend", new ArmExtendFully(this))
-        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-
-    // Retract extender
-    pos = m_defaultLayout.getWidgetPosition("Retract extender");
-    Shuffleboard.getTab("Simulation").add("Retract extender", new RetractArmCommand(this))
-        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-  }
-
   private void addShuffleboardArmList() {
     // Arm functional display
     Widget pos = m_defaultLayout.getWidgetPosition("Arm Functional");
@@ -102,11 +75,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     Shuffleboard.getTab("Simulation")
         .addDouble("Arm position", () -> m_winchAbsoluteEncoder.getAbsolutePosition())
         .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-
-    // Arm commands
-    pos = m_defaultLayout.getWidgetPosition("Arm System Commands");
-    Shuffleboard.getTab("Simulation").add("Arm System Commands", this).withPosition(pos.x, pos.y)
         .withSize(pos.width, pos.height);
   }
 
@@ -152,6 +120,5 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     super.initDashBoard();
 
     addShuffleboardWidgets();
-    addCommandButtons();
   }
 }

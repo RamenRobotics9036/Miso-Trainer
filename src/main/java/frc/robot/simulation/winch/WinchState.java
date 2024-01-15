@@ -51,16 +51,6 @@ public class WinchState implements CopyableInterface<WinchState> {
     return m_windingOrientation.name();
   }
 
-  // $TODO - This should go away
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
-
-  // $TODO - This should go away
-  public void setIsBroken(boolean isBroken) {
-    m_isBroken = isBroken;
-  }
-
   /**
    * Copy to another instance of WinchState.
    */

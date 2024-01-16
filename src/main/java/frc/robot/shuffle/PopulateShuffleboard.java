@@ -57,12 +57,11 @@ public class PopulateShuffleboard {
         0,
         1.0);
 
-    // $TODO - We don't support strings yet
-    // Widget pos = m_defaultLayout.getWidgetPosition("Winch string location");
-    // Shuffleboard.getTab("Simulation")
-    // .addString("Winch string location", () -> m_winchState.getWindingOrientationName())
-    // .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
-    // .withSize(pos.width, pos.height);
+    // $TODO Cleanup
+    Widget pos = m_defaultLayout.getWidgetPosition("Winch string location");
+    Shuffleboard.getTab("Simulation").addString("Winch string location", () -> "Hello")
+        .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
   }
 
   private void addExtenderToDash() {

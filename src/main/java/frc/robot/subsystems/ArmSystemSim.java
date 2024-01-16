@@ -32,6 +32,7 @@ import frc.robot.simulation.motor.MotorSimModel;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import frc.robot.simulation.winch.WinchCable;
+import frc.robot.simulation.winch.WinchDashboardPlugin;
 import frc.robot.simulation.winch.WinchParams;
 import frc.robot.simulation.winch.WinchSimModel;
 import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
@@ -168,7 +169,7 @@ public class ArmSystemSim extends ArmSystem {
     // Create winch simulated encoder
     m_winchEncoderSim = new RelativeEncoderSim(m_winchEncoder);
 
-    m_winchState = new WinchState(Constants.SimConstants.kTotalStringLenMeters);
+    m_winchState = new WinchState();
 
     // Create the motor simulation for the winch motor
     m_winchMotorSimManager = new SimManager<Double, Double>(
@@ -184,7 +185,7 @@ public class ArmSystemSim extends ArmSystem {
         WindingOrientation.BackOfRobot), true);
 
     m_winchSimManager = new SimManager<Double, WinchState>(new WinchSimModel(winchParams),
-        shuffleClient.getSubdirectoryClient("Winch"), null, false);
+        shuffleClient.getSubdirectoryClient("Winch"), new WinchDashboardPlugin(), false);
     m_winchSimManager.setInputHandler(new RelEncoderSimInput(m_winchEncoderSim));
     m_winchSimManager.setOutputHandler(new CopySimOutput<WinchState>(m_winchState));
   }

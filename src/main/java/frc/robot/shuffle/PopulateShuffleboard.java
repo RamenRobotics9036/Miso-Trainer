@@ -1,12 +1,19 @@
 package frc.robot.shuffle;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.ArmExtendFully;
+import frc.robot.commands.ArmToGround;
+import frc.robot.commands.ArmToMiddleNodeCone;
+import frc.robot.commands.RetractArmCommand;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
+import frc.robot.subsystems.ArmSystem;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * Adds Shuffleboard widgets to Simulation tab.
@@ -44,6 +51,16 @@ public class PopulateShuffleboard {
         "ArmSystem/WinchMotor/InputPower",
         -1.0,
         1.0);
+
+    addWidgetRange("Winch String % Extended",
+        "Winch String % Extended",
+        "ArmSystem/Winch/UnspooledPercent",
+        0,
+        1.0);
+
+    addStringWidget("Winch string location",
+        "Winch string location",
+        "ArmSystem/Winch/WindingOrientation");
   }
 
   private void addExtenderToDash() {
@@ -64,7 +81,7 @@ public class PopulateShuffleboard {
         0.0,
         1.0);
 
-    addBooleanWidget("Extender Sensor", "Extender Sensor", "ArmSystem/Extender/Sensor", false);
+    addSwitchDisplay("Extender Sensor", "Extender Sensor", "ArmSystem/Extender/Sensor");
   }
 
   /**
@@ -83,6 +100,10 @@ public class PopulateShuffleboard {
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 
+  private BooleanSupplier constructSupplier(BooleanSupplier supplier, boolean invertBoolValue) {
+    return invertBoolValue ? () -> !supplier.getAsBoolean() : supplier;
+  }
+
   /**
    * Adds a boolean widget to the Shuffleboard.
    */
@@ -91,13 +112,66 @@ public class PopulateShuffleboard {
       String dashItemKey,
       boolean invertBoolValue) {
 
-    BooleanSupplier supplier = invertBoolValue
-        ? () -> !m_helpers.getBooleanSupplier(dashItemKey).getAsBoolean()
-        : m_helpers.getBooleanSupplier(dashItemKey);
+    BooleanSupplier supplier = constructSupplier(m_helpers.getBooleanSupplier(dashItemKey),
+        invertBoolValue);
 
     Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
     m_tab.addBoolean(title, supplier).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  private void addStringWidget(String title, String layoutId, String dashItemKey) {
+
+    Supplier<String> supplier = m_helpers.getStringSupplier(dashItemKey);
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+
+    m_tab.addString(title, supplier).withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+  }
+
+  private void addSwitchDisplay(String title, String layoutId, String dashItemKey) {
+
+    BooleanSupplier supplier = constructSupplier(m_helpers.getBooleanSupplier(dashItemKey), false);
+
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+    Shuffleboard.getTab("Simulation").addBoolean("Extender Sensor", supplier)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#FFFFFF"))
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  /**
+   * Adds macro buttons to Shuffleboard.
+   */
+  public void addMacros(ArmSystem armSystem) {
+    // Move to to middle node cone
+    Widget pos = m_defaultLayout.getWidgetPosition("Arm Middle node");
+    Shuffleboard.getTab("Simulation").add("Arm Middle node", new ArmToMiddleNodeCone(armSystem))
+        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+
+    // Lower arm to ground
+    pos = m_defaultLayout.getWidgetPosition("Arm to ground");
+    Shuffleboard.getTab("Simulation").add("Arm to ground", new ArmToGround(armSystem))
+        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+
+    // Extend arm
+    pos = m_defaultLayout.getWidgetPosition("Extend");
+    Shuffleboard.getTab("Simulation").add("Extend", new ArmExtendFully(armSystem))
+        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+
+    // Retract extender
+    pos = m_defaultLayout.getWidgetPosition("Retract extender");
+    Shuffleboard.getTab("Simulation").add("Retract extender", new RetractArmCommand(armSystem))
+        .withWidget(BuiltInWidgets.kCommand).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+
+    // Show the current running command, and the default command for the arm
+    pos = m_defaultLayout.getWidgetPosition("Arm System Commands");
+    Shuffleboard.getTab("Simulation").add("Arm System Commands", armSystem)
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 }

@@ -120,6 +120,7 @@ public class RobotContainer {
         new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
         Shuffleboard.getTab("Simulation"));
     shuffle.addShuffleboardWidgets();
+    shuffle.addMacros(m_armSystem);
   }
 
   /**

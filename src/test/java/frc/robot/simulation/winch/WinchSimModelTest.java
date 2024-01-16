@@ -70,7 +70,7 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(getTestingStringLen());
+    WinchState tempWinchState = new WinchState();
 
     // Create SimManager
     SimManager<Double, WinchState> winchSimManager = createTestSimManager(stringOrientation,
@@ -90,9 +90,14 @@ public class WinchSimModelTest {
     winchSimManager.simulationPeriodic();
 
     double result = tempWinchState.getStringUnspooledLen();
-
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
     assertTrue(winchSimManager.isBroken() == expectIsBroken);
+
+    // Now check that tempWinchState.getStringUnspooledPercent() is correct too
+    double expectedPercent = tempWinchState.getStringUnspooledPercent();
+    assertEquals(expectedPercent,
+        expectedResult / getTestingStringLen(),
+        UnitConversions.kAngleTolerance);
   }
 
   @Test
@@ -158,7 +163,7 @@ public class WinchSimModelTest {
       return currentWinchRotations[0];
     };
 
-    WinchState tempWinchState = new WinchState(getTestingStringLen());
+    WinchState tempWinchState = new WinchState();
 
     // Create SimManager
     SimManager<Double, WinchState> winchSimManager = createTestSimManager(
@@ -187,5 +192,11 @@ public class WinchSimModelTest {
     double expectedResult = 4.4;
     assertEquals(result, expectedResult, UnitConversions.kAngleTolerance);
     assertTrue(!winchSimManager.isBroken());
+
+    // Now check that tempWinchState.getStringUnspooledPercent() is correct too
+    double expectedPercent = tempWinchState.getStringUnspooledPercent();
+    assertEquals(expectedPercent,
+        expectedResult / getTestingStringLen(),
+        UnitConversions.kAngleTolerance);
   }
 }

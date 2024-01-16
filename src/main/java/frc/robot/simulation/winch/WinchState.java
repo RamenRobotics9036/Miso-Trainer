@@ -7,22 +7,20 @@ import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
  * Holds the outputed state of the winch.
  */
 public class WinchState implements CopyableInterface<WinchState> {
-  private final double m_totalStringLenMeters;
   private double m_stringUnspooledLen;
+  private double m_unspooledPercent;
   private WindingOrientation m_windingOrientation;
+  private String m_windingOrientationName;
   private boolean m_isBroken;
 
   /**
    * Constructor.
    */
-  public WinchState(double totalStringLenMeters) {
-    if (totalStringLenMeters <= 0) {
-      throw new IllegalArgumentException("totalStringLenMeters must be greater than 0");
-    }
-
-    m_totalStringLenMeters = totalStringLenMeters;
+  public WinchState() {
     m_stringUnspooledLen = 0;
+    m_unspooledPercent = 0;
     m_windingOrientation = WindingOrientation.BackOfRobot;
+    m_windingOrientationName = "";
     m_isBroken = false;
   }
 
@@ -36,7 +34,11 @@ public class WinchState implements CopyableInterface<WinchState> {
   }
 
   public double getStringUnspooledPercent() {
-    return getStringUnspooledLen() / m_totalStringLenMeters;
+    return m_unspooledPercent;
+  }
+
+  public void setStringUnspooledPercent(double unspooledPercent) {
+    m_unspooledPercent = unspooledPercent;
   }
 
   public WindingOrientation getWindingOrientation() {
@@ -48,15 +50,18 @@ public class WinchState implements CopyableInterface<WinchState> {
   }
 
   public String getWindingOrientationName() {
-    return m_windingOrientation.name();
+    return m_windingOrientationName;
   }
 
-  public boolean getIsBroken() {
-    return m_isBroken;
-  }
+  /**
+   * Sets the winding orientation name.
+   */
+  public void setWindingOrientationName(String windingOrientationName) {
+    if (windingOrientationName == null) {
+      throw new IllegalArgumentException("windingOrientationName cannot be null");
+    }
 
-  public void setIsBroken(boolean isBroken) {
-    m_isBroken = isBroken;
+    m_windingOrientationName = windingOrientationName;
   }
 
   /**
@@ -68,7 +73,9 @@ public class WinchState implements CopyableInterface<WinchState> {
     }
 
     m_stringUnspooledLen = other.m_stringUnspooledLen;
+    m_unspooledPercent = other.m_unspooledPercent;
     m_windingOrientation = other.m_windingOrientation;
+    m_windingOrientationName = other.m_windingOrientationName;
     m_isBroken = other.m_isBroken;
   }
 }

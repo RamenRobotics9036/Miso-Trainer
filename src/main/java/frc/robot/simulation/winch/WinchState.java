@@ -10,6 +10,7 @@ public class WinchState implements CopyableInterface<WinchState> {
   private double m_stringUnspooledLen;
   private double m_unspooledPercent;
   private WindingOrientation m_windingOrientation;
+  private String m_windingOrientationName;
   private boolean m_isBroken;
 
   /**
@@ -19,6 +20,7 @@ public class WinchState implements CopyableInterface<WinchState> {
     m_stringUnspooledLen = 0;
     m_unspooledPercent = 0;
     m_windingOrientation = WindingOrientation.BackOfRobot;
+    m_windingOrientationName = "";
     m_isBroken = false;
   }
 
@@ -48,7 +50,18 @@ public class WinchState implements CopyableInterface<WinchState> {
   }
 
   public String getWindingOrientationName() {
-    return m_windingOrientation.name();
+    return m_windingOrientationName;
+  }
+
+  /**
+   * Sets the winding orientation name.
+   */
+  public void setWindingOrientationName(String windingOrientationName) {
+    if (windingOrientationName == null) {
+      throw new IllegalArgumentException("windingOrientationName cannot be null");
+    }
+
+    m_windingOrientationName = windingOrientationName;
   }
 
   /**
@@ -62,6 +75,7 @@ public class WinchState implements CopyableInterface<WinchState> {
     m_stringUnspooledLen = other.m_stringUnspooledLen;
     m_unspooledPercent = other.m_unspooledPercent;
     m_windingOrientation = other.m_windingOrientation;
+    m_windingOrientationName = other.m_windingOrientationName;
     m_isBroken = other.m_isBroken;
   }
 }

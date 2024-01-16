@@ -130,6 +130,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
       winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
       winchStateResult.setStringUnspooledPercent(getCableUnspooledLen() / getTotalLenMeters());
       winchStateResult.setWindingOrientation(getWindingOrientation());
+      winchStateResult.setWindingOrientationName(getWindingOrientation().name());
       return winchStateResult;
     }
 
@@ -156,6 +157,7 @@ public class WinchSimModel implements SimModelInterface<Double, WinchState> {
     winchStateResult.setCableUnspooledLen(getCableUnspooledLen());
     winchStateResult.setStringUnspooledPercent(getCableUnspooledLen() / getTotalLenMeters());
     winchStateResult.setWindingOrientation(getWindingOrientation());
+    winchStateResult.setWindingOrientationName(getWindingOrientation().name());
 
     return winchStateResult;
   }

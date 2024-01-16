@@ -52,4 +52,21 @@ public class ShuffleboardHelpers {
 
     return () -> supplier.get().getBoolean().orElse(false);
   }
+
+  /**
+   * Converts Supplier for MultiType to Supplier-String.
+   */
+  public Supplier<String> getStringSupplier(String key) {
+    Supplier<MultiType> supplier = m_globalMap.get(key);
+
+    if (supplier == null) {
+      throw new IllegalArgumentException("Key missing: " + key);
+    }
+
+    if (!supplier.get().getType().equals("String")) {
+      throw new IllegalArgumentException("Key wrong type: " + key);
+    }
+
+    return () -> supplier.get().getString().orElse("");
+  }
 }

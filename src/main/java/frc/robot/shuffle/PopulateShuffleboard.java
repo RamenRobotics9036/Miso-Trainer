@@ -13,6 +13,7 @@ import frc.robot.subsystems.ArmSystem;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * Adds Shuffleboard widgets to Simulation tab.
@@ -57,11 +58,9 @@ public class PopulateShuffleboard {
         0,
         1.0);
 
-    // $TODO Cleanup
-    Widget pos = m_defaultLayout.getWidgetPosition("Winch string location");
-    Shuffleboard.getTab("Simulation").addString("Winch string location", () -> "Hello")
-        .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
+    addStringWidget("Winch string location",
+        "Winch string location",
+        "ArmSystem/Winch/WindingOrientation");
   }
 
   private void addExtenderToDash() {
@@ -120,6 +119,15 @@ public class PopulateShuffleboard {
     m_tab.addBoolean(title, supplier).withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  private void addStringWidget(String title, String layoutId, String dashItemKey) {
+
+    Supplier<String> supplier = m_helpers.getStringSupplier(dashItemKey);
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+
+    m_tab.addString(title, supplier).withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
   }
 
   private void addSwitchDisplay(String title, String layoutId, String dashItemKey) {

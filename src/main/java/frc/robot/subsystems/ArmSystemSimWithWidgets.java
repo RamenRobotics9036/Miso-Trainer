@@ -3,15 +3,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
-import frc.robot.helpers.DefaultLayout;
-import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.SupplierMapFactory;
-import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -19,8 +15,8 @@ import java.util.function.Supplier;
 /**
  * This adds shuffleboard widgets to the ArmSystemSim class.
  */
+// $TODO - Break this into a separate class in shuffle directory
 public class ArmSystemSimWithWidgets extends ArmSystemSim {
-  private DefaultLayout m_defaultLayout = new DefaultLayout();
   PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
 
   private static class SendableArmPosition implements Sendable {
@@ -58,22 +54,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
     super(controller);
   }
 
-  private void addShuffleboardArmList() {
-    // Arm functional display
-    Widget pos = m_defaultLayout.getWidgetPosition("Arm Functional");
-    Shuffleboard.getTab("Simulation").addBoolean("Arm Functional", () -> !getIsStringOrArmBroken())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withProperties(Map.of("colorWhenTrue", "#C0FBC0", "colorWhenFalse", "#8B0000"))
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
-    // Arm position
-    pos = m_defaultLayout.getWidgetPosition("Arm position");
-    Shuffleboard.getTab("Simulation")
-        .addDouble("Arm position", () -> m_winchAbsoluteEncoder.getAbsolutePosition())
-        .withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
-  }
-
   private double getArmPercentRaised() {
     double lowerLimit = Constants.OperatorConstants.kWinchEncoderLowerLimit;
     double upperLimit = Constants.OperatorConstants.kWinchEncoderUpperLimit;
@@ -83,8 +63,6 @@ public class ArmSystemSimWithWidgets extends ArmSystemSim {
   }
 
   private void addShuffleboardWidgets() {
-    addShuffleboardArmList();
-
     // Add Robot Arm widget
     // $LATER Don't hardcode name of the widget and location
     Shuffleboard.getTab("Simulation").add("Happy",

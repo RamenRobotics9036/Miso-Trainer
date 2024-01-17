@@ -130,7 +130,8 @@ public class ArmSystemSim extends ArmSystem {
         Constants.SimConstants.karmEncoderRotationsOffset);
 
     Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
-        .createRamenArmSimulation(armAngleSupplier,
+        .createRamenArmSimulation(shuffleClient,
+            armAngleSupplier,
             m_winchAbsoluteEncoderSim,
             armParams,
             UnitConversions

@@ -41,6 +41,13 @@ public class PopulateShuffleboard {
   public void addShuffleboardWidgets() {
     addWinchToDash();
     addExtenderToDash();
+    addArmToDash();
+  }
+
+  private void addArmToDash() {
+    addDoubleAsTextWidget("Arm position", "Arm position", "ArmSystem/Arm/ArmPosition");
+
+    addBooleanWidget("Arm Functional", "Arm Functional", "ArmSystem/Arm/IsBroken", true);
   }
 
   private void addWinchToDash() {
@@ -127,6 +134,15 @@ public class PopulateShuffleboard {
     Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
 
     m_tab.addString(title, supplier).withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height);
+  }
+
+  private void addDoubleAsTextWidget(String title, String layoutId, String dashItemKey) {
+
+    DoubleSupplier supplier = m_helpers.getDoubleSupplier(dashItemKey);
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+
+    m_tab.addDouble(title, supplier).withWidget(BuiltInWidgets.kTextView).withPosition(pos.x, pos.y)
         .withSize(pos.width, pos.height);
   }
 

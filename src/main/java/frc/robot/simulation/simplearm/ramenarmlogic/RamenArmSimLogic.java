@@ -3,9 +3,12 @@ package frc.robot.simulation.simplearm.ramenarmlogic;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
+import frc.robot.shuffle.MultiType;
+import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.AbsEncoderSimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.simplearm.ArmDashboardPlugin;
 import frc.robot.simulation.simplearm.ArmSimModel;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
@@ -45,6 +48,7 @@ public class RamenArmSimLogic implements ExtendArmInterface {
    * from Ramen bot.
    */
   public static Pair<SimManager<Double, Double>, RamenArmSimLogic> createRamenArmSimulation(
+      Client<Supplier<MultiType>> shuffleClient,
       Supplier<Double> desiredArmAngleSupplier,
       DutyCycleEncoderSim winchAbsoluteEncoderSim,
       ArmSimParams armParams,
@@ -54,8 +58,13 @@ public class RamenArmSimLogic implements ExtendArmInterface {
     RamenArmSimLogic ramenArmLogic = new RamenArmSimLogic(
         grabberBreaksIfOpenBelowSignedDegreesLimit, armParams);
 
+    Client<Supplier<MultiType>> armClient = (shuffleClient != null)
+        ? shuffleClient.getSubdirectoryClient("Arm")
+        : null;
+
     SimManager<Double, Double> armSimManager = new SimManager<Double, Double>(
-        new ArmSimModel(armParams, ramenArmLogic), null, null, enableTestMode);
+        new ArmSimModel(armParams, ramenArmLogic), armClient, new ArmDashboardPlugin(),
+        enableTestMode);
     armSimManager.setInputHandler(new LambdaSimInput<Double>(desiredArmAngleSupplier));
     armSimManager.setOutputHandler(new AbsEncoderSimOutput(winchAbsoluteEncoderSim));
 

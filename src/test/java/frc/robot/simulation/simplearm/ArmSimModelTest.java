@@ -159,7 +159,8 @@ public class ArmSimModelTest {
     };
 
     Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
-        .createRamenArmSimulation(desiredArmAngleSupplier,
+        .createRamenArmSimulation(null,
+            desiredArmAngleSupplier,
             m_winchAbsoluteEncoderSim,
             m_defaultArmParams,
             UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
@@ -210,6 +211,7 @@ public class ArmSimModelTest {
 
       Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
           .createRamenArmSimulation(null,
+              null,
               m_winchAbsoluteEncoderSim,
               m_defaultArmParams,
               UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),
@@ -556,7 +558,8 @@ public class ArmSimModelTest {
     };
 
     Pair<SimManager<Double, Double>, RamenArmSimLogic> createResult = RamenArmSimLogic
-        .createRamenArmSimulation(desiredArmAngleSupplier,
+        .createRamenArmSimulation(null,
+            desiredArmAngleSupplier,
             m_winchAbsoluteEncoderSim,
             tempArmParamsBuilder.build(),
             UnitConversions.rotationToSignedDegrees(grabberLimitRotations - offsetRotations),

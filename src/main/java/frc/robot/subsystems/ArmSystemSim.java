@@ -4,6 +4,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
@@ -13,6 +14,7 @@ import frc.robot.helpers.UnitConversions;
 import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+import frc.robot.shuffle.SendableArmPosition;
 import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
@@ -52,18 +54,18 @@ public class ArmSystemSim extends ArmSystem {
   private SimManager<Double, WinchState> m_winchSimManager;
   private SimManager<Double, ArmAngleState> m_angleSimManager;
 
-  protected WinchState m_winchState;
+  private WinchState m_winchState;
   private ArmAngleState m_armAngleState;
-  protected ExtenderState m_extenderState;
+  private ExtenderState m_extenderState;
 
   private RelativeEncoderSim m_extenderEncoderSim;
   private SimManager<Double, Double> m_extenderMotorSimManager;
-  protected SimManager<Double, ExtenderState> m_extenderSimManager;
+  private SimManager<Double, ExtenderState> m_extenderSimManager;
 
-  protected DIOSim m_sensorSim;
+  private DIOSim m_sensorSim;
 
-  protected SimManager<Double, Double> m_armSimManager;
-  protected RamenArmSimLogic m_ramenArmSimLogic;
+  private SimManager<Double, Double> m_armSimManager;
+  private RamenArmSimLogic m_ramenArmSimLogic;
 
   /**
    * Creates an instance of the ArmSystem or ArmSystemSim class.
@@ -72,7 +74,7 @@ public class ArmSystemSim extends ArmSystem {
     ArmSystem result;
 
     if (RobotBase.isSimulation()) {
-      result = new ArmSystemSimWithWidgets(controller);
+      result = new ArmSystemSim(controller);
 
       // System.out.println("ARMSYSTEM: **** Simulation ****");
 
@@ -228,11 +230,6 @@ public class ArmSystemSim extends ArmSystem {
   }
 
   // $LATER - This is temporary until we combine string and arm simulation
-  protected boolean getIsStringOrArmBroken() {
-    return m_angleSimManager.isBroken() || m_armSimManager.isBroken();
-  }
-
-  // $LATER - This is temporary until we combine string and arm simulation
   private void simulatePeriodicStringAndArm(SimManager<Double, ArmAngleState> angleSimulation,
       SimManager<Double, Double> armSimManager) {
 
@@ -263,5 +260,29 @@ public class ArmSystemSim extends ArmSystem {
           .getExtendedLen() <= Constants.SimConstants.kextenderFullyRetractedLen;
       m_sensorSim.setValue(!isExtenderSensorOn);
     }
+  }
+
+  private double getArmPercentRaised() {
+    double lowerLimit = Constants.OperatorConstants.kWinchEncoderLowerLimit;
+    double upperLimit = Constants.OperatorConstants.kWinchEncoderUpperLimit;
+    double currentPosition = m_winchAbsoluteEncoder.getAbsolutePosition();
+
+    return (currentPosition - lowerLimit) / (upperLimit - lowerLimit);
+  }
+
+  private void addShuffleboardWidgets() {
+    // Add Robot Arm widget
+    // $LATER Don't hardcode name of the widget and location
+    Shuffleboard.getTab("Simulation").add("Happy",
+        new SendableArmPosition(() -> getArmPercentRaised(),
+            () -> m_extenderState.getExtendedPercent(), () -> m_ramenArmSimLogic.getGrabberOpen()))
+        .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
+  }
+
+  @Override
+  public void initDashBoard() {
+    super.initDashBoard();
+
+    addShuffleboardWidgets();
   }
 }

@@ -9,10 +9,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * by setting it on the RelativeEncoderSim object. This way, the simulation never
  * directly touches the RelativeEncoder object, which is a bit cleaner.
  */
-// $LATER - Is testmode even needed anymore?
 public class RelativeEncoderSim {
-  private boolean m_testMode;
-  private double m_testModePosition;
   private RelativeEncoder m_relEncoder = null;
 
   /**
@@ -24,41 +21,19 @@ public class RelativeEncoderSim {
     if (RobotBase.isSimulation()) {
       m_relEncoder = relEncoder;
     }
-
-    m_testMode = false;
-  }
-
-  /**
-   * Constructor for test mode.
-   */
-  public RelativeEncoderSim(RelativeEncoder relEncoder, boolean testMode) {
-    this(relEncoder);
-
-    m_testMode = testMode;
-    m_testModePosition = 0;
   }
 
   /**
    * Get the current position of the encoder.
    */
   public double getPosition() {
-    if (!m_testMode) {
-      return m_relEncoder.getPosition();
-    }
-    else {
-      return m_testModePosition;
-    }
+    return m_relEncoder.getPosition();
   }
 
   /**
    * Set the current position of the encoder.
    */
   public void setPosition(double position) {
-    if (!m_testMode) {
-      m_relEncoder.setPosition(position);
-    }
-    else {
-      m_testModePosition = position;
-    }
+    m_relEncoder.setPosition(position);
   }
 }

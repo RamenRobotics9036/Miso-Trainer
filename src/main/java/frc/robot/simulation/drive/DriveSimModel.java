@@ -220,7 +220,7 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  private void simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
+  private DriveState simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
@@ -236,16 +236,18 @@ public class DriveSimModel {
     driveState.setRightEncoderRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
     driveState.setRobotHeadingDegrees(-m_drivetrainSimulator.getHeading().getDegrees());
 
-    m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
-    m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
-    m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());
-    m_rightEncoderSim.setRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
-    m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
+    return driveState;
   }
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
-    simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
+    DriveState newDriveState = simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
+
+    m_leftEncoderSim.setDistance(newDriveState.getLeftEncoderDistance());
+    m_leftEncoderSim.setRate(newDriveState.getLeftEncoderRate());
+    m_rightEncoderSim.setDistance(newDriveState.getRightEncoderDistance());
+    m_rightEncoderSim.setRate(newDriveState.getRightEncoderRate());
+    m_gyroSim.setAngle(newDriveState.getRobotHeadingDegrees());
 
     updateOdometry();
     drawRobotOnField();

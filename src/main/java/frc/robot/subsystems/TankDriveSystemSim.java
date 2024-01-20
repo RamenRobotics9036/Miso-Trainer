@@ -95,11 +95,6 @@ public class TankDriveSystemSim extends TankDriveSystem {
   @Override
   public void simulationPeriodic() {
     super.simulationPeriodic();
-
-    // When Robot is disabled, the entire simulation freezes
-    if (isRobotEnabled()) {
-      m_driveSimulation.simulationPeriodic();
-    }
   }
 
   @Override

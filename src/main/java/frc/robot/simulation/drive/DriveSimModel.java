@@ -220,7 +220,7 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  public void simulationPeriodic() {
+  private void simulationPeriodic() {
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
@@ -238,6 +238,8 @@ public class DriveSimModel {
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
+    simulationPeriodic();
+
     updateOdometry();
     drawRobotOnField();
   }

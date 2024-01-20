@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
-import frc.robot.simulation.DriveSimulation;
+import frc.robot.simulation.drive.DriveSimulation;
+
 import java.util.Map;
 
 /**

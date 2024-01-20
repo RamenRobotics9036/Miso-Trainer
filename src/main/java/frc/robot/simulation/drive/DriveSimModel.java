@@ -229,6 +229,13 @@ public class DriveSimModel {
         rightVoltagePercent * RobotController.getInputVoltage());
     m_drivetrainSimulator.update(0.02);
 
+    DriveState driveState = new DriveState();
+    driveState.setLeftEncoderDistance(m_drivetrainSimulator.getLeftPositionMeters());
+    driveState.setLeftEncoderRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
+    driveState.setRightEncoderDistance(m_drivetrainSimulator.getRightPositionMeters());
+    driveState.setRightEncoderRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
+    driveState.setRobotHeadingDegrees(-m_drivetrainSimulator.getHeading().getDegrees());
+
     m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
     m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());

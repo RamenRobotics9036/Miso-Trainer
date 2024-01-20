@@ -79,7 +79,6 @@ public class ArmSystem extends SubsystemBase {
 
   /**
    * Display sensor information on smart dashboard.
-   * $LATER - Should this be in updateDashboard?
    */
   public void putSensorOutputs() {
     SmartDashboard.putNumber("Winch Absolute Encoder Position",
@@ -105,7 +104,6 @@ public class ArmSystem extends SubsystemBase {
   public void periodic() {
     Double winchAbsoluteEncoder = Double.valueOf(getWinchAbsoluteEncoder());
 
-    // $LATER - This should be in init or update DashBoard?
     SmartDashboard.putBoolean("Winch Absolute Encoder", !(winchAbsoluteEncoder == 0.0));
   }
 

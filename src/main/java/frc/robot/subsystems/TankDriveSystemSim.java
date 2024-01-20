@@ -11,7 +11,6 @@ import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.simulation.drive.DriveSimModel;
-
 import java.util.Map;
 
 /**

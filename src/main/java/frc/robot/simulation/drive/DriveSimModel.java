@@ -207,11 +207,6 @@ public class DriveSimModel {
     drawRobotOnField();
   }
 
-  /** Check the current robot pose. */
-  public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
-  }
-
   public double getHeading() {
     return m_gyroSim.getAngle();
   }

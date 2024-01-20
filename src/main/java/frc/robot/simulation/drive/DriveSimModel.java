@@ -31,7 +31,7 @@ import frc.robot.helpers.RelEncoderWrapper;
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown
  * on the field.
  */
-public class DriveSimulation {
+public class DriveSimModel {
   // 3 meters per second.
   public static final double kMaxSpeed = 3.0;
   // 1/2 rotation per second.
@@ -102,7 +102,7 @@ public class DriveSimulation {
   }
 
   /** Subsystem constructor. */
-  public DriveSimulation(double wheelRadiusMeters) {
+  public DriveSimModel(double wheelRadiusMeters) {
     m_wheelRadius = wheelRadiusMeters;
 
     m_drivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem, DCMotor.getCIM(2), 8,

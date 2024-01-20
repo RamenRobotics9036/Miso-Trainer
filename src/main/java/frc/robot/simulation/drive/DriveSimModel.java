@@ -220,13 +220,13 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  private void simulationPeriodic() {
+  private void simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
     // voltages make the right side move forward.
-    m_drivetrainSimulator.setInputs(m_leftGroup.get() * RobotController.getInputVoltage(),
-        m_rightGroup.get() * RobotController.getInputVoltage());
+    m_drivetrainSimulator.setInputs(leftVoltagePercent * RobotController.getInputVoltage(),
+        rightVoltagePercent * RobotController.getInputVoltage());
     m_drivetrainSimulator.update(0.02);
 
     m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
@@ -238,7 +238,7 @@ public class DriveSimModel {
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
-    simulationPeriodic();
+    simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
 
     updateOdometry();
     drawRobotOnField();

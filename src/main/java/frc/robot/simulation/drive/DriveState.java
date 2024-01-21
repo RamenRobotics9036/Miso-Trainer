@@ -7,7 +7,8 @@ import frc.robot.simulation.framework.inputoutputs.CopyableInterface;
  * Holds output state.
  */
 public class DriveState implements CopyableInterface<DriveState> {
-  private Pose2d m_pose;
+  private Pose2d m_relativePose;
+  private Pose2d m_physicalWorldPose;
   private double m_gyroHeadingDegrees;
   private double m_leftRelativeEncoderDistance;
   private double m_rightRelativeEncoderDistance;
@@ -16,7 +17,8 @@ public class DriveState implements CopyableInterface<DriveState> {
    * Constructor.
    */
   public DriveState() {
-    m_pose = new Pose2d();
+    m_relativePose = new Pose2d();
+    m_physicalWorldPose = new Pose2d();
     m_gyroHeadingDegrees = 0.0;
     m_leftRelativeEncoderDistance = 0.0;
     m_rightRelativeEncoderDistance = 0.0;
@@ -27,13 +29,22 @@ public class DriveState implements CopyableInterface<DriveState> {
   }
 
   // Implement getters and setters for fields
-  public Pose2d getPose() {
-    return m_pose;
+  public Pose2d getRelativePose() {
+    return m_relativePose;
   }
 
-  public void setPose(Pose2d newPose) {
+  public void setRelativePose(Pose2d newPose) {
     // Make a copy when initially setting value
-    m_pose = copyPose(newPose);
+    m_relativePose = copyPose(newPose);
+  }
+
+  public Pose2d getPhysicalWorldPose() {
+    return m_physicalWorldPose;
+  }
+
+  public void setPhysicalWorldPose(Pose2d newPose) {
+    // Make a copy when initially setting value
+    m_physicalWorldPose = copyPose(newPose);
   }
 
   public double getGyroHeadingDegrees() {
@@ -68,7 +79,8 @@ public class DriveState implements CopyableInterface<DriveState> {
       throw new IllegalArgumentException("other cannot be null");
     }
 
-    this.setPose(other.getPose());
+    this.setRelativePose(other.getRelativePose());
+    this.setPhysicalWorldPose(other.getPhysicalWorldPose());
     this.m_gyroHeadingDegrees = other.m_gyroHeadingDegrees;
     this.m_leftRelativeEncoderDistance = other.m_leftRelativeEncoderDistance;
     this.m_rightRelativeEncoderDistance = other.m_rightRelativeEncoderDistance;

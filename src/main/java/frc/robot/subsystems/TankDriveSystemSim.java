@@ -66,7 +66,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
       // Force draw robot on field once, so that it shows up even if Robot is currently
       // disabled and periodic function therefore not being called.
-      drawRobotOnField(m_driveState.getPose());
+      drawRobotOnField(m_driveState.getPhysicalWorldPose());
     }
 
     // $LATER - 1) This should be called from initDashboard, 2) move the widget code into
@@ -110,7 +110,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
       DriveState driveState = m_driveSimulation.simulationPeriodic(inputState);
       m_driveState.copyFrom(driveState);
 
-      drawRobotOnField(m_driveState.getPose());
+      drawRobotOnField(m_driveState.getPhysicalWorldPose());
     }
   }
 

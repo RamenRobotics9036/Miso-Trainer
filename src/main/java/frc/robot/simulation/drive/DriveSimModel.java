@@ -63,6 +63,8 @@ public class DriveSimModel {
   private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
       m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
+  private final Pose2d m_initialPose;
+
   // Gains are for example purposes only - must be determined for your own
   // robot!
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
@@ -113,6 +115,7 @@ public class DriveSimModel {
     m_rightEncoderSimWrapper = new RelEncoderWrapper(m_rightEncoderSim);
 
     resetAllEncoders();
+    m_initialPose = initialPose;
 
     m_rightGroup.setInverted(true);
   }
@@ -208,7 +211,8 @@ public class DriveSimModel {
     updateOdometry();
 
     DriveState driveState = new DriveState();
-    driveState.setPose(m_odometry.getPoseMeters());
+    driveState.setRelativePose(m_odometry.getPoseMeters());
+    driveState.setPhysicalWorldPose(m_odometry.getPoseMeters()); // $TODO - Broken
     driveState.setGyroHeadingDegrees(getHeading());
     driveState.setLeftRelativeEncoderDistance(m_leftEncoderSimWrapper.getDistance());
     driveState.setRightRelativeEncoderDistance(m_rightEncoderSimWrapper.getDistance());

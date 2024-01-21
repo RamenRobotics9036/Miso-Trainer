@@ -189,8 +189,8 @@ public class DriveSimModel {
         .update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
 
-  private void drawRobotOnField() {
-    m_fieldSim.setRobotPose(m_odometry.getPoseMeters());
+  private void drawRobotOnField(Pose2d pose) {
+    m_fieldSim.setRobotPose(pose);
   }
 
   /** Resets robot odometry. */
@@ -204,7 +204,8 @@ public class DriveSimModel {
 
     // Even if robot is in Disabled state, we want to update the Field view to show
     // where it is initially
-    drawRobotOnField();
+    // $TODO - This is broken now
+    // drawRobotOnField();
   }
 
   public double getHeading() {
@@ -220,7 +221,7 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  private void simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
+  private DriveState simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
@@ -229,25 +230,22 @@ public class DriveSimModel {
         rightVoltagePercent * RobotController.getInputVoltage());
     m_drivetrainSimulator.update(0.02);
 
-    DriveState driveState = new DriveState();
-    driveState.setLeftEncoderDistance(m_drivetrainSimulator.getLeftPositionMeters());
-    driveState.setLeftEncoderRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
-    driveState.setRightEncoderDistance(m_drivetrainSimulator.getRightPositionMeters());
-    driveState.setRightEncoderRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
-    driveState.setRobotHeadingDegrees(-m_drivetrainSimulator.getHeading().getDegrees());
-
     m_leftEncoderSim.setDistance(m_drivetrainSimulator.getLeftPositionMeters());
     m_leftEncoderSim.setRate(m_drivetrainSimulator.getLeftVelocityMetersPerSecond());
     m_rightEncoderSim.setDistance(m_drivetrainSimulator.getRightPositionMeters());
     m_rightEncoderSim.setRate(m_drivetrainSimulator.getRightVelocityMetersPerSecond());
     m_gyroSim.setAngle(-m_drivetrainSimulator.getHeading().getDegrees());
+    updateOdometry();
+
+    DriveState driveState = new DriveState();
+    driveState.setPose(m_odometry.getPoseMeters());
+    return driveState;
   }
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
-    simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
+    DriveState driveState = simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
 
-    updateOdometry();
-    drawRobotOnField();
+    drawRobotOnField(driveState.getPose());
   }
 }

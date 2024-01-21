@@ -7,10 +7,13 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
-import frc.robot.simulation.DriveSimulation;
+import frc.robot.simulation.drive.DriveInputState;
+import frc.robot.simulation.drive.DriveSimModel;
+import frc.robot.simulation.drive.DriveState;
 import java.util.Map;
 
 /**
@@ -18,8 +21,11 @@ import java.util.Map;
  * the robot is not running in simulation mode.
  */
 public class TankDriveSystemSim extends TankDriveSystem {
-  private DriveSimulation m_driveSimulation = null;
+  private DriveSimModel m_driveSimulation = null;
   private DefaultLayout m_defaultLayout = new DefaultLayout();
+  private final DriveState m_driveState = new DriveState();
+  private final Field2d m_fieldSim = new Field2d();
+  private boolean m_resetRelativeEncodersOnNextCycle = false;
 
   /**
    * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
@@ -53,9 +59,13 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // But just in-case someone tries to instantiate it otherwise, we do an extra
     // check here.
     if (RobotBase.isSimulation()) {
-      m_driveSimulation = new DriveSimulation(
+      Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
+
+      m_driveSimulation = new DriveSimModel(initialPosition,
           Constants.OperatorConstants.kWheelDiameterMetersDrive / 2);
-      resetSimulationRobotPosition();
+
+      // $TODO - This can go away later when we use SimManager
+      force_periodic();
     }
 
     // $LATER - 1) This should be called from initDashboard, 2) move the widget code into
@@ -68,18 +78,34 @@ public class TankDriveSystemSim extends TankDriveSystem {
    */
   private void addShuffleboardWidgets() {
     Widget pos = m_defaultLayout.getWidgetPosition("Field");
-    Shuffleboard.getTab("Simulation").add("Field", m_driveSimulation.getField())
-        .withWidget(BuiltInWidgets.kField).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
+    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
+    // $TODO - Move this into the populate widget class
     pos = m_defaultLayout.getWidgetPosition("Heading");
-    Shuffleboard.getTab("Simulation").add("Heading", m_driveSimulation.getGyro())
+    Shuffleboard.getTab("Simulation")
+        .addDouble("Heading", () -> m_driveState.getGyroHeadingDegrees())
         .withWidget(BuiltInWidgets.kGyro).withPosition(pos.x, pos.y).withSize(pos.width, pos.height)
         .withProperties(Map.of("Starting angle", 90));
   }
 
+  private void drawRobotOnField(Pose2d pose) {
+    m_fieldSim.setRobotPose(pose);
+  }
+
   private boolean isRobotEnabled() {
     return RobotState.isEnabled();
+  }
+
+  // $TODO - This can go away later when we use SimManager
+  private void force_periodic() {
+    DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle);
+    m_resetRelativeEncodersOnNextCycle = false;
+
+    DriveState driveState = m_driveSimulation.simulationPeriodicForDrive(inputState);
+    m_driveState.copyFrom(driveState);
+
+    drawRobotOnField(m_driveState.getPhysicalWorldPose());
   }
 
   @Override
@@ -88,35 +114,25 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
-      m_driveSimulation.periodic();
+      force_periodic();
     }
   }
 
   @Override
   public void simulationPeriodic() {
     super.simulationPeriodic();
-
-    // When Robot is disabled, the entire simulation freezes
-    if (isRobotEnabled()) {
-      m_driveSimulation.simulationPeriodic();
-    }
   }
 
   @Override
   public void resetEncoders() {
     super.resetEncoders();
 
-    m_driveSimulation.resetRelativeEncoders();
+    m_resetRelativeEncodersOnNextCycle = true;
   }
 
   @Override
   public double getGyroYaw() {
-    return m_driveSimulation.getHeading();
-  }
-
-  private void resetSimulationRobotPosition() {
-    Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
-    m_driveSimulation.resetOdometry(initialPosition);
+    return m_driveState.getGyroHeadingDegrees();
   }
 
   // RETURN SIMULATED VALUE: Overrides physical encoder value in parent class
@@ -126,7 +142,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // the field in meters.
     // But we want to return number of MOTOR rotations that our PHYSICAL robot would
     // have had to take to move that distance in real life.
-    return m_driveSimulation.getRelativeDistanceLeft() * m_gearBoxRatio
+    return m_driveState.getLeftRelativeEncoderDistance() * m_gearBoxRatio
         / (m_wheelDiameterMeters * Math.PI);
   }
 
@@ -137,7 +153,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // the field in meters.
     // But we want to return number of MOTOR rotations that our PHYSICAL robot would
     // have had to take to move that distance in real life.
-    return m_driveSimulation.getRelativeDistanceRight() * m_gearBoxRatio
+    return m_driveState.getRightRelativeEncoderDistance() * m_gearBoxRatio
         / (m_wheelDiameterMeters * Math.PI);
   }
 

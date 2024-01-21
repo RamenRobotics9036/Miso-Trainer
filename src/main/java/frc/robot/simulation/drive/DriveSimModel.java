@@ -188,6 +188,8 @@ public class DriveSimModel {
   }
 
   /** Resets robot odometry. */
+  // $TODO - This can go away 100%. Instead, pass in an initial x=2, y=2, heading=0 to the
+  // constructor of the drive
   public void resetOdometry(Pose2d pose) {
     resetAllEncoders();
     m_drivetrainSimulator.setPose(pose);

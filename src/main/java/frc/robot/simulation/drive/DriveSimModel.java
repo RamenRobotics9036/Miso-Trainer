@@ -10,7 +10,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -34,11 +33,6 @@ import frc.robot.helpers.RelEncoderWrapper;
  * on the field.
  */
 public class DriveSimModel {
-  // 3 meters per second.
-  public static final double kMaxSpeed = 3.0;
-  // 1/2 rotation per second.
-  public static final double kMaxAngularSpeed = Math.PI;
-
   private static final double kTrackWidth = 0.381 * 2;
   private final double m_wheelRadius;
   private static final int kEncoderResolution = -4096;

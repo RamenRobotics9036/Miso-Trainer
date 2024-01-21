@@ -20,7 +20,6 @@ import frc.robot.simulation.drive.DriveState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
-import java.util.Map;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if

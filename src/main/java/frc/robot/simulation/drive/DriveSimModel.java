@@ -91,15 +91,6 @@ public class DriveSimModel {
     m_rightEncoderSimWrapper.reset();
   }
 
-  // $TODO - Delete this
-  public double getRelativeDistanceLeft() {
-    return m_leftEncoderSimWrapper.getDistance();
-  }
-
-  public double getRelativeDistanceRight() {
-    return m_rightEncoderSimWrapper.getDistance();
-  }
-
   /** Subsystem constructor. */
   public DriveSimModel(double wheelRadiusMeters) {
     m_wheelRadius = wheelRadiusMeters;

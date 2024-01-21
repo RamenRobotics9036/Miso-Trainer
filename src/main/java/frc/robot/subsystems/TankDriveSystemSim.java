@@ -140,7 +140,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // the field in meters.
     // But we want to return number of MOTOR rotations that our PHYSICAL robot would
     // have had to take to move that distance in real life.
-    return m_driveSimulation.getRelativeDistanceLeft() * m_gearBoxRatio
+    return m_driveState.getLeftRelativeEncoderDistance() * m_gearBoxRatio
         / (m_wheelDiameterMeters * Math.PI);
   }
 
@@ -151,7 +151,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // the field in meters.
     // But we want to return number of MOTOR rotations that our PHYSICAL robot would
     // have had to take to move that distance in real life.
-    return m_driveSimulation.getRelativeDistanceRight() * m_gearBoxRatio
+    return m_driveState.getRightRelativeEncoderDistance() * m_gearBoxRatio
         / (m_wheelDiameterMeters * Math.PI);
   }
 

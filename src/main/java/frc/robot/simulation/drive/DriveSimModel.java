@@ -8,7 +8,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -188,15 +190,15 @@ public class DriveSimModel {
   }
 
   private Pose2d getPhysicalWorldPose() {
-    // Calculate the Transform2d from an identity Pose2d to the initialPose
-    Transform2d transform = m_initialPose.minus(new Pose2d());
+    // Move initial position by x,y (translation)
+    Pose2d translatedPos = m_initialPose
+        .plus(new Transform2d(m_odometry.getPoseMeters().getTranslation(), new Rotation2d(0)));
 
-    // Apply this transformation to the currentLocation
-    Pose2d result = m_odometry.getPoseMeters().plus(transform);
+    // Add rotation back
+    Rotation2d newRotation = m_odometry.getPoseMeters().getRotation()
+        .rotateBy(m_initialPose.getRotation());
 
-    System.out.println("getPhysicalWorldPose: " + result);
-
-    return result;
+    return new Pose2d(translatedPos.getTranslation(), newRotation);
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */

@@ -131,22 +131,6 @@ public class DriveSimModel {
   }
 
   /**
-   * Controls the robot using thank drive.
-   *
-   * @param leftSpeed  for left wheels
-   * @param rightSpeed for right wheels
-   */
-  public void tankDrive(double leftSpeed, double rightSpeed, boolean squareInputs) {
-    // System.out.println("TANK: xLeft = " + leftSpeed + ", xRight = " +
-    // rightSpeed);
-
-    double xforward = (leftSpeed + rightSpeed) / 2;
-    double zrotation = (leftSpeed - rightSpeed) / 2;
-
-    arcadeDrive(xforward, zrotation, squareInputs);
-  }
-
-  /**
    * Controls the robot using arcade drive.
    *
    * @param xspeed the speed for the x axis

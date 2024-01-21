@@ -157,10 +157,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
         / (m_wheelDiameterMeters * Math.PI);
   }
 
-  @Override
-  public void arcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
-    super.arcadeDrive(xspeed, zrotation, squareInputs);
-
+  private void simArcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
       m_driveSimulation.arcadeDrive(xspeed, zrotation, squareInputs);
@@ -168,12 +165,19 @@ public class TankDriveSystemSim extends TankDriveSystem {
   }
 
   @Override
+  public void arcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
+    super.arcadeDrive(xspeed, zrotation, squareInputs);
+
+    simArcadeDrive(xspeed, zrotation, squareInputs);
+  }
+
+  @Override
   public void tankDrive(double leftSpeed, double rightSpeed, boolean squareInputs) {
     super.tankDrive(leftSpeed, rightSpeed, squareInputs);
 
-    // When Robot is disabled, the entire simulation freezes
-    if (isRobotEnabled()) {
-      m_driveSimulation.tankDrive(leftSpeed, rightSpeed, squareInputs);
-    }
+    double xforward = (leftSpeed + rightSpeed) / 2;
+    double zrotation = (leftSpeed - rightSpeed) / 2;
+
+    simArcadeDrive(xforward, zrotation, squareInputs);
   }
 }

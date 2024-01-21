@@ -209,8 +209,7 @@ public class DriveSimModel {
     // drawRobotOnField();
   }
 
-  // $TODO - Make this private
-  public double getHeading() {
+  private double getHeading() {
     return m_gyroSim.getAngle();
   }
 

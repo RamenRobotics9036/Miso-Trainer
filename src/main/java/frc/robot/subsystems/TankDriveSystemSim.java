@@ -111,8 +111,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
   @Override
   public double getGyroYaw() {
-    // $TODO - This is wrong
-    return m_driveSimulation.getHeading();
+    return m_driveState.getGyroHeadingDegrees();
   }
 
   // $TODO - This can go away 100%. Instead, pass in an initial x=2, y=2, heading=0 to the

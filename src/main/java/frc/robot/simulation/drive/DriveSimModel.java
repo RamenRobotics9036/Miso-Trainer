@@ -86,12 +86,12 @@ public class DriveSimModel {
     resetRelativeEncoders();
   }
 
-  // $TODO - This cant be public
-  public void resetRelativeEncoders() {
+  private void resetRelativeEncoders() {
     m_leftEncoderSimWrapper.reset();
     m_rightEncoderSimWrapper.reset();
   }
 
+  // $TODO - This shouldn't be public
   public double getRelativeDistanceLeft() {
     return m_leftEncoderSimWrapper.getDistance();
   }
@@ -210,9 +210,13 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  public DriveState simulationPeriodic() {
+  public DriveState simulationPeriodic(DriveInputState input) {
     double leftVoltagePercent = m_leftGroup.get();
     double rightVoltagePercent = m_rightGroup.get();
+
+    if (input.resetRelativeEncoders) {
+      resetRelativeEncoders();
+    }
 
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our

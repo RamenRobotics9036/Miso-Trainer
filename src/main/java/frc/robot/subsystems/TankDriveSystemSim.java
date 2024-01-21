@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
+import frc.robot.simulation.drive.DriveInputState;
 import frc.robot.simulation.drive.DriveSimModel;
 import frc.robot.simulation.drive.DriveState;
 import java.util.Map;
@@ -24,6 +25,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private DefaultLayout m_defaultLayout = new DefaultLayout();
   private final DriveState m_driveState = new DriveState();
   private final Field2d m_fieldSim = new Field2d();
+  private boolean m_resetRelativeEncodersOnNextCycle = false;
 
   /**
    * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
@@ -97,7 +99,10 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
-      DriveState driveState = m_driveSimulation.simulationPeriodic();
+      DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle);
+      m_resetRelativeEncodersOnNextCycle = false;
+
+      DriveState driveState = m_driveSimulation.simulationPeriodic(inputState);
       m_driveState.copyFrom(driveState);
 
       drawRobotOnField(m_driveState.getPose());
@@ -113,7 +118,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   public void resetEncoders() {
     super.resetEncoders();
 
-    m_driveSimulation.resetRelativeEncoders();
+    m_resetRelativeEncodersOnNextCycle = true;
   }
 
   @Override

@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -186,6 +187,18 @@ public class DriveSimModel {
     return m_gyroSim.getAngle();
   }
 
+  private Pose2d getPhysicalWorldPose() {
+    // Calculate the Transform2d from an identity Pose2d to the initialPose
+    Transform2d transform = m_initialPose.minus(new Pose2d());
+
+    // Apply this transformation to the currentLocation
+    Pose2d result = m_odometry.getPoseMeters().plus(transform);
+
+    System.out.println("getPhysicalWorldPose: " + result);
+
+    return result;
+  }
+
   /** Update our simulation. This should be run every robot loop in simulation. */
   public DriveState simulationPeriodic(DriveInputState input) {
     double leftVoltagePercent = m_leftGroup.get();
@@ -212,7 +225,7 @@ public class DriveSimModel {
 
     DriveState driveState = new DriveState();
     driveState.setRelativePose(m_odometry.getPoseMeters());
-    driveState.setPhysicalWorldPose(m_odometry.getPoseMeters()); // $TODO - Broken
+    driveState.setPhysicalWorldPose(getPhysicalWorldPose());
     driveState.setGyroHeadingDegrees(getHeading());
     driveState.setLeftRelativeEncoderDistance(m_leftEncoderSimWrapper.getDistance());
     driveState.setRightRelativeEncoderDistance(m_rightEncoderSimWrapper.getDistance());

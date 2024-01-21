@@ -86,6 +86,7 @@ public class DriveSimModel {
     resetRelativeEncoders();
   }
 
+  // $TODO - This cant be public
   public void resetRelativeEncoders() {
     m_leftEncoderSimWrapper.reset();
     m_rightEncoderSimWrapper.reset();

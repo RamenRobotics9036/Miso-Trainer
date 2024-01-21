@@ -9,6 +9,8 @@ import frc.robot.simulation.framework.inputoutputs.CopyableInterface;
 public class DriveState implements CopyableInterface<DriveState> {
   private Pose2d m_pose;
   private double m_gyroHeadingDegrees;
+  private double m_leftRelativeEncoderDistance;
+  private double m_rightRelativeEncoderDistance;
 
   /**
    * Constructor.
@@ -16,6 +18,8 @@ public class DriveState implements CopyableInterface<DriveState> {
   public DriveState() {
     m_pose = new Pose2d();
     m_gyroHeadingDegrees = 0.0;
+    m_leftRelativeEncoderDistance = 0.0;
+    m_rightRelativeEncoderDistance = 0.0;
   }
 
   private static Pose2d copyPose(Pose2d other) {
@@ -40,6 +44,22 @@ public class DriveState implements CopyableInterface<DriveState> {
     m_gyroHeadingDegrees = newGyroHeading;
   }
 
+  public double getLeftRelativeEncoderDistance() {
+    return m_leftRelativeEncoderDistance;
+  }
+
+  public void setLeftRelativeEncoderDistance(double newLeftRelativeEncoderDistance) {
+    m_leftRelativeEncoderDistance = newLeftRelativeEncoderDistance;
+  }
+
+  public double getRightRelativeEncoderDistance() {
+    return m_rightRelativeEncoderDistance;
+  }
+
+  public void setRightRelativeEncoderDistance(double newRightRelativeEncoderDistance) {
+    m_rightRelativeEncoderDistance = newRightRelativeEncoderDistance;
+  }
+
   /**
    * Copy to another instance.
    */
@@ -50,5 +70,7 @@ public class DriveState implements CopyableInterface<DriveState> {
 
     this.setPose(other.getPose());
     this.m_gyroHeadingDegrees = other.m_gyroHeadingDegrees;
+    this.m_leftRelativeEncoderDistance = other.m_leftRelativeEncoderDistance;
+    this.m_rightRelativeEncoderDistance = other.m_rightRelativeEncoderDistance;
   }
 }

@@ -91,7 +91,7 @@ public class DriveSimModel {
     m_rightEncoderSimWrapper.reset();
   }
 
-  // $TODO - This shouldn't be public
+  // $TODO - Delete this
   public double getRelativeDistanceLeft() {
     return m_leftEncoderSimWrapper.getDistance();
   }
@@ -236,6 +236,8 @@ public class DriveSimModel {
     DriveState driveState = new DriveState();
     driveState.setPose(m_odometry.getPoseMeters());
     driveState.setGyroHeadingDegrees(getHeading());
+    driveState.setLeftRelativeEncoderDistance(m_leftEncoderSimWrapper.getDistance());
+    driveState.setRightRelativeEncoderDistance(m_rightEncoderSimWrapper.getDistance());
     return driveState;
   }
 }

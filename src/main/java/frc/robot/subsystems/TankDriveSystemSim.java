@@ -15,16 +15,23 @@ import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveInputState;
 import frc.robot.simulation.drive.DriveSimModel;
 import frc.robot.simulation.drive.DriveState;
+import frc.robot.simulation.framework.SimInputInterface;
+import frc.robot.simulation.framework.SimManager;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
+import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
+
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
  * the robot is not running in simulation mode.
  */
 public class TankDriveSystemSim extends TankDriveSystem {
-  private DriveSimModel m_driveSimulation = null;
+  private final Pose2d m_initialPosition = new Pose2d(2, 2, new Rotation2d());
+  private SimManager<DriveInputState, DriveState> m_driveSimManager;
   private DefaultLayout m_defaultLayout = new DefaultLayout();
-  private final DriveState m_driveState = new DriveState();
+  private DriveState m_driveState = new DriveState();
   private final Field2d m_fieldSim = new Field2d();
   private final DriveInputState m_driveInputState = new DriveInputState(false,
       new ArcadeInputParams(0, 0, false));
@@ -57,22 +64,20 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // FIRST, we call superclass
     super(controller);
 
-    // This entire class should only be instantiated when we're under simulation.
-    // But just in-case someone tries to instantiate it otherwise, we do an extra
-    // check here.
-    if (RobotBase.isSimulation()) {
-      Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
+    m_driveSimManager = new SimManager<DriveInputState, DriveState>(
+        new DriveSimModel(m_initialPosition,
+            Constants.OperatorConstants.kWheelDiameterMetersDrive / 2),
+        null, null, false);
 
-      m_driveSimulation = new DriveSimModel(initialPosition,
-          Constants.OperatorConstants.kWheelDiameterMetersDrive / 2);
-
-      // $TODO - This can go away later when we use SimManager
-      force_periodic();
-    }
+    m_driveSimManager.setInputHandler(new LambdaSimInput<DriveInputState>(() -> m_driveInputState));
+    m_driveSimManager.setOutputHandler(new LambdaSimOutput<DriveState>((stateOutput) -> {
+      m_driveState = stateOutput;
+    }));
 
     // $LATER - 1) This should be called from initDashboard, 2) move the widget code into
     // TankDriveSystemSimWithWidgets
     addShuffleboardWidgets();
+    drawRobotOnField(m_driveState.getPhysicalWorldPose());
   }
 
   /**
@@ -99,30 +104,23 @@ public class TankDriveSystemSim extends TankDriveSystem {
     return RobotState.isEnabled();
   }
 
-  // $TODO - This can go away later when we use SimManager
-  private void force_periodic() {
-    DriveState driveState = m_driveSimulation.updateSimulation(m_driveInputState);
-    m_driveState.copyFrom(driveState);
-
-    // Reset one-shot
-    m_driveInputState.resetRelativeEncoders = false;
-
-    drawRobotOnField(m_driveState.getPhysicalWorldPose());
-  }
-
   @Override
   public void periodic() {
     super.periodic();
-
-    // When Robot is disabled, the entire simulation freezes
-    if (isRobotEnabled()) {
-      force_periodic();
-    }
   }
 
   @Override
   public void simulationPeriodic() {
     super.simulationPeriodic();
+
+    if (isRobotEnabled()) {
+      m_driveSimManager.simulationPeriodic();
+
+      // Reset one-shot
+      m_driveInputState.resetRelativeEncoders = false;
+
+      drawRobotOnField(m_driveState.getPhysicalWorldPose());
+    }
   }
 
   @Override

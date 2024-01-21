@@ -11,6 +11,8 @@ import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.simulation.drive.DriveSimModel;
+import frc.robot.simulation.drive.DriveState;
+
 import java.util.Map;
 
 /**
@@ -88,7 +90,8 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
-      m_driveSimulation.periodic();
+      DriveState driveState = m_driveSimulation.simulationPeriodic();
+      m_driveSimulation.drawRobotOnField(driveState.getPose());
     }
   }
 

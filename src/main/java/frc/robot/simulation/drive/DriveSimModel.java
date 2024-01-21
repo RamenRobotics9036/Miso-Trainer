@@ -189,7 +189,8 @@ public class DriveSimModel {
         .update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
   }
 
-  private void drawRobotOnField(Pose2d pose) {
+  // $TODO - This should go away
+  public void drawRobotOnField(Pose2d pose) {
     m_fieldSim.setRobotPose(pose);
   }
 
@@ -222,7 +223,7 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  private DriveState simulationPeriodic() {
+  public DriveState simulationPeriodic() {
     double leftVoltagePercent = m_leftGroup.get();
     double rightVoltagePercent = m_rightGroup.get();
 
@@ -245,12 +246,5 @@ public class DriveSimModel {
     driveState.setPose(m_odometry.getPoseMeters());
     driveState.setGyroHeadingDegrees(getHeading());
     return driveState;
-  }
-
-  /** Update odometry - this should be run every robot loop. */
-  public void periodic() {
-    DriveState driveState = simulationPeriodic();
-
-    drawRobotOnField(driveState.getPose());
   }
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
@@ -22,6 +23,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private DriveSimModel m_driveSimulation = null;
   private DefaultLayout m_defaultLayout = new DefaultLayout();
   private final DriveState m_driveState = new DriveState();
+  private final Field2d m_fieldSim = new Field2d();
 
   /**
    * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
@@ -70,14 +72,17 @@ public class TankDriveSystemSim extends TankDriveSystem {
    */
   private void addShuffleboardWidgets() {
     Widget pos = m_defaultLayout.getWidgetPosition("Field");
-    Shuffleboard.getTab("Simulation").add("Field", m_driveSimulation.getField())
-        .withWidget(BuiltInWidgets.kField).withPosition(pos.x, pos.y)
-        .withSize(pos.width, pos.height);
+    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
     pos = m_defaultLayout.getWidgetPosition("Heading");
     Shuffleboard.getTab("Simulation").add("Heading", m_driveSimulation.getGyro())
         .withWidget(BuiltInWidgets.kGyro).withPosition(pos.x, pos.y).withSize(pos.width, pos.height)
         .withProperties(Map.of("Starting angle", 90));
+  }
+
+  private void drawRobotOnField(Pose2d pose) {
+    m_fieldSim.setRobotPose(pose);
   }
 
   private boolean isRobotEnabled() {
@@ -93,7 +98,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
       DriveState driveState = m_driveSimulation.simulationPeriodic();
       m_driveState.copyFrom(driveState);
 
-      m_driveSimulation.drawRobotOnField(m_driveState.getPose());
+      drawRobotOnField(m_driveState.getPose());
     }
   }
 

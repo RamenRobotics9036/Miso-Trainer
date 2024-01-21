@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.helpers.RelEncoderWrapper;
 
 /**
@@ -76,7 +75,6 @@ public class DriveSimModel {
   private final RelEncoderWrapper m_leftEncoderSimWrapper;
   private final RelEncoderWrapper m_rightEncoderSimWrapper;
 
-  private final Field2d m_fieldSim = new Field2d();
   private final LinearSystem<N2, N2, N2> m_drivetrainSystem = LinearSystemId
       .identifyDrivetrainSystem(1.98, 0.2, 1.5, 0.3);
   private final DifferentialDrivetrainSim m_drivetrainSimulator;
@@ -128,7 +126,7 @@ public class DriveSimModel {
   }
 
   /** Sets speeds to the drivetrain motors. */
-  public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+  private void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
     double leftOutput = m_leftPidController.calculate(m_leftEncoder.getRate(),
@@ -184,14 +182,9 @@ public class DriveSimModel {
   }
 
   /** Update robot odometry. */
-  public void updateOdometry() {
+  private void updateOdometry() {
     m_odometry
         .update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-  }
-
-  // $TODO - This should go away
-  public void drawRobotOnField(Pose2d pose) {
-    m_fieldSim.setRobotPose(pose);
   }
 
   /** Resets robot odometry. */
@@ -213,10 +206,7 @@ public class DriveSimModel {
     return m_gyroSim.getAngle();
   }
 
-  public Field2d getField() {
-    return m_fieldSim;
-  }
-
+  // $TODO - Get rid of this
   public AnalogGyro getGyro() {
     return m_gyro;
   }

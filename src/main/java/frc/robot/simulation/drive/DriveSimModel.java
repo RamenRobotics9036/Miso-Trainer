@@ -136,20 +136,20 @@ public class DriveSimModel {
    * @param xspeed the speed for the x axis
    * @param rot    the rotation
    */
-  public void arcadeDrive(double xspeed, double rot, boolean squareInputs) {
+  private void arcadeDrive(ArcadeInputParams arcadeParams) {
     // System.out.println("ARCADE: xSpeed = " + xSpeed);
 
     // $LATER - If the robot is stopped too quickly, or direction is changed instantly,
     // this robot simulation doesnt handle it well. Consider adding slew within this
     // simulation to avoid that.
-    xspeed = MathUtil.clamp(xspeed, -1.0, 1.0);
-    rot = MathUtil.clamp(rot, -1.0, 1.0);
+    double xspeed = MathUtil.clamp(arcadeParams.xspeed, -1.0, 1.0);
+    double rot = MathUtil.clamp(arcadeParams.zrotation, -1.0, 1.0);
 
     // $LATER - Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
     // private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(3);
     // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-    if (squareInputs) {
+    if (arcadeParams.squareInputs) {
       xspeed = Math.copySign(xspeed * xspeed, xspeed);
       rot = Math.copySign(rot * rot, rot);
     }
@@ -187,6 +187,7 @@ public class DriveSimModel {
     if (input.resetRelativeEncoders) {
       resetRelativeEncoders();
     }
+    arcadeDrive(input.arcadeParams);
 
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our

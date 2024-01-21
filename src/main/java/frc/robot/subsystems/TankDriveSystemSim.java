@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
+import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveInputState;
 import frc.robot.simulation.drive.DriveSimModel;
 import frc.robot.simulation.drive.DriveState;
@@ -26,6 +27,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private final DriveState m_driveState = new DriveState();
   private final Field2d m_fieldSim = new Field2d();
   private boolean m_resetRelativeEncodersOnNextCycle = false;
+  private ArcadeInputParams m_arcadeInputParamsNextCycle = new ArcadeInputParams(0, 0, false);
 
   /**
    * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
@@ -99,7 +101,10 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
   // $TODO - This can go away later when we use SimManager
   private void force_periodic() {
-    DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle);
+    DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle,
+        m_arcadeInputParamsNextCycle);
+
+    // Reset one-shot
     m_resetRelativeEncodersOnNextCycle = false;
 
     DriveState driveState = m_driveSimulation.simulationPeriodicForDrive(inputState);
@@ -160,7 +165,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private void simArcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
-      m_driveSimulation.arcadeDrive(xspeed, zrotation, squareInputs);
+      m_arcadeInputParamsNextCycle = new ArcadeInputParams(xspeed, zrotation, squareInputs);
     }
   }
 

@@ -92,7 +92,7 @@ public class DriveSimModel {
   }
 
   /** Subsystem constructor. */
-  public DriveSimModel(double wheelRadiusMeters) {
+  public DriveSimModel(Pose2d initialPose, double wheelRadiusMeters) {
     m_wheelRadius = wheelRadiusMeters;
 
     m_drivetrainSimulator = new DifferentialDrivetrainSim(m_drivetrainSystem, DCMotor.getCIM(2), 8,
@@ -177,23 +177,6 @@ public class DriveSimModel {
   private void updateOdometry() {
     m_odometry
         .update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
-  }
-
-  /** Resets robot odometry. */
-  // $TODO - This can go away 100%. Instead, pass in an initial x=2, y=2, heading=0 to the
-  // constructor of the drive
-  public void resetOdometry(Pose2d pose) {
-    resetAllEncoders();
-    m_drivetrainSimulator.setPose(pose);
-    m_odometry.resetPosition(m_gyro.getRotation2d(),
-        m_leftEncoder.getDistance(),
-        m_rightEncoder.getDistance(),
-        pose);
-
-    // Even if robot is in Disabled state, we want to update the Field view to show
-    // where it is initially
-    // $TODO - This is broken now
-    // drawRobotOnField();
   }
 
   private double getHeading() {

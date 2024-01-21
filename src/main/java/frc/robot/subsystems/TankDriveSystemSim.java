@@ -59,9 +59,14 @@ public class TankDriveSystemSim extends TankDriveSystem {
     // But just in-case someone tries to instantiate it otherwise, we do an extra
     // check here.
     if (RobotBase.isSimulation()) {
-      m_driveSimulation = new DriveSimModel(
+      Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
+
+      m_driveSimulation = new DriveSimModel(initialPosition,
           Constants.OperatorConstants.kWheelDiameterMetersDrive / 2);
-      resetSimulationRobotPosition();
+
+      // Force draw robot on field once, so that it shows up even if Robot is currently
+      // disabled and periodic function therefore not being called.
+      drawRobotOnField(m_driveState.getPose());
     }
 
     // $LATER - 1) This should be called from initDashboard, 2) move the widget code into
@@ -124,13 +129,6 @@ public class TankDriveSystemSim extends TankDriveSystem {
   @Override
   public double getGyroYaw() {
     return m_driveState.getGyroHeadingDegrees();
-  }
-
-  // $TODO - This can go away 100%. Instead, pass in an initial x=2, y=2, heading=0 to the
-  // constructor of the drive
-  private void resetSimulationRobotPosition() {
-    Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
-    m_driveSimulation.resetOdometry(initialPosition);
   }
 
   // RETURN SIMULATED VALUE: Overrides physical encoder value in parent class

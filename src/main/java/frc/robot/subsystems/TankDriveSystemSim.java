@@ -106,9 +106,12 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
   @Override
   public double getGyroYaw() {
+    // $TODO - This is wrong
     return m_driveSimulation.getHeading();
   }
 
+  // $TODO - This can go away 100%. Instead, pass in an initial x=2, y=2, heading=0 to the
+  // constructor of the drive
   private void resetSimulationRobotPosition() {
     Pose2d initialPosition = new Pose2d(2, 2, new Rotation2d());
     m_driveSimulation.resetOdometry(initialPosition);

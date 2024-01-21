@@ -208,6 +208,7 @@ public class DriveSimModel {
     // drawRobotOnField();
   }
 
+  // $TODO - Make this private
   public double getHeading() {
     return m_gyroSim.getAngle();
   }
@@ -221,7 +222,10 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  private DriveState simulationPeriodic(double leftVoltagePercent, double rightVoltagePercent) {
+  private DriveState simulationPeriodic() {
+    double leftVoltagePercent = m_leftGroup.get();
+    double rightVoltagePercent = m_rightGroup.get();
+
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
     // simulated encoder and gyro. We negate the right side so that positive
@@ -239,12 +243,13 @@ public class DriveSimModel {
 
     DriveState driveState = new DriveState();
     driveState.setPose(m_odometry.getPoseMeters());
+    driveState.setGyroHeadingDegrees(getHeading());
     return driveState;
   }
 
   /** Update odometry - this should be run every robot loop. */
   public void periodic() {
-    DriveState driveState = simulationPeriodic(m_leftGroup.get(), m_rightGroup.get());
+    DriveState driveState = simulationPeriodic();
 
     drawRobotOnField(driveState.getPose());
   }

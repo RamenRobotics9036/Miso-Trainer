@@ -196,7 +196,7 @@ public class DriveSimModel {
   }
 
   /** Update our simulation. This should be run every robot loop in simulation. */
-  public DriveState simulationPeriodic(DriveInputState input) {
+  public DriveState simulationPeriodicForDrive(DriveInputState input) {
     double leftVoltagePercent = m_leftGroup.get();
     double rightVoltagePercent = m_rightGroup.get();
 

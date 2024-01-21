@@ -97,11 +97,12 @@ public class TankDriveSystemSim extends TankDriveSystem {
     return RobotState.isEnabled();
   }
 
+  // $TODO - This can go away later when we use SimManager
   private void force_periodic() {
     DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle);
     m_resetRelativeEncodersOnNextCycle = false;
 
-    DriveState driveState = m_driveSimulation.simulationPeriodic(inputState);
+    DriveState driveState = m_driveSimulation.simulationPeriodicForDrive(inputState);
     m_driveState.copyFrom(driveState);
 
     drawRobotOnField(m_driveState.getPhysicalWorldPose());

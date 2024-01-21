@@ -206,11 +206,6 @@ public class DriveSimModel {
     return m_gyroSim.getAngle();
   }
 
-  // $TODO - Get rid of this
-  public AnalogGyro getGyro() {
-    return m_gyro;
-  }
-
   /** Update our simulation. This should be run every robot loop in simulation. */
   public DriveState simulationPeriodic() {
     double leftVoltagePercent = m_leftGroup.get();

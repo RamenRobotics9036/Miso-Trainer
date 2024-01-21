@@ -75,8 +75,10 @@ public class TankDriveSystemSim extends TankDriveSystem {
     Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
 
+    // $TODO - Move this into the populate widget class
     pos = m_defaultLayout.getWidgetPosition("Heading");
-    Shuffleboard.getTab("Simulation").add("Heading", m_driveSimulation.getGyro())
+    Shuffleboard.getTab("Simulation")
+        .addDouble("Heading", () -> m_driveState.getGyroHeadingDegrees())
         .withWidget(BuiltInWidgets.kGyro).withPosition(pos.x, pos.y).withSize(pos.width, pos.height)
         .withProperties(Map.of("Starting angle", 90));
   }

@@ -27,12 +27,13 @@ import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.helpers.RelEncoderWrapper;
+import frc.robot.simulation.framework.SimModelInterface;
 
 /**
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown
  * on the field.
  */
-public class DriveSimModel {
+public class DriveSimModel implements SimModelInterface<DriveInputState, DriveState> {
   private static final double kTrackWidth = 0.381 * 2;
   private final double m_wheelRadius;
   private static final int kEncoderResolution = -4096;
@@ -179,8 +180,8 @@ public class DriveSimModel {
     return new Pose2d(translatedPos.getTranslation(), newRotation);
   }
 
-  /** Update our simulation. This should be run every robot loop in simulation. */
-  public DriveState simulationPeriodicForDrive(DriveInputState input) {
+  @Override
+  public DriveState updateSimulation(DriveInputState input) {
     double leftVoltagePercent = m_leftGroup.get();
     double rightVoltagePercent = m_rightGroup.get();
 
@@ -211,5 +212,10 @@ public class DriveSimModel {
     driveState.setLeftRelativeEncoderDistance(m_leftEncoderSimWrapper.getDistance());
     driveState.setRightRelativeEncoderDistance(m_rightEncoderSimWrapper.getDistance());
     return driveState;
+  }
+
+  @Override
+  public boolean isModelBroken() {
+    return false;
   }
 }

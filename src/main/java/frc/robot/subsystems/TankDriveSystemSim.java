@@ -26,8 +26,8 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private DefaultLayout m_defaultLayout = new DefaultLayout();
   private final DriveState m_driveState = new DriveState();
   private final Field2d m_fieldSim = new Field2d();
-  private boolean m_resetRelativeEncodersOnNextCycle = false;
-  private ArcadeInputParams m_arcadeInputParamsNextCycle = new ArcadeInputParams(0, 0, false);
+  private final DriveInputState m_driveInputState = new DriveInputState(false,
+      new ArcadeInputParams(0, 0, false));
 
   /**
    * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
@@ -101,14 +101,11 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
   // $TODO - This can go away later when we use SimManager
   private void force_periodic() {
-    DriveInputState inputState = new DriveInputState(m_resetRelativeEncodersOnNextCycle,
-        m_arcadeInputParamsNextCycle);
+    DriveState driveState = m_driveSimulation.updateSimulation(m_driveInputState);
+    m_driveState.copyFrom(driveState);
 
     // Reset one-shot
-    m_resetRelativeEncodersOnNextCycle = false;
-
-    DriveState driveState = m_driveSimulation.simulationPeriodicForDrive(inputState);
-    m_driveState.copyFrom(driveState);
+    m_driveInputState.resetRelativeEncoders = false;
 
     drawRobotOnField(m_driveState.getPhysicalWorldPose());
   }
@@ -132,7 +129,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   public void resetEncoders() {
     super.resetEncoders();
 
-    m_resetRelativeEncodersOnNextCycle = true;
+    m_driveInputState.resetRelativeEncoders = true;
   }
 
   @Override
@@ -165,7 +162,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private void simArcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
     // When Robot is disabled, the entire simulation freezes
     if (isRobotEnabled()) {
-      m_arcadeInputParamsNextCycle = new ArcadeInputParams(xspeed, zrotation, squareInputs);
+      m_driveInputState.arcadeParams = new ArcadeInputParams(xspeed, zrotation, squareInputs);
     }
   }
 

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
+import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveInputState;
 import frc.robot.simulation.drive.DriveSimModel;
@@ -64,7 +65,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
     m_driveSimManager = new SimManager<DriveInputState, DriveState>(
         new DriveSimModel(m_initialPosition,
             Constants.OperatorConstants.kWheelDiameterMetersDrive / 2),
-        null, null, false);
+        PrefixedConcurrentMap.createShuffleboardClientForSubsystem("DriveSystem"), null, false);
 
     m_driveSimManager.setInputHandler(new LambdaSimInput<DriveInputState>(() -> m_driveInputState));
     m_driveSimManager.setOutputHandler(new LambdaSimOutput<DriveState>((stateOutput) -> {

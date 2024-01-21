@@ -15,7 +15,6 @@ import frc.robot.shuffle.MultiType;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import frc.robot.shuffle.SendableArmPosition;
-import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
@@ -103,7 +102,8 @@ public class ArmSystemSim extends ArmSystem {
       return;
     }
 
-    Client<Supplier<MultiType>> shuffleClient = createShuffleboardClientForSubsystem("ArmSystem");
+    Client<Supplier<MultiType>> shuffleClient = PrefixedConcurrentMap
+        .createShuffleboardClientForSubsystem("ArmSystem");
     createWinchSimParts(shuffleClient);
     createExtenderSimParts(shuffleClient);
     createArmAngleSimParts(shuffleClient);
@@ -143,11 +143,6 @@ public class ArmSystemSim extends ArmSystem {
 
     m_armSimManager = createResult.getFirst();
     m_ramenArmSimLogic = createResult.getSecond();
-  }
-
-  private Client<Supplier<MultiType>> createShuffleboardClientForSubsystem(String subsystemName) {
-    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
-    return globalMap.getClientWithPrefix(subsystemName);
   }
 
   private void createArmAngleSimParts(Client<Supplier<MultiType>> shuffleClient) {

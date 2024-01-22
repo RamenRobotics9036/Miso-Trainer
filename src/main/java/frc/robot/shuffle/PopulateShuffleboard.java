@@ -42,6 +42,11 @@ public class PopulateShuffleboard {
     addWinchToDash();
     addExtenderToDash();
     addArmToDash();
+    addDriveToDash();
+  }
+
+  private void addDriveToDash() {
+    addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
   }
 
   private void addArmToDash() {
@@ -105,6 +110,18 @@ public class PopulateShuffleboard {
     m_tab.addDouble(title, supplier).withWidget(BuiltInWidgets.kNumberBar)
         .withProperties(Map.of("min", min, "max", max, "show text", false))
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+  }
+
+  private void addHeadingWidget(String title,
+      String layoutId,
+      String dashItemKey,
+      double startingAngle) {
+
+    DoubleSupplier supplier = m_helpers.getDoubleSupplier(dashItemKey);
+    Widget pos = m_defaultLayout.getWidgetPosition(layoutId);
+
+    m_tab.addDouble(title, supplier).withWidget(BuiltInWidgets.kGyro).withPosition(pos.x, pos.y)
+        .withSize(pos.width, pos.height).withProperties(Map.of("Starting angle", startingAngle));
   }
 
   private BooleanSupplier constructSupplier(BooleanSupplier supplier, boolean invertBoolValue) {

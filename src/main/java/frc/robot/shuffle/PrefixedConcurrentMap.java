@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Stores a map of key-value pairs, where the key is prefixed with a string path
@@ -66,6 +67,12 @@ public class PrefixedConcurrentMap<T> {
         System.out.println("  " + key);
       }
     }
+  }
+
+  public static Client<Supplier<MultiType>> createShuffleboardClientForSubsystem(
+      String subsystemName) {
+    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+    return globalMap.getClientWithPrefix(subsystemName);
   }
 
   /**

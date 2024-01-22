@@ -27,12 +27,13 @@ import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.helpers.RelEncoderWrapper;
+import frc.robot.simulation.framework.SimModelInterface;
 
 /**
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown
  * on the field.
  */
-public class DriveSimModel {
+public class DriveSimModel implements SimModelInterface<DriveInputState, DriveState> {
   private static final double kTrackWidth = 0.381 * 2;
   private final double m_wheelRadius;
   private static final int kEncoderResolution = -4096;
@@ -131,41 +132,25 @@ public class DriveSimModel {
   }
 
   /**
-   * Controls the robot using thank drive.
-   *
-   * @param leftSpeed  for left wheels
-   * @param rightSpeed for right wheels
-   */
-  public void tankDrive(double leftSpeed, double rightSpeed, boolean squareInputs) {
-    // System.out.println("TANK: xLeft = " + leftSpeed + ", xRight = " +
-    // rightSpeed);
-
-    double xforward = (leftSpeed + rightSpeed) / 2;
-    double zrotation = (leftSpeed - rightSpeed) / 2;
-
-    arcadeDrive(xforward, zrotation, squareInputs);
-  }
-
-  /**
    * Controls the robot using arcade drive.
    *
    * @param xspeed the speed for the x axis
    * @param rot    the rotation
    */
-  public void arcadeDrive(double xspeed, double rot, boolean squareInputs) {
+  private void arcadeDrive(ArcadeInputParams arcadeParams) {
     // System.out.println("ARCADE: xSpeed = " + xSpeed);
 
     // $LATER - If the robot is stopped too quickly, or direction is changed instantly,
     // this robot simulation doesnt handle it well. Consider adding slew within this
     // simulation to avoid that.
-    xspeed = MathUtil.clamp(xspeed, -1.0, 1.0);
-    rot = MathUtil.clamp(rot, -1.0, 1.0);
+    double xspeed = MathUtil.clamp(arcadeParams.xspeed, -1.0, 1.0);
+    double rot = MathUtil.clamp(arcadeParams.zrotation, -1.0, 1.0);
 
     // $LATER - Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
     // private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(3);
     // private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
-    if (squareInputs) {
+    if (arcadeParams.squareInputs) {
       xspeed = Math.copySign(xspeed * xspeed, xspeed);
       rot = Math.copySign(rot * rot, rot);
     }
@@ -195,14 +180,15 @@ public class DriveSimModel {
     return new Pose2d(translatedPos.getTranslation(), newRotation);
   }
 
-  /** Update our simulation. This should be run every robot loop in simulation. */
-  public DriveState simulationPeriodicForDrive(DriveInputState input) {
+  @Override
+  public DriveState updateSimulation(DriveInputState input) {
     double leftVoltagePercent = m_leftGroup.get();
     double rightVoltagePercent = m_rightGroup.get();
 
     if (input.resetRelativeEncoders) {
       resetRelativeEncoders();
     }
+    arcadeDrive(input.arcadeParams);
 
     // To update our simulation, we set motor voltage inputs, update the
     // simulation, and write the simulated positions and velocities to our
@@ -226,5 +212,10 @@ public class DriveSimModel {
     driveState.setLeftRelativeEncoderDistance(m_leftEncoderSimWrapper.getDistance());
     driveState.setRightRelativeEncoderDistance(m_rightEncoderSimWrapper.getDistance());
     return driveState;
+  }
+
+  @Override
+  public boolean isModelBroken() {
+    return false;
   }
 }

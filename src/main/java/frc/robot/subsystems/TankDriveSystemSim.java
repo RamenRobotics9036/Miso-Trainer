@@ -5,12 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.helpers.DefaultLayout;
-import frc.robot.helpers.DefaultLayout.Widget;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveDashboardPlugin;
@@ -30,7 +26,6 @@ public class TankDriveSystemSim extends TankDriveSystem {
   private SimManager<DriveInputState, DriveState> m_driveSimManager;
   private DefaultLayout m_defaultLayout = new DefaultLayout();
   private DriveState m_driveState = new DriveState();
-  private final Field2d m_fieldSim = new Field2d();
   private final DriveInputState m_driveInputState = new DriveInputState(false,
       new ArcadeInputParams(0, 0, false));
 
@@ -72,25 +67,6 @@ public class TankDriveSystemSim extends TankDriveSystem {
     m_driveSimManager.setOutputHandler(new LambdaSimOutput<DriveState>((stateOutput) -> {
       m_driveState = stateOutput;
     }));
-
-    // $LATER - 1) This should be called from initDashboard, 2) move the widget code into
-    // TankDriveSystemSimWithWidgets
-    addShuffleboardWidgets();
-    drawRobotOnField(m_driveState.getPhysicalWorldPose());
-  }
-
-  /**
-   * Add widgets to Shuffleboard.
-   */
-  private void addShuffleboardWidgets() {
-    // $TODO - Move to ShuffleboardManager
-    Widget pos = m_defaultLayout.getWidgetPosition("Field");
-    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-  }
-
-  private void drawRobotOnField(Pose2d pose) {
-    m_fieldSim.setRobotPose(pose);
   }
 
   private boolean isRobotEnabled() {
@@ -111,8 +87,6 @@ public class TankDriveSystemSim extends TankDriveSystem {
 
       // Reset one-shot
       m_driveInputState.resetRelativeEncoders = false;
-
-      drawRobotOnField(m_driveState.getPhysicalWorldPose());
     }
   }
 

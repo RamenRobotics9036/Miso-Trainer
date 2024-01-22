@@ -253,13 +253,13 @@ public class VerifyJoysticks {
       m_firstCall = false;
 
       // We only update the dashboard every few seconds
-      updateDashboard();
+      updateDashboardForJoystick();
     }
 
     return m_lastResult;
   }
 
-  private void updateDashboard() {
+  private void updateDashboardForJoystick() {
     SmartDashboard.putBoolean("Joystick health", m_lastResult);
   }
 

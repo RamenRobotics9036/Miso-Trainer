@@ -67,7 +67,7 @@ public class ArmSystem extends SubsystemBase {
   /**
    * Update the values displayed on the dashboard.
    */
-  public void updateDashBoard() {
+  public void updateDashOnRobotPeriodic() {
     SmartDashboard.putNumber("Winch Encoder", m_winchEncoder.getPosition());
     SmartDashboard.putNumber("Extender Encoder", m_extenderEncoder.getPosition());
     m_maxOutputWinch = SmartDashboard.getNumber("Winch Max Output", m_maxOutputWinch);

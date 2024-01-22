@@ -1,8 +1,11 @@
 package frc.robot.shuffle;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.commands.ArmExtendFully;
 import frc.robot.commands.ArmToGround;
 import frc.robot.commands.ArmToMiddleNodeCone;
@@ -20,8 +23,12 @@ import java.util.function.Supplier;
  */
 public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
-  ShuffleboardTab m_tab;
-  ShuffleboardHelpers m_helpers;
+  private ShuffleboardTab m_tab;
+  private ShuffleboardHelpers m_helpers;
+  private final Field2d m_fieldSim = new Field2d();
+  private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
+  private boolean m_previousPoseSet = false;
+  private Supplier<Pose2d> m_poseSupplier = null;
 
   /**
    * Constructor.
@@ -45,8 +52,35 @@ public class PopulateShuffleboard {
     addDriveToDash();
   }
 
+  /**
+   * We update the dashboard LAST in our various periodic loops.
+   * This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
+   * robotPeriodic(). Since robotPeriodic() runs last, it will display the
+   * most up-to-date values each cycle.
+   */
+  public void updateDashOnRobotPeriodic() {
+    if (m_poseSupplier == null) {
+      m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
+    }
+
+    Pose2d newPose = m_poseSupplier.get();
+
+    // Only update the pose if it has changed.
+    if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
+
+      m_fieldSim.setRobotPose(newPose);
+
+      m_previousPose = newPose;
+      m_previousPoseSet = true;
+    }
+  }
+
   private void addDriveToDash() {
     addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
+
+    Widget pos = m_defaultLayout.getWidgetPosition("Field");
+    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 
   private void addArmToDash() {

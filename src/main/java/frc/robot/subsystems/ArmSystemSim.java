@@ -110,7 +110,7 @@ public class ArmSystemSim extends ArmSystem {
 
     m_sensorSim = new DIOSim(m_sensor);
 
-    // $LATER - Eventually, move this into PopulateDashboard class
+    // $LATER - Eventually, move this into ShuffleboardManager class
     shuffleClient.getSubdirectoryClient("Extender").addItem("Sensor",
         () -> MultiType.of(!m_sensorSim.getValue()));
 

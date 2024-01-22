@@ -83,6 +83,7 @@ public class TankDriveSystemSim extends TankDriveSystem {
    * Add widgets to Shuffleboard.
    */
   private void addShuffleboardWidgets() {
+    // $TODO - Move to PopulateWidgets
     Widget pos = m_defaultLayout.getWidgetPosition("Field");
     Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
         .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);

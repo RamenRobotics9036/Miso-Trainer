@@ -1,5 +1,7 @@
 package frc.robot.shuffle;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -24,6 +26,8 @@ public class PopulateShuffleboard {
   ShuffleboardTab m_tab;
   ShuffleboardHelpers m_helpers;
   private final Field2d m_fieldSim = new Field2d();
+  private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
+  private boolean m_previousPoseSet = false;
 
   /**
    * Constructor.
@@ -47,22 +51,33 @@ public class PopulateShuffleboard {
     addDriveToDash();
   }
 
-  // We update the dashboard LAST in our various periodic loops.
-  // This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
-  // robotPeriodic(). Since robotPeriodic() runs last, it will display the
-  // most up-to-date values each cycle.
+  /**
+   * We update the dashboard LAST in our various periodic loops.
+   * This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
+   * robotPeriodic(). Since robotPeriodic() runs last, it will display the
+   * most up-to-date values each cycle.
+   */
   public void updateDashOnRobotPeriodic() {
-    // $TODO m_fieldSim.setRobotPose(pose);
+    Pose2d newPose = new Pose2d(2, 2, Rotation2d.fromDegrees(45));
+
+    // Only update the pose if it has changed.
+    if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
+
+      m_fieldSim.setRobotPose(newPose);
+
+      m_previousPose = newPose;
+      m_previousPoseSet = true;
+
+      System.out.println("HI!!");
+    }
   }
 
   private void addDriveToDash() {
     addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
 
-    // $TODO - Move to ShuffleboardManager
-    // Widget pos = m_defaultLayout.getWidgetPosition("Field");
-    // Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
-    // .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-
+    Widget pos = m_defaultLayout.getWidgetPosition("Field");
+    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 
   private void addArmToDash() {

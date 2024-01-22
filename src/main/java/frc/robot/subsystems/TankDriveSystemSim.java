@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
-import frc.robot.helpers.DefaultLayout;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveDashboardPlugin;
@@ -24,7 +23,6 @@ import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 public class TankDriveSystemSim extends TankDriveSystem {
   private final Pose2d m_initialPosition = new Pose2d(2, 2, new Rotation2d());
   private SimManager<DriveInputState, DriveState> m_driveSimManager;
-  private DefaultLayout m_defaultLayout = new DefaultLayout();
   private DriveState m_driveState = new DriveState();
   private final DriveInputState m_driveInputState = new DriveInputState(false,
       new ArcadeInputParams(0, 0, false));

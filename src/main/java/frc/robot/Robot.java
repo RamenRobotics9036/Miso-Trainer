@@ -35,10 +35,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    super.robotPeriodic();
+
     CommandScheduler.getInstance().run();
 
     m_verifyJoysticks.verifyJoysticksPeriodically();
     m_ledLights.updateLeds();
+
+    // We update the dashboard LAST in our various periodic loops.
+    // This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
+    // robotPeriodic(). Since robotPeriodic() runs last, it will display the
+    // most up-to-date values each cycle.
+    m_robotContainer.updateDashOnRobotPeriodic();
   }
 
   @Override
@@ -72,7 +80,6 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().cancelAll();
     m_robotContainer.configureBindings();
-    m_robotContainer.updateDashBoard();
 
     new RetractArmCommand(m_robotContainer.m_armSystem).schedule();
 

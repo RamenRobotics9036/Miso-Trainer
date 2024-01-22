@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 /**
  * Adds Shuffleboard widgets to Simulation tab.
  */
-public class PopulateShuffleboard {
+public class ShuffleboardManager {
   private final DefaultLayout m_defaultLayout;
   ShuffleboardTab m_tab;
   ShuffleboardHelpers m_helpers;
@@ -26,7 +26,7 @@ public class PopulateShuffleboard {
   /**
    * Constructor.
    */
-  public PopulateShuffleboard(ShuffleboardHelpers helpers,
+  public ShuffleboardManager(ShuffleboardHelpers helpers,
       DefaultLayout defaultLayout,
       ShuffleboardTab tab) {
 
@@ -43,6 +43,14 @@ public class PopulateShuffleboard {
     addExtenderToDash();
     addArmToDash();
     addDriveToDash();
+  }
+
+  // We update the dashboard LAST in our various periodic loops.
+  // This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
+  // robotPeriodic(). Since robotPeriodic() runs last, it will display the
+  // most up-to-date values each cycle.
+  public void updateDashOnRobotPeriodic() {
+
   }
 
   private void addDriveToDash() {

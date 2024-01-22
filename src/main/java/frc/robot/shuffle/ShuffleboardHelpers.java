@@ -5,7 +5,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 /**
- * Helper class for populating Shuffleboard.
+ * Helper class for managing Shuffleboard.
  */
 public class ShuffleboardHelpers {
   PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap;

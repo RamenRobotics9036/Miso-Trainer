@@ -186,7 +186,7 @@ public class SimManager<InputT, OutputT> {
     }
   }
 
-  private void updateDashboardValues(MultiType[] newValues) {
+  private void updateGlobalDashValues(MultiType[] newValues) {
     if (newValues == null) {
       System.out.println("WARNING: getDashboardPropertiesFromInputOutput() return null");
       return;
@@ -244,7 +244,7 @@ public class SimManager<InputT, OutputT> {
               "getDashboardPropertiesFromInputOutput() returned wrong number of items");
         }
 
-        updateDashboardValues(newDashValues);
+        updateGlobalDashValues(newDashValues);
       }
 
       if (m_defaultDashItemsInitialized) {

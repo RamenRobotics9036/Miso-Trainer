@@ -15,9 +15,9 @@ import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
 import frc.robot.helpers.DefaultLayout;
 import frc.robot.shuffle.MultiType;
-import frc.robot.shuffle.PopulateShuffleboard;
 import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.shuffle.ShuffleboardHelpers;
+import frc.robot.shuffle.ShuffleboardManager;
 import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
 import frc.robot.subsystems.ArmSystemSim;
@@ -41,6 +41,8 @@ public class RobotContainer {
   public final TankDriveSystem m_driveSystem;
   public final ArmSystem m_armSystem;
   public final GrabberSystem m_grabSystem;
+
+  private final ShuffleboardManager m_shuffleboardManager;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -69,6 +71,10 @@ public class RobotContainer {
     // Now that all subsystems are created, print out the list of properties
     // available for display in Shuffleboard.
     printAvailableDashboardProperties();
+
+    m_shuffleboardManager = new ShuffleboardManager(
+        new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
+        Shuffleboard.getTab("Simulation"));
   }
 
   private void printAvailableDashboardProperties() {
@@ -116,20 +122,19 @@ public class RobotContainer {
     m_armSystem.initDashBoard();
     m_grabSystem.initDashBoard();
 
-    PopulateShuffleboard shuffle = new PopulateShuffleboard(
-        new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
-        Shuffleboard.getTab("Simulation"));
-    shuffle.addShuffleboardWidgets();
-    shuffle.addMacros(m_armSystem);
+    m_shuffleboardManager.addShuffleboardWidgets();
+    m_shuffleboardManager.addMacros(m_armSystem);
   }
 
   /**
    * This is the single point in code that updates Shuffleboard.
    */
-  public void updateDashBoard() {
-    m_driveSystem.updateDashBoard();
-    m_armSystem.updateDashBoard();
-    m_grabSystem.updateDashBoard();
+  public void updateDashOnRobotPeriodic() {
+    m_driveSystem.updateDashOnRobotPeriodic();
+    m_armSystem.updateDashOnRobotPeriodic();
+    m_grabSystem.updateDashOnRobotPeriodic();
+
+    m_shuffleboardManager.updateDashOnRobotPeriodic();
   }
 
   private void setDefaultCommands() {

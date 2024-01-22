@@ -97,7 +97,7 @@ public class TankDriveSystem extends SubsystemBase {
   public void initDashBoard() {
   }
 
-  public void updateDashBoard() {
+  public void updateDashOnRobotPeriodic() {
   }
 
   /**

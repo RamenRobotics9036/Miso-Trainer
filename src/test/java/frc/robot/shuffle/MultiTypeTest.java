@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /**
  * Tests the MultiType class.
  */
@@ -41,6 +44,13 @@ public class MultiTypeTest {
   }
 
   @Test
+  public void testCreatePose2dType() {
+    MultiType poseType = MultiType.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0)));
+    assertEquals("Pose2d", poseType.getType());
+    assertEquals(Optional.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0))), poseType.getPose2d());
+  }
+
+  @Test
   public void testNullBooleanCreation() {
     assertThrows(IllegalArgumentException.class, () -> MultiType.of((Boolean) null));
   }
@@ -58,6 +68,11 @@ public class MultiTypeTest {
   @Test
   public void testNullStringCreation() {
     assertThrows(IllegalArgumentException.class, () -> MultiType.of((String) null));
+  }
+
+  @Test
+  public void testNullPose2dCreation() {
+    assertThrows(IllegalArgumentException.class, () -> MultiType.of((Pose2d) null));
   }
 
   @Test
@@ -82,6 +97,12 @@ public class MultiTypeTest {
   public void testGetWrongTypeString() {
     MultiType doubleType = MultiType.of(123.45);
     assertEquals(Optional.empty(), doubleType.getString());
+  }
+
+  @Test
+  public void testGetWrongTypePose2d() {
+    MultiType stringType = MultiType.of("Test");
+    assertEquals(Optional.empty(), stringType.getPose2d());
   }
 
   @Test
@@ -148,6 +169,23 @@ public class MultiTypeTest {
     assertThrows(IllegalStateException.class, () -> booleanMultiType.setString("false"));
   }
 
+  @Test
+  public void testSetPose2d() {
+    MultiType pose2dMultiType = MultiType.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0)));
+
+    // Test setting a new pose2d value
+    pose2dMultiType.setPose2d(new Pose2d(2.0, 3.0, new Rotation2d(5.0)));
+    assertEquals(new Pose2d(2.0, 3.0, new Rotation2d(5.0)),
+        pose2dMultiType.getPose2d().orElseThrow());
+
+    // Test setting null (should throw IllegalArgumentException)
+    assertThrows(IllegalArgumentException.class, () -> pose2dMultiType.setPose2d(null));
+
+    // Test setting pose2d on a boolean type (should throw IllegalStateException)
+    MultiType booleanMultiType = MultiType.of(true);
+    assertThrows(IllegalStateException.class, () -> booleanMultiType.setPose2d(new Pose2d()));
+  }
+
   // Unit tests for CopyTo method
   @Test
   public void testCopyToBoolean() {
@@ -186,6 +224,16 @@ public class MultiTypeTest {
   }
 
   @Test
+  public void testCopyToPose2d() {
+    MultiType pose2dMultiType = MultiType.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0)));
+    MultiType otherPose2dMultiType = MultiType.of(new Pose2d(2.0, 3.0, new Rotation2d(5.0)));
+
+    pose2dMultiType.copyTo(otherPose2dMultiType);
+    assertEquals(Optional.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0))),
+        otherPose2dMultiType.getPose2d());
+  }
+
+  @Test
   public void testCopyToDifferentTypeBool() {
     MultiType stringMultiType = MultiType.of("test");
     MultiType booleanMultiType = MultiType.of(true);
@@ -215,6 +263,14 @@ public class MultiTypeTest {
     MultiType stringMultiType = MultiType.of("test");
 
     assertThrows(IllegalStateException.class, () -> booleanMultiType.copyTo(stringMultiType));
+  }
+
+  @Test
+  void testCopyToDifferentTypePose2d() {
+    MultiType stringMultiType = MultiType.of("test");
+    MultiType pose2dMultiType = MultiType.of(new Pose2d(1.0, 2.0, new Rotation2d(4.0)));
+
+    assertThrows(IllegalStateException.class, () -> stringMultiType.copyTo(pose2dMultiType));
   }
 
   @Test

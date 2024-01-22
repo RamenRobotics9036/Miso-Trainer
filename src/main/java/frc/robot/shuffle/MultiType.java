@@ -1,5 +1,6 @@
 package frc.robot.shuffle;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import java.util.Optional;
 
 /**
@@ -11,16 +12,19 @@ public class MultiType {
   private Double m_doubleValue;
   private Integer m_integerValue;
   private String m_stringValue;
+  private Pose2d m_poseValue;
 
   // Private constructor
   private MultiType(Boolean booleanValue,
       Double doubleValue,
       Integer integerValue,
-      String stringValue) {
+      String stringValue,
+      Pose2d poseValue) {
     this.m_booleanValue = booleanValue;
     this.m_doubleValue = doubleValue;
     this.m_integerValue = integerValue;
     this.m_stringValue = stringValue;
+    this.m_poseValue = poseValue;
   }
 
   /**
@@ -31,7 +35,7 @@ public class MultiType {
       throw new IllegalArgumentException("Null value not allowed for Boolean type");
     }
 
-    return new MultiType(value, null, null, null);
+    return new MultiType(value, null, null, null, null);
   }
 
   /**
@@ -42,7 +46,7 @@ public class MultiType {
       throw new IllegalArgumentException("Null value not allowed for Double type");
     }
 
-    return new MultiType(null, value, null, null);
+    return new MultiType(null, value, null, null, null);
   }
 
   /**
@@ -53,7 +57,7 @@ public class MultiType {
       throw new IllegalArgumentException("Null value not allowed for Integer type");
     }
 
-    return new MultiType(null, null, value, null);
+    return new MultiType(null, null, value, null, null);
   }
 
   /**
@@ -64,7 +68,18 @@ public class MultiType {
       throw new IllegalArgumentException("Null value not allowed for String type");
     }
 
-    return new MultiType(null, null, null, value);
+    return new MultiType(null, null, null, value, null);
+  }
+
+  /**
+   * Factory for Pose2d.
+   */
+  public static MultiType of(Pose2d value) {
+    if (value == null) {
+      throw new IllegalArgumentException("Null value not allowed for Pose2d type");
+    }
+
+    return new MultiType(null, null, null, null, value);
   }
 
   /**
@@ -127,6 +142,21 @@ public class MultiType {
     m_stringValue = value;
   }
 
+  /**
+   * Change value of Pose2d.
+   */
+  public void setPose2d(Pose2d value) {
+    if (m_poseValue == null) {
+      throw new IllegalStateException("Cannot change type of value");
+    }
+
+    if (value == null) {
+      throw new IllegalArgumentException("Null value not allowed for Pose2d type");
+    }
+
+    m_poseValue = value;
+  }
+
   // Methods to safely retrieve the value
   public Optional<Boolean> getBoolean() {
     return Optional.ofNullable(m_booleanValue);
@@ -144,6 +174,10 @@ public class MultiType {
     return Optional.ofNullable(m_stringValue);
   }
 
+  public Optional<Pose2d> getPose2d() {
+    return Optional.ofNullable(m_poseValue);
+  }
+
   /**
    * Method to determine the type of the value.
    */
@@ -159,6 +193,9 @@ public class MultiType {
     }
     else if (m_stringValue != null) {
       return "String";
+    }
+    else if (m_poseValue != null) {
+      return "Pose2d";
     }
     else {
       return "None";
@@ -187,6 +224,10 @@ public class MultiType {
 
     if (m_stringValue != null) {
       other.setString(m_stringValue);
+    }
+
+    if (m_poseValue != null) {
+      other.setPose2d(m_poseValue);
     }
   }
 }

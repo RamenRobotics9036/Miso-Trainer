@@ -1,5 +1,7 @@
 package frc.robot.simulation.drive;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.DashboardPluginInterface;
@@ -12,16 +14,18 @@ public class DriveDashboardPlugin implements DashboardPluginInterface<DriveInput
   @Override
   public DashboardItem[] queryListOfDashboardPropertiesWithInitValues() {
     return new DashboardItem[] {
-        new DashboardItem("GyroHeadingDegrees", MultiType.of(0.0))
+        new DashboardItem("GyroHeadingDegrees", MultiType.of(0.0)),
+        new DashboardItem("RobotPose", MultiType.of(new Pose2d(0, 0, new Rotation2d()))),
     };
   }
 
   @Override
   public MultiType[] getDashboardPropertiesFromInputOutput(DriveInputState input,
       DriveState output) {
-    MultiType[] result = new MultiType[1];
+    MultiType[] result = new MultiType[2];
 
     result[0] = MultiType.of(output.getGyroHeadingDegrees());
+    result[1] = MultiType.of(output.getPhysicalWorldPose());
 
     return result;
   }

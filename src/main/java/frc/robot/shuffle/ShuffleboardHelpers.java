@@ -1,5 +1,7 @@
 package frc.robot.shuffle;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -68,5 +70,22 @@ public class ShuffleboardHelpers {
     }
 
     return () -> supplier.get().getString().orElse("");
+  }
+
+  /**
+   * Converts Supplier for MultiType to Supplier-Pose2d.
+   */
+  public Supplier<Pose2d> getPoseSupplier(String key) {
+    Supplier<MultiType> supplier = m_globalMap.get(key);
+
+    if (supplier == null) {
+      throw new IllegalArgumentException("Key missing: " + key);
+    }
+
+    if (!supplier.get().getType().equals("Pose2d")) {
+      throw new IllegalArgumentException("Key wrong type: " + key);
+    }
+
+    return () -> supplier.get().getPose2d().orElse(new Pose2d(0, 0, new Rotation2d()));
   }
 }

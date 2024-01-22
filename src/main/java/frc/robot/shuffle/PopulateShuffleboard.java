@@ -23,11 +23,12 @@ import java.util.function.Supplier;
  */
 public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
-  ShuffleboardTab m_tab;
-  ShuffleboardHelpers m_helpers;
+  private ShuffleboardTab m_tab;
+  private ShuffleboardHelpers m_helpers;
   private final Field2d m_fieldSim = new Field2d();
   private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
   private boolean m_previousPoseSet = false;
+  private Supplier<Pose2d> m_poseSupplier = null;
 
   /**
    * Constructor.
@@ -58,7 +59,11 @@ public class PopulateShuffleboard {
    * most up-to-date values each cycle.
    */
   public void updateDashOnRobotPeriodic() {
-    Pose2d newPose = new Pose2d(2, 2, Rotation2d.fromDegrees(45));
+    if (m_poseSupplier == null) {
+      m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
+    }
+
+    Pose2d newPose = m_poseSupplier.get();
 
     // Only update the pose if it has changed.
     if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
@@ -67,8 +72,6 @@ public class PopulateShuffleboard {
 
       m_previousPose = newPose;
       m_previousPoseSet = true;
-
-      System.out.println("HI!!");
     }
   }
 

@@ -110,7 +110,7 @@ tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
 
-// $TODO
-//tasks.named('compileJava').configure {
-//    dependsOn(':simulationlib:build')
-//}
+// Build library first
+tasks.named('compileJava').configure {
+    dependsOn('lib:build')
+}

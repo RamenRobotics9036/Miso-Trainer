@@ -6,6 +6,8 @@ import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 /**
  * This class is a factory for the global singleton instance of PrefixedConcurrentMap.
  */
+// $TODO - This singleton is causing race-conditions in the tests. Also,
+// if multiple tests are running simultaneously, they will interfere with each other.
 public class SupplierMapFactory {
   /**
    * This is the global singleton instance of ConcurrentHashMap.

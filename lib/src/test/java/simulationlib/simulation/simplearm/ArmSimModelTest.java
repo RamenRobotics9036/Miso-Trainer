@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
@@ -87,8 +86,6 @@ public class ArmSimModelTest {
    */
   @BeforeEach
   public void setUp() {
-    assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
-
     final int absoluteEncoderWinchChannel = 5;
 
     m_winchAbsoluteEncoder = new DutyCycleEncoder(absoluteEncoderWinchChannel);

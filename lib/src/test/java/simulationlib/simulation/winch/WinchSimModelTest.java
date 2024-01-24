@@ -3,7 +3,6 @@ package simulationlib.simulation.winch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import edu.wpi.first.hal.HAL;
 import simulationlib.helpers.UnitConversions;
 import simulationlib.simulation.framework.SimManager;
 import simulationlib.simulation.framework.inputoutputs.CopySimOutput;
@@ -29,7 +28,6 @@ public class WinchSimModelTest {
    */
   @BeforeEach
   public void setUp() {
-    assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
   }
 
   private double getTestingSpoolDiameter() {

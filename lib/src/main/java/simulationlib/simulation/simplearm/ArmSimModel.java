@@ -1,7 +1,7 @@
 package simulationlib.simulation.simplearm;
 
 import edu.wpi.first.math.Pair;
-import frc.robot.helpers.UnitConversions;
+import simulationlib.helpers.UnitConversions;
 import simulationlib.simulation.framework.SimModelInterface;
 
 /**

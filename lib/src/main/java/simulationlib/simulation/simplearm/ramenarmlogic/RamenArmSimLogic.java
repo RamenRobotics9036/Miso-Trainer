@@ -2,7 +2,9 @@ package simulationlib.simulation.simplearm.ramenarmlogic;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
-import frc.robot.helpers.UnitConversions;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+import simulationlib.helpers.UnitConversions;
 import simulationlib.shuffle.MultiType;
 import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 import simulationlib.simulation.framework.SimManager;
@@ -12,9 +14,6 @@ import simulationlib.simulation.simplearm.ArmDashboardPlugin;
 import simulationlib.simulation.simplearm.ArmSimModel;
 import simulationlib.simulation.simplearm.ArmSimParams;
 import simulationlib.simulation.simplearm.ExtendArmInterface;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 /**
  * Robot-specific logic for the arm simulation.

@@ -8,14 +8,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
-import simulationlib.Constants.SimConstants;
-import simulationlib.helpers.UnitConversions;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import simulationlib.Constants.SimConstants;
+import simulationlib.Constants.WidgetConstants;
+import simulationlib.helpers.UnitConversions;
 import simulationlib.shuffle.MultiType;
 import simulationlib.shuffle.PrefixedConcurrentMap;
 import simulationlib.shuffle.PrefixedConcurrentMap.Client;
+import simulationlib.shuffle.SendableArmPosition;
 import simulationlib.simulation.armangle.ArmAngleSimModel;
 import simulationlib.simulation.armangle.ArmAngleState;
 import simulationlib.simulation.armangle.PivotMechanism;
@@ -39,9 +40,8 @@ import simulationlib.simulation.winch.WinchCable;
 import simulationlib.simulation.winch.WinchDashboardPlugin;
 import simulationlib.simulation.winch.WinchParams;
 import simulationlib.simulation.winch.WinchSimModel;
-import simulationlib.simulation.winch.WinchState;
 import simulationlib.simulation.winch.WinchSimModel.WindingOrientation;
-import simulationlib.shuffle.SendableArmPosition;
+import simulationlib.simulation.winch.WinchState;
 
 /**
  * Subclass of ArmSystem that is used for simulation. Note that this code isn't run if

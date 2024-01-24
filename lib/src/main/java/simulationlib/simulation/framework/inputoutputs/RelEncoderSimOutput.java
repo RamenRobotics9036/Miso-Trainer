@@ -1,7 +1,7 @@
 package simulationlib.simulation.framework.inputoutputs;
 
-import frc.robot.helpers.RelativeEncoderSim;
 import simulationlib.simulation.framework.SimOutputInterface;
+import simulationlib.simulation.framework.customwrappers.RelativeEncoderSim;
 
 /**
  * Helper class to implement output to relative encoder.

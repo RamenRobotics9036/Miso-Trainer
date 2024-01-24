@@ -1,7 +1,7 @@
 package simulationlib.simulation.armangle;
 
-import frc.robot.helpers.UnitConversions;
 import simulationlib.Constants.SimConstants;
+import simulationlib.helpers.UnitConversions;
 
 /**
  * The PivotMechanism class is responsible for calculating the signed degrees

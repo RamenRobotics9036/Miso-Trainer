@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import frc.robot.helpers.RelEncoderWrapper;
 import simulationlib.simulation.framework.SimModelInterface;
+import simulationlib.simulation.framework.customwrappers.RelEncoderWrapper;
 
 /**
  * Simulates a real world drivetrain. E.g. the position of the robot is even shown

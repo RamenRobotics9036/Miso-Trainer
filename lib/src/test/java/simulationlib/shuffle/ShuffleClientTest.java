@@ -18,7 +18,6 @@ import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
 import simulationlib.simulation.sample.SampleDashboardPlugin;
 import simulationlib.simulation.sample.SampleSimModel;
 
-// $TODO - Move all simulation unit tests to simulationlib
 /**
  * Test querying each sim model for the properties it shows on the Shuffleboard dash.
  */

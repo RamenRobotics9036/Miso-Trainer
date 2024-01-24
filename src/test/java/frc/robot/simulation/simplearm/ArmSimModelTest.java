@@ -9,7 +9,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
-import frc.robot.helpers.UnitConversions;
+import simulationlib.helpers.UnitConversions;
 import simulationlib.simulation.armangle.ArmAngleSimModel;
 import simulationlib.simulation.armangle.ArmAngleState;
 import simulationlib.simulation.armangle.PivotMechanism;

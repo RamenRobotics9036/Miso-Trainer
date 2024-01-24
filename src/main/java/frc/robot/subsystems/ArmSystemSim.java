@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
-import frc.robot.helpers.UnitConversions;
-
 import simulationlib.Constants.SimConstants;
+import simulationlib.helpers.UnitConversions;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import simulationlib.shuffle.MultiType;

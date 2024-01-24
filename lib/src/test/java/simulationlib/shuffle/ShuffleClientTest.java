@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import simulationlib.shuffle.MultiType;
-import simulationlib.shuffle.PrefixedConcurrentMap;
-import simulationlib.shuffle.SupplierMapFactory;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 import simulationlib.simulation.framework.DashboardItem;
 import simulationlib.simulation.framework.DashboardPluginInterface;
@@ -17,10 +17,6 @@ import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
 import simulationlib.simulation.sample.SampleDashboardPlugin;
 import simulationlib.simulation.sample.SampleSimModel;
-
-import java.util.function.Supplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Test querying each sim model for the properties it shows on the Shuffleboard dash.

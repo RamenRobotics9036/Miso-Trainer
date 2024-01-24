@@ -1,4 +1,4 @@
-package frc.robot.simulation.winch;
+package simulationlib.simulation.winch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

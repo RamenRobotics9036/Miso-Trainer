@@ -1,4 +1,4 @@
-package frc.robot.simulation.armangle;
+package simulationlib.simulation.armangle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

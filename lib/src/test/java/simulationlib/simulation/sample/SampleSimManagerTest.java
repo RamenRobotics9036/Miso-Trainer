@@ -1,4 +1,4 @@
-package frc.robot.simulation.sample;
+package simulationlib.simulation.sample;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

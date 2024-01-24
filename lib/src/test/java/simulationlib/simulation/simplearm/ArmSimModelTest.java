@@ -1,4 +1,4 @@
-package frc.robot.simulation.simplearm;
+package simulationlib.simulation.simplearm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

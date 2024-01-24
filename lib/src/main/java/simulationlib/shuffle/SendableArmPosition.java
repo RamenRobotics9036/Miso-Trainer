@@ -1,10 +1,10 @@
-package frc.robot.shuffle;
+package simulationlib.shuffle;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import frc.robot.Constants;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import simulationlib.Constants;
 
 /**
  * Datatype used to describe Shuffleboard widget animation's arm position.
@@ -28,7 +28,7 @@ public class SendableArmPosition implements Sendable {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType(Constants.SimConstants.kAnimatedArmWidget);
+    builder.setSmartDashboardType(Constants.kAnimatedArmWidget);
     builder.addDoubleProperty("percentRaised", m_percentRaisedSupplier, null);
     builder.addDoubleProperty("percentExtended", m_percentExtendedSupplier, null);
     builder.addBooleanProperty("isClawOpen", m_clawOpenSupplier, null);

@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
-import frc.robot.shuffle.PrefixedConcurrentMap;
 import frc.robot.simulation.drive.ArcadeInputParams;
 import frc.robot.simulation.drive.DriveDashboardPlugin;
 import frc.robot.simulation.drive.DriveInputState;
@@ -15,6 +14,7 @@ import frc.robot.simulation.drive.DriveState;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
+import simulationlib.shuffle.PrefixedConcurrentMap;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if

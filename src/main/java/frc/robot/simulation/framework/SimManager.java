@@ -2,8 +2,9 @@ package frc.robot.simulation.framework;
 
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
-import frc.robot.shuffle.MultiType;
-import frc.robot.shuffle.PrefixedConcurrentMap.Client;
+import simulationlib.shuffle.MultiType;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
+
 import java.util.function.Supplier;
 
 /**

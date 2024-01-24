@@ -3,8 +3,6 @@ package frc.robot.simulation.simplearm.ramenarmlogic;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.shuffle.MultiType;
-import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import frc.robot.simulation.framework.SimManager;
 import frc.robot.simulation.framework.inputoutputs.AbsEncoderSimOutput;
 import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
@@ -12,6 +10,9 @@ import frc.robot.simulation.simplearm.ArmDashboardPlugin;
 import frc.robot.simulation.simplearm.ArmSimModel;
 import frc.robot.simulation.simplearm.ArmSimParams;
 import frc.robot.simulation.simplearm.ExtendArmInterface;
+import simulationlib.shuffle.MultiType;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 

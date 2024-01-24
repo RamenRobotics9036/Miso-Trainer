@@ -1,15 +1,15 @@
-package frc.robot.shuffle;
+package simulationlib.shuffle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 
 /**
  * Unit tests for ShuffleboardHelpers.

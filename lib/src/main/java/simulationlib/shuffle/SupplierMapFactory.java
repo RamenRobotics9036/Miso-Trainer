@@ -1,7 +1,7 @@
-package frc.robot.shuffle;
+package simulationlib.shuffle;
 
-import frc.robot.shuffle.PrefixedConcurrentMap.Client;
 import java.util.function.Supplier;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 
 /**
  * This class is a factory for the global singleton instance of PrefixedConcurrentMap.

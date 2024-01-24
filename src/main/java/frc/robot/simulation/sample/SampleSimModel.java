@@ -1,7 +1,7 @@
 package frc.robot.simulation.sample;
 
-import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.SimModelInterface;
+import simulationlib.shuffle.MultiType;
 
 /**
  * Does the real-world simulation for the sample (which just accumulates integer values as a sum).

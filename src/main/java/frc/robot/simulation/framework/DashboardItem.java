@@ -1,6 +1,6 @@
 package frc.robot.simulation.framework;
 
-import frc.robot.shuffle.MultiType;
+import simulationlib.shuffle.MultiType;
 
 /**
  * Holds two values:

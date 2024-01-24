@@ -115,8 +115,5 @@ public final class Constants {
 
     // Grabber
     public static boolean kgrabberInitiallyOpened = false;
-
-    // Arm widget for shuffleboard to load
-    public static final String kAnimatedArmWidget = "AnimatedArm";
   }
 }

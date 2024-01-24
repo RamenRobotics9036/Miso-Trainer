@@ -1,8 +1,8 @@
 package frc.robot.simulation.sample;
 
-import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.DashboardPluginInterface;
+import simulationlib.shuffle.MultiType;
 
 /**
  * For Sample Sim Model, exposes the properties we show on Shuffleboard dashboard.

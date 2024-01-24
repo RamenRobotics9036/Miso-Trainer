@@ -11,10 +11,6 @@ import frc.robot.Constants;
 import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.RelativeEncoderSim;
 import frc.robot.helpers.UnitConversions;
-import frc.robot.shuffle.MultiType;
-import frc.robot.shuffle.PrefixedConcurrentMap;
-import frc.robot.shuffle.PrefixedConcurrentMap.Client;
-import frc.robot.shuffle.SendableArmPosition;
 import frc.robot.simulation.armangle.ArmAngleSimModel;
 import frc.robot.simulation.armangle.ArmAngleState;
 import frc.robot.simulation.armangle.PivotMechanism;
@@ -40,6 +36,10 @@ import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
 import frc.robot.simulation.winch.WinchState;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import simulationlib.shuffle.MultiType;
+import simulationlib.shuffle.PrefixedConcurrentMap;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
+import simulationlib.shuffle.SendableArmPosition;
 
 /**
  * Subclass of ArmSystem that is used for simulation. Note that this code isn't run if
@@ -271,7 +271,7 @@ public class ArmSystemSim extends ArmSystem {
     Shuffleboard.getTab("Simulation").add("Happy",
         new SendableArmPosition(() -> getArmPercentRaised(),
             () -> m_extenderState.getExtendedPercent(), () -> m_ramenArmSimLogic.getGrabberOpen()))
-        .withWidget(Constants.SimConstants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
+        .withWidget(simulationlib.Constants.kAnimatedArmWidget).withPosition(7, 0).withSize(3, 3);
   }
 
   @Override

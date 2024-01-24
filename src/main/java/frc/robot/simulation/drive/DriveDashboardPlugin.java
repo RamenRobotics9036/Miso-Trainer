@@ -2,9 +2,9 @@ package frc.robot.simulation.drive;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.shuffle.MultiType;
 import frc.robot.simulation.framework.DashboardItem;
 import frc.robot.simulation.framework.DashboardPluginInterface;
+import simulationlib.shuffle.MultiType;
 
 /**
  * For Sample Sim Model, exposes the properties we show on Shuffleboard dashboard.

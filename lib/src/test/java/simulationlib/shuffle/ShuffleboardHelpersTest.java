@@ -22,12 +22,12 @@ public class ShuffleboardHelpersTest {
    * Constructor.
    */
   public ShuffleboardHelpersTest() {
-    m_helpers = new ShuffleboardHelpers(m_globalMap);
   }
 
   @BeforeEach
   public void setUp() {
     m_globalMap = new PrefixedConcurrentMap<>();
+    m_helpers = new ShuffleboardHelpers(m_globalMap);
   }
 
   @Test

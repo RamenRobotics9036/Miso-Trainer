@@ -7,6 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import simulationlib.helpers.UnitConversions;
 import simulationlib.simulation.armangle.ArmAngleSimModel;
 import simulationlib.simulation.armangle.ArmAngleState;
@@ -15,20 +20,12 @@ import simulationlib.simulation.framework.SimManager;
 import simulationlib.simulation.framework.customwrappers.DutyCycleEncoderSim2;
 import simulationlib.simulation.framework.inputoutputs.CopySimOutput;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;
-import simulationlib.simulation.simplearm.ArmSimParams;
-import simulationlib.simulation.simplearm.ArmSimParamsBuilder;
 import simulationlib.simulation.simplearm.ramenarmlogic.RamenArmSimLogic;
 import simulationlib.simulation.winch.WinchCable;
 import simulationlib.simulation.winch.WinchParams;
 import simulationlib.simulation.winch.WinchSimModel;
-import simulationlib.simulation.winch.WinchState;
 import simulationlib.simulation.winch.WinchSimModel.WindingOrientation;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import simulationlib.simulation.winch.WinchState;
 
 /**
  * Tests the ArmSimulation class.

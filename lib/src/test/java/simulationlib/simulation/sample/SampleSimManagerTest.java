@@ -6,11 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import simulationlib.simulation.framework.SimManager;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
-import simulationlib.simulation.sample.SampleSimModel;
 
 /**
  * Test the simulation framework: The framework takes an input, runs

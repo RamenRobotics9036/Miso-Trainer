@@ -2,12 +2,10 @@ package simulationlib.simulation.armangle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import simulationlib.helpers.UnitConversions;
-import simulationlib.simulation.armangle.PivotMechanism;
-import simulationlib.simulation.armangle.PivotMechanism.Result;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import simulationlib.helpers.UnitConversions;
+import simulationlib.simulation.armangle.PivotMechanism.Result;
 
 /**
  * Tests the PivotMechanism class.

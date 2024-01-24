@@ -20,12 +20,12 @@ import frc.robot.subsystems.GrabberSystem;
 import frc.robot.subsystems.GrabberSystemSim;
 import frc.robot.subsystems.TankDriveSystem;
 import frc.robot.subsystems.TankDriveSystemSim;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import simulationlib.shuffle.MultiType;
 import simulationlib.shuffle.PrefixedConcurrentMap;
 import simulationlib.shuffle.ShuffleboardHelpers;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
+import simulationlib.shuffle.SupplierMapFactory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -71,22 +71,15 @@ public class RobotContainer {
     // available for display in Shuffleboard.
     printAvailableDashboardProperties();
 
-    m_shuffleboardManager = null;
-    /*
-     * $TODO new PopulateShuffleboard(
-     * new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
-     * Shuffleboard.getTab("Simulation"));
-     */
+    m_shuffleboardManager = new PopulateShuffleboard(
+        new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
+        Shuffleboard.getTab("Simulation"));
   }
 
   private void printAvailableDashboardProperties() {
-    /*
-     * $TODO
-     * PrefixedConcurrentMap<Supplier<MultiType>> globalMap =
-     * SupplierMapFactory.getGlobalInstance();
-     * 
-     * globalMap.prettyPrint();
-     */
+    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+
+    globalMap.prettyPrint();
   }
 
   /**

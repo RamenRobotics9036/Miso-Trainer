@@ -10,10 +10,6 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import simulationlib.simulation.extender.ExtenderParams;
-import simulationlib.simulation.extender.ExtenderSimModel;
-import simulationlib.simulation.extender.ExtenderState;
 import simulationlib.simulation.framework.SimManager;
 import simulationlib.simulation.framework.inputoutputs.CopySimOutput;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;

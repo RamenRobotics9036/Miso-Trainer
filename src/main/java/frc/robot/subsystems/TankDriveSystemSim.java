@@ -56,9 +56,9 @@ public class TankDriveSystemSim extends TankDriveSystem {
     super(controller);
 
     m_driveSimManager = new SimManager<DriveInputState, DriveState>(
-        new DriveSimModel(m_initialPosition, Constants.OperatorConstants.kWheelDiameterMetersDrive
-            / 2),
-        null, /* $TODO PrefixedConcurrentMap.createShuffleboardClientForSubsystem("DriveSystem"), */
+        new DriveSimModel(m_initialPosition,
+            Constants.OperatorConstants.kWheelDiameterMetersDrive / 2),
+        PrefixedConcurrentMap.createShuffleboardClientForSubsystem("DriveSystem"),
         new DriveDashboardPlugin(), false);
 
     m_driveSimManager.setInputHandler(new LambdaSimInput<DriveInputState>(() -> m_driveInputState));

@@ -4,7 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import edu.wpi.first.hal.HAL;
-import frc.robot.simulation.winch.WinchSimModel.WindingOrientation;
+import simulationlib.simulation.winch.WinchCable;
+import simulationlib.simulation.winch.WinchParams;
+import simulationlib.simulation.winch.WinchSimModel;
+import simulationlib.simulation.winch.WinchState;
+import simulationlib.simulation.winch.WinchSimModel.WindingOrientation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

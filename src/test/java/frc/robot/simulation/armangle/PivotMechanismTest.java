@@ -3,7 +3,9 @@ package frc.robot.simulation.armangle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import frc.robot.helpers.UnitConversions;
-import frc.robot.simulation.armangle.PivotMechanism.Result;
+import simulationlib.simulation.armangle.PivotMechanism;
+import simulationlib.simulation.armangle.PivotMechanism.Result;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

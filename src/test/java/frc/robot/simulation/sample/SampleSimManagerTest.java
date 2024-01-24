@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import frc.robot.simulation.framework.SimManager;
-import frc.robot.simulation.framework.inputoutputs.LambdaSimInput;
-import frc.robot.simulation.framework.inputoutputs.LambdaSimOutput;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import simulationlib.simulation.framework.SimManager;
+import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;
+import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
+import simulationlib.simulation.sample.SampleSimModel;
 
 /**
  * Test the simulation framework: The framework takes an input, runs

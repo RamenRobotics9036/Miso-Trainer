@@ -35,7 +35,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    super.robotPeriodic();
+    // Note that we don't call parent.robotPeriodic() here, since WPILib specifies we
+    // should override it.
+    // super.robotPeriodic();
 
     CommandScheduler.getInstance().run();
 

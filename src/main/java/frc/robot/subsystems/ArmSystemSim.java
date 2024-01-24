@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
 import frc.robot.Constants;
-import frc.robot.helpers.DutyCycleEncoderSim2;
 import frc.robot.helpers.UnitConversions;
 
 import simulationlib.Constants.SimConstants;
@@ -25,6 +24,7 @@ import simulationlib.simulation.extender.ExtenderParams;
 import simulationlib.simulation.extender.ExtenderSimModel;
 import simulationlib.simulation.extender.ExtenderState;
 import simulationlib.simulation.framework.SimManager;
+import simulationlib.simulation.framework.customwrappers.DutyCycleEncoderSim2;
 import simulationlib.simulation.framework.customwrappers.RelativeEncoderSim;
 import simulationlib.simulation.framework.inputoutputs.CopySimOutput;
 import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;

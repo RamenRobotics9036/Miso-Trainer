@@ -23,13 +23,12 @@ import simulationlib.simulation.sample.SampleSimModel;
  * Test querying each sim model for the properties it shows on the Shuffleboard dash.
  */
 public class ShuffleClientTest {
-  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
+  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap;
   private final Integer m_numDefaultProperties = 1;
 
   @BeforeEach
   public void setUp() {
-    // Reset the global cache of dashboard items before each test
-    m_globalMap.clear();
+    m_globalMap = new PrefixedConcurrentMap<>();
   }
 
   @Test

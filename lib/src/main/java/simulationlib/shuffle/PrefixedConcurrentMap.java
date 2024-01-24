@@ -69,11 +69,14 @@ public class PrefixedConcurrentMap<T> {
     }
   }
 
-  public static Client<Supplier<MultiType>> createShuffleboardClientForSubsystem(
-      String subsystemName) {
-    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
-    return globalMap.getClientWithPrefix(subsystemName);
-  }
+  /*
+   * $TODO Remove this
+   * public static Client<Supplier<MultiType>> createShuffleboardClientForSubsystem_old(
+   * String subsystemName) {
+   * PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+   * return globalMap.getClientWithPrefix(subsystemName);
+   * }
+   */
 
   /**
    * Client interface for adding items.

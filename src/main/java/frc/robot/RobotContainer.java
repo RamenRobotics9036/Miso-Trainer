@@ -23,7 +23,6 @@ import frc.robot.subsystems.TankDriveSystemSim;
 import simulationlib.shuffle.MultiType;
 import simulationlib.shuffle.PrefixedConcurrentMap;
 import simulationlib.shuffle.ShuffleboardHelpers;
-import simulationlib.shuffle.SupplierMapFactory;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -72,14 +71,22 @@ public class RobotContainer {
     // available for display in Shuffleboard.
     printAvailableDashboardProperties();
 
-    m_shuffleboardManager = new PopulateShuffleboard(
-        new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
-        Shuffleboard.getTab("Simulation"));
+    m_shuffleboardManager = null;
+    /*
+     * $TODO new PopulateShuffleboard(
+     * new ShuffleboardHelpers(SupplierMapFactory.getGlobalInstance()), new DefaultLayout(),
+     * Shuffleboard.getTab("Simulation"));
+     */
   }
 
   private void printAvailableDashboardProperties() {
-    PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
-    globalMap.prettyPrint();
+    /*
+     * $TODO
+     * PrefixedConcurrentMap<Supplier<MultiType>> globalMap =
+     * SupplierMapFactory.getGlobalInstance();
+     * 
+     * globalMap.prettyPrint();
+     */
   }
 
   /**

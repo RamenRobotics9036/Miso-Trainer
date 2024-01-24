@@ -15,7 +15,7 @@ import simulationlib.shuffle.PrefixedConcurrentMap.Client;
  * Unit tests for ShuffleboardHelpers.
  */
 public class ShuffleboardHelpersTest {
-  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap = SupplierMapFactory.getGlobalInstance();
+  PrefixedConcurrentMap<Supplier<MultiType>> m_globalMap;
   private ShuffleboardHelpers m_helpers;
 
   /**
@@ -27,8 +27,7 @@ public class ShuffleboardHelpersTest {
 
   @BeforeEach
   public void setUp() {
-    // Reset the global cache of dashboard items before each test
-    m_globalMap.clear();
+    m_globalMap = new PrefixedConcurrentMap<>();
   }
 
   @Test

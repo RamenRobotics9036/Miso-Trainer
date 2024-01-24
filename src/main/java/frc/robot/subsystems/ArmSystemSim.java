@@ -104,8 +104,11 @@ public class ArmSystemSim extends ArmSystem {
       return;
     }
 
-    Client<Supplier<MultiType>> shuffleClient = PrefixedConcurrentMap
-        .createShuffleboardClientForSubsystem("ArmSystem");
+    Client<Supplier<MultiType>> shuffleClient = null;
+    /*
+     * $TODO PrefixedConcurrentMap
+     * .createShuffleboardClientForSubsystem("ArmSystem");
+     */
     createWinchSimParts(shuffleClient);
     createExtenderSimParts(shuffleClient);
     createArmAngleSimParts(shuffleClient);

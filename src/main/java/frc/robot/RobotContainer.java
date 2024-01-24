@@ -14,11 +14,6 @@ import frc.robot.commands.RetractArmCommand;
 import frc.robot.commands.SetSoftLimitCommand;
 import frc.robot.commands.SetWinchToAngle;
 import frc.robot.helpers.DefaultLayout;
-import frc.robot.shuffle.MultiType;
-import frc.robot.shuffle.PopulateShuffleboard;
-import frc.robot.shuffle.PrefixedConcurrentMap;
-import frc.robot.shuffle.ShuffleboardHelpers;
-import frc.robot.shuffle.SupplierMapFactory;
 import frc.robot.subsystems.ArmSystem;
 import frc.robot.subsystems.ArmSystemSim;
 import frc.robot.subsystems.GrabberSystem;
@@ -27,6 +22,10 @@ import frc.robot.subsystems.TankDriveSystem;
 import frc.robot.subsystems.TankDriveSystemSim;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import simulationlib.shuffle.MultiType;
+import simulationlib.shuffle.PrefixedConcurrentMap;
+import simulationlib.shuffle.ShuffleboardHelpers;
+import simulationlib.shuffle.SupplierMapFactory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -79,6 +78,7 @@ public class RobotContainer {
 
   private void printAvailableDashboardProperties() {
     PrefixedConcurrentMap<Supplier<MultiType>> globalMap = SupplierMapFactory.getGlobalInstance();
+
     globalMap.prettyPrint();
   }
 

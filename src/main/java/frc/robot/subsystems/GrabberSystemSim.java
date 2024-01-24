@@ -15,6 +15,7 @@ import frc.robot.helpers.DefaultLayout;
 import frc.robot.helpers.DefaultLayout.Widget;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
+import simulationlib.Constants.SimConstants;
 
 /**
  * Subclass of GrabberSystem that is used for simulation. Note that this code isn't run if
@@ -72,7 +73,7 @@ public class GrabberSystemSim extends GrabberSystem {
         Constants.OperatorConstants.kGrabberBackwardChannel);
 
     m_solenoidStatus = Value.kOff;
-    m_grabberPhysicallyOpened = Constants.SimConstants.kgrabberInitiallyOpened;
+    m_grabberPhysicallyOpened = SimConstants.kgrabberInitiallyOpened;
   }
 
   private void addCommandButtons() {

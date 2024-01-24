@@ -8,7 +8,6 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.simulation.DutyCycleEncoderSim;
-import frc.robot.Constants;
 import simulationlib.helpers.UnitConversions;
 import simulationlib.simulation.armangle.ArmAngleSimModel;
 import simulationlib.simulation.armangle.ArmAngleState;
@@ -90,8 +89,9 @@ public class ArmSimModelTest {
   public void setUp() {
     assert HAL.initialize(500, 0); // initialize the HAL, crash if failed
 
-    m_winchAbsoluteEncoder = new DutyCycleEncoder(
-        Constants.OperatorConstants.kAbsoluteEncoderWinchChannel);
+    final int absoluteEncoderWinchChannel = 5;
+
+    m_winchAbsoluteEncoder = new DutyCycleEncoder(absoluteEncoderWinchChannel);
     m_winchAbsoluteEncoderSim = new DutyCycleEncoderSim2(m_winchAbsoluteEncoder);
   }
 

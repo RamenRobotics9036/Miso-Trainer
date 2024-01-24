@@ -7,9 +7,22 @@
  */
 
 plugins {
-    // Apply the java-library plugin for API and implementation separation.
+    id "checkstyle"
     id 'java-library'
+    id "edu.wpi.first.GradleRIO" version "2023.4.3"
 }
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = '10.12.0'  // specify the version of checkstyle
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")  // specify the path to your checkstyle config file
+    sourceSets = [sourceSets.main]  // specify the source sets to be checked, in this case, it's the main source set
+    showViolations = true  // whether to show the violations in the console
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -18,16 +31,28 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation "org.mockito:mockito-core:3.+"
 
     // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
+    //api 'org.apache.commons:commons-math3:3.6.1'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation wpi.java.deps.wpilib()
+    implementation wpi.java.vendor.java()
+
+    //implementation 'com.google.guava:guava:31.0.1-jre'
+}
+
+// Configure string concat to always inline compile
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add '-XDstringConcat=inline'
 }
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
 }

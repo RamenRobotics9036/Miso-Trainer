@@ -1,7 +1,7 @@
 package simulationlib.simulation.armangle;
 
-import frc.robot.Constants;
 import frc.robot.helpers.UnitConversions;
+import simulationlib.Constants.SimConstants;
 
 /**
  * The PivotMechanism class is responsible for calculating the signed degrees
@@ -55,16 +55,16 @@ public class PivotMechanism {
    *                                  lengthFromEdgeToPivot is less than min.
    */
   public PivotMechanism(double lengthFromWinchToPivotPoint, double lengthFromEdgeToPivot) {
-    if (lengthFromWinchToPivotPoint < Constants.SimConstants.klengthFromWinchToPivotPoint_Min) {
+    if (lengthFromWinchToPivotPoint < SimConstants.klengthFromWinchToPivotPoint_Min) {
       throw new IllegalArgumentException(
           "Distance from winch to arm pivot point needs to be at least "
-              + Constants.SimConstants.klengthFromWinchToPivotPoint_Min + " meters");
+              + SimConstants.klengthFromWinchToPivotPoint_Min + " meters");
     }
 
-    if (lengthFromEdgeToPivot < Constants.SimConstants.klengthFromEdgeToPivot_Min) {
+    if (lengthFromEdgeToPivot < SimConstants.klengthFromEdgeToPivot_Min) {
       throw new IllegalArgumentException(
           "Length from arm pivot point to arm back end needs to be at least "
-              + Constants.SimConstants.klengthFromEdgeToPivot_Min
+              + SimConstants.klengthFromEdgeToPivot_Min
               + " meters, otherwise the arm cant be rotated");
     }
 

@@ -28,7 +28,7 @@ public class SendableArmPosition implements Sendable {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType(Constants.kAnimatedArmWidget);
+    builder.setSmartDashboardType(Constants.WidgetConstants.kAnimatedArmWidget);
     builder.addDoubleProperty("percentRaised", m_percentRaisedSupplier, null);
     builder.addDoubleProperty("percentExtended", m_percentExtendedSupplier, null);
     builder.addBooleanProperty("isClawOpen", m_clawOpenSupplier, null);

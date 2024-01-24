@@ -85,35 +85,4 @@ public final class Constants {
     public static int kLEDLightsChannel = 9;
     public static int kLEDLightsLength = 40;
   }
-
-  /**
-   * Constants that we specifically use in simulation mode.
-   */
-  public static class SimConstants {
-    // Winch
-    public static double kTotalStringLenMeters = 1;
-    public static double kCurrentLenSpooled = 0.25;
-    public static double kwinchSimGearRatio = 20.0; // 20:1
-
-    // Extender
-    public static double kTotalExtenderLenMeters = 0.75;
-    public static double kInitialExtendedLen = 0.2;
-    public static double kextenderSimGearRatio = 2.0; // 2:1
-    public static double kcylinderDiameterMeters = 0.00155;
-    public static double kextenderFullyRetractedLen = 0.05;
-
-    // Arm
-    public static double karmLengthFromEdgeToPivot = 0.25;
-    public static double karmHeightFromWinchToPivotPoint = 0.75;
-
-    public static double klengthFromWinchToPivotPoint_Min = 0.1;
-    public static double klengthFromEdgeToPivot_Min = 0.1;
-    public static double karmEncoderRotationsOffset = 0.56;
-
-    public static double kdeltaRotationsBeforeBroken = .01;
-    public static double kgrabberBreaksIfOpenBelowThisLimit = 0.60;
-
-    // Grabber
-    public static boolean kgrabberInitiallyOpened = false;
-  }
 }

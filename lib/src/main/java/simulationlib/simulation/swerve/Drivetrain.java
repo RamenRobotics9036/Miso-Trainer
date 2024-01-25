@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 // Swerve simulation implementation from: https://github.com/truher/swerve-sim
 
-package frc.robot.swerve;
+package simulationlib.simulation.swerve;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;

@@ -18,8 +18,8 @@ public class SwerveSimTest {
   // $TODO - Not sure why yet, but the distance travelled is half of expected
   private final double m_distanceErrorFactor = 2.0;
 
-  Drivetrain newDrivetrain() {
-    Drivetrain swerve = new Drivetrain();
+  SwerveSimulation newSwerveSimulation() {
+    SwerveSimulation swerve = new SwerveSimulation();
     swerve.simulationInit();
     swerve.m_frontLeft.m_drivePidController.reset();
     swerve.m_frontRight.m_drivePidController.reset();
@@ -41,7 +41,7 @@ public class SwerveSimTest {
   @Test
   void noopTest() {
     HAL.initialize(500, 0);
-    Drivetrain swerve = newDrivetrain();
+    SwerveSimulation swerve = newSwerveSimulation();
     try {
       final Pose2d initialPose = swerve.getPose();
       assertAll(() -> assertEquals(0, initialPose.getX(), "initial x"),
@@ -70,7 +70,7 @@ public class SwerveSimTest {
   @Test
   void translationTest() {
     HAL.initialize(500, 0);
-    Drivetrain swerve = newDrivetrain();
+    SwerveSimulation swerve = newSwerveSimulation();
     try {
       final Pose2d initialPose = swerve.getPose();
       // At the origin
@@ -170,7 +170,7 @@ public class SwerveSimTest {
   @Test
   void rotationTest() {
     HAL.initialize(500, 0);
-    Drivetrain swerve = newDrivetrain();
+    SwerveSimulation swerve = newSwerveSimulation();
     try {
       final Pose2d initialPose = swerve.getPose();
       // at the origin
@@ -349,7 +349,7 @@ public class SwerveSimTest {
   @Test
   void rotatedTranslationTest() {
     HAL.initialize(500, 0);
-    Drivetrain swerve = newDrivetrain();
+    SwerveSimulation swerve = newSwerveSimulation();
     try {
       final Pose2d initialPose = swerve.getPose();
 

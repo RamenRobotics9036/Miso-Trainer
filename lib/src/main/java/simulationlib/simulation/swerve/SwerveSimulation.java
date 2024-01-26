@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Represents a swerve drive style drivetrain. */
-public class Drivetrain extends SubsystemBase {
+public class SwerveSimulation extends SubsystemBase {
   /// 3 m/s
   public static final double kMaxSpeed = 6.0;
   // pi rad/s
@@ -95,7 +95,7 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Constructor.
    */
-  public Drivetrain() {
+  public SwerveSimulation() {
     m_gyro.reset();
     m_inst.startClient4("blarg");
     NetworkTable fieldTable = m_inst.getTable("field");

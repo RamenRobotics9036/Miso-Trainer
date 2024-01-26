@@ -28,7 +28,8 @@ import java.util.List;
 
 /** Represents a swerve drive style drivetrain. */
 public class SwerveSimulation extends SubsystemBase {
-  /// 3 m/s
+  // $TODO - Is it possible that this is why the test is off by factor of two? 3 vs. 6
+  // 3 m/s
   public static final double kMaxSpeed = 6.0;
   // pi rad/s
   public static final double kMaxAngularSpeed = 6 * Math.PI;

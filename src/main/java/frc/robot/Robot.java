@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
     m_verifyJoysticks.verifyJoysticksPeriodically();
     m_ledLights.updateLeds();
 
+    // $TODO - This is wrong, simulationPeriodic is last
     // We update the dashboard LAST in our various periodic loops.
     // This way, teleOpPeriodic() runs first, then simulationPeriodic(), then
     // robotPeriodic(). Since robotPeriodic() runs last, it will display the

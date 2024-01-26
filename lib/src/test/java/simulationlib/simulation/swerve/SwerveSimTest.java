@@ -1,10 +1,9 @@
-package frc.robot;
+package simulationlib.simulation.swerve;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,10 +18,10 @@ public class SwerveSimTest {
   Drivetrain newDrivetrain() {
     Drivetrain m_swerve = new Drivetrain();
     m_swerve.simulationInit();
-    m_swerve.m_frontLeft.m_drivePIDController.reset();
-    m_swerve.m_frontRight.m_drivePIDController.reset();
-    m_swerve.m_backLeft.m_drivePIDController.reset();
-    m_swerve.m_backRight.m_drivePIDController.reset();
+    m_swerve.m_frontLeft.m_drivePidController.reset();
+    m_swerve.m_frontRight.m_drivePidController.reset();
+    m_swerve.m_backLeft.m_drivePidController.reset();
+    m_swerve.m_backRight.m_drivePidController.reset();
     // weird that you have to do this; a simulation artifact?
     m_swerve.m_frontLeft.m_driveEncoder.reset();
     m_swerve.m_frontRight.m_driveEncoder.reset();
@@ -85,49 +84,49 @@ public class SwerveSimTest {
       });
       assertAll( // controller setpoints should now be 1 m/s
           () -> assertEquals(1,
-              m_swerve.m_frontLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontLeft.m_drivePidController.getSetpoint(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontRight.m_drivePidController.getSetpoint(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backLeft.m_drivePidController.getSetpoint(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backRight.m_drivePidController.getSetpoint(),
               0.001,
               "BR setpoint"));
       assertAll( // controller errors should now also be 1 m/s
           () -> assertEquals(1,
-              m_swerve.m_frontLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontLeft.m_drivePidController.getPositionError(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontRight.m_drivePidController.getPositionError(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_backLeft.m_drivePidController.getPositionError(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_backRight.m_drivePidController.getPositionError(),
               0.001,
               "BR setpoint"));
       assertAll( // so since the error is 1 and the PID are (0.1,0,0) controller output should be
                  // 0.1
-          () -> assertEquals(0.1, m_swerve.m_frontLeft.driveOutput, 0.001, "FL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_frontRight.driveOutput, 0.001, "FR ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_backLeft.driveOutput, 0.001, "BL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_backRight.driveOutput, 0.001, "BR ctrl output"));
+          () -> assertEquals(0.1, m_swerve.m_frontLeft.m_driveOutput, 0.001, "FL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_frontRight.m_driveOutput, 0.001, "FR ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_backLeft.m_driveOutput, 0.001, "BL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_backRight.m_driveOutput, 0.001, "BR ctrl output"));
       assertAll( // kv 0.15 ks 0.001, v = 1, so ff is 0.151
-          () -> assertEquals(0.151, m_swerve.m_frontLeft.driveFeedforward, 0.001, "FL ff"),
-          () -> assertEquals(0.151, m_swerve.m_frontRight.driveFeedforward, 0.001, "FR ff"),
-          () -> assertEquals(0.151, m_swerve.m_backLeft.driveFeedforward, 0.001, "BL ff"),
-          () -> assertEquals(0.151, m_swerve.m_backRight.driveFeedforward, 0.001, "BR ff"));
+          () -> assertEquals(0.151, m_swerve.m_frontLeft.m_driveFeedforwardVal, 0.001, "FL ff"),
+          () -> assertEquals(0.151, m_swerve.m_frontRight.m_driveFeedforwardVal, 0.001, "FR ff"),
+          () -> assertEquals(0.151, m_swerve.m_backLeft.m_driveFeedforwardVal, 0.001, "BL ff"),
+          () -> assertEquals(0.151, m_swerve.m_backRight.m_driveFeedforwardVal, 0.001, "BR ff"));
       assertAll( // add ctrl and ff, 0.251
           () -> assertEquals(0.251, m_swerve.m_frontLeft.getDriveOutput(), 0.001, "FL output"),
           () -> assertEquals(0.251, m_swerve.m_frontRight.getDriveOutput(), 0.001, "FR output"),
@@ -167,10 +166,10 @@ public class SwerveSimTest {
           () -> assertEquals(0, m_swerve.m_backLeft.getDriveOutput(), 0.001, "BL output"),
           () -> assertEquals(0, m_swerve.m_backRight.getDriveOutput(), 0.001, "BR output"));
       // so i can just force the simulated encoders to the settings i want.
-      m_swerve.m_frontLeft.m_TurnEncoderSim.setDistance(-Math.PI / 4);
-      m_swerve.m_frontRight.m_TurnEncoderSim.setDistance(Math.PI / 4);
-      m_swerve.m_backLeft.m_TurnEncoderSim.setDistance(Math.PI / 4);
-      m_swerve.m_backRight.m_TurnEncoderSim.setDistance(-Math.PI / 4);
+      m_swerve.m_frontLeft.m_turnEncoderSim.setDistance(-Math.PI / 4);
+      m_swerve.m_frontRight.m_turnEncoderSim.setDistance(Math.PI / 4);
+      m_swerve.m_backLeft.m_turnEncoderSim.setDistance(Math.PI / 4);
+      m_swerve.m_backRight.m_turnEncoderSim.setDistance(-Math.PI / 4);
       // verify those settings.
       assertAll(
           () -> assertEquals(-0.785,
@@ -204,49 +203,49 @@ public class SwerveSimTest {
       });
       assertAll( // controller setpoints should now be +/-1 m/s
           () -> assertEquals(-1,
-              m_swerve.m_frontLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontLeft.m_drivePidController.getSetpoint(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontRight.m_drivePidController.getSetpoint(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(-1,
-              m_swerve.m_backLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backLeft.m_drivePidController.getSetpoint(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backRight.m_drivePidController.getSetpoint(),
               0.001,
               "BR setpoint"));
       assertAll( // controller errors should now also be 1 m/s
           () -> assertEquals(-1,
-              m_swerve.m_frontLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontLeft.m_drivePidController.getPositionError(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontRight.m_drivePidController.getPositionError(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(-1,
-              m_swerve.m_backLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_backLeft.m_drivePidController.getPositionError(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_backRight.m_drivePidController.getPositionError(),
               0.001,
               "BR setpoint"));
       assertAll( // so since the error is 1 and the PID are (0.1,0,0) controller output should be
                  // 0.1
-          () -> assertEquals(-0.1, m_swerve.m_frontLeft.driveOutput, 0.001, "FL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_frontRight.driveOutput, 0.001, "FR ctrl output"),
-          () -> assertEquals(-0.1, m_swerve.m_backLeft.driveOutput, 0.001, "BL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_backRight.driveOutput, 0.001, "BR ctrl output"));
+          () -> assertEquals(-0.1, m_swerve.m_frontLeft.m_driveOutput, 0.001, "FL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_frontRight.m_driveOutput, 0.001, "FR ctrl output"),
+          () -> assertEquals(-0.1, m_swerve.m_backLeft.m_driveOutput, 0.001, "BL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_backRight.m_driveOutput, 0.001, "BR ctrl output"));
       assertAll( // kv 0.15 ks 0.001, v = 1, so ff is 0.151
-          () -> assertEquals(-0.151, m_swerve.m_frontLeft.driveFeedforward, 0.001, "FL ff"),
-          () -> assertEquals(0.151, m_swerve.m_frontRight.driveFeedforward, 0.001, "FR ff"),
-          () -> assertEquals(-0.151, m_swerve.m_backLeft.driveFeedforward, 0.001, "BL ff"),
-          () -> assertEquals(0.151, m_swerve.m_backRight.driveFeedforward, 0.001, "BR ff"));
+          () -> assertEquals(-0.151, m_swerve.m_frontLeft.m_driveFeedforwardVal, 0.001, "FL ff"),
+          () -> assertEquals(0.151, m_swerve.m_frontRight.m_driveFeedforwardVal, 0.001, "FR ff"),
+          () -> assertEquals(-0.151, m_swerve.m_backLeft.m_driveFeedforwardVal, 0.001, "BL ff"),
+          () -> assertEquals(0.151, m_swerve.m_backRight.m_driveFeedforwardVal, 0.001, "BR ff"));
       assertAll( // add ctrl and ff, 0.251
           () -> assertEquals(-0.251, m_swerve.m_frontLeft.getDriveOutput(), 0.001, "FL output"),
           () -> assertEquals(0.251, m_swerve.m_frontRight.getDriveOutput(), 0.001, "FR output"),
@@ -274,13 +273,13 @@ public class SwerveSimTest {
               "BR m"));
 
       // no x or y movement
-      assertEquals(0, m_swerve.speeds.vxMetersPerSecond, 0.001, "chassis speed x");
-      assertEquals(0, m_swerve.speeds.vyMetersPerSecond, 0.001, "chassis speed y");
+      assertEquals(0, m_swerve.m_speeds.vxMetersPerSecond, 0.001, "chassis speed x");
+      assertEquals(0, m_swerve.m_speeds.vyMetersPerSecond, 0.001, "chassis speed y");
       // so 0.033 m wheel movement and radius of 0.539m yields 0.061 rad in 0.02s or
       // 3.061 rad/s, it's actually 0.062 and 3.087 because rounding
       // this is NWU, CCW+, so should be positive.
       assertEquals(3.090 / m_DistanceErrorFactor,
-          m_swerve.speeds.omegaRadiansPerSecond,
+          m_swerve.m_speeds.omegaRadiansPerSecond,
           0.001,
           "chassis speed omega");
       // look at the pose we're maintaining
@@ -372,7 +371,7 @@ public class SwerveSimTest {
           () -> assertEquals(0, m_swerve.m_gyro.getAngle(), 0.001, "gyro angle"));
 
       // force gyro to angled position, +pi/2 in NWU, so -90 deg in NED
-      m_swerve.gyroSim.setAngle(-90);
+      m_swerve.m_gyroSim.setAngle(-90);
 
       // need to reset the odometry with the actual robot pose since we rotated it.
       m_swerve.resetOdometry(new Pose2d(0, 0, m_swerve.m_gyro.getRotation2d())); // pi/2
@@ -413,51 +412,51 @@ public class SwerveSimTest {
       });
       assertAll( // controller setpoints should now be +/-1 m/s
           () -> assertEquals(1,
-              m_swerve.m_frontLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontLeft.m_drivePidController.getSetpoint(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_frontRight.m_drivePidController.getSetpoint(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backLeft.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backLeft.m_drivePidController.getSetpoint(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getSetpoint(),
+              m_swerve.m_backRight.m_drivePidController.getSetpoint(),
               0.001,
               "BR setpoint"));
 
       assertAll( // controller errors should now also be 1 m/s
           () -> assertEquals(1,
-              m_swerve.m_frontLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontLeft.m_drivePidController.getPositionError(),
               0.001,
               "FL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_frontRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_frontRight.m_drivePidController.getPositionError(),
               0.001,
               "FR setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backLeft.m_drivePIDController.getPositionError(),
+              m_swerve.m_backLeft.m_drivePidController.getPositionError(),
               0.001,
               "BL setpoint"),
           () -> assertEquals(1,
-              m_swerve.m_backRight.m_drivePIDController.getPositionError(),
+              m_swerve.m_backRight.m_drivePidController.getPositionError(),
               0.001,
               "BR setpoint"));
 
       assertAll( // so since the error is 1 and the PID are (0.1,0,0) controller output should be
                  // 0.1
-          () -> assertEquals(0.1, m_swerve.m_frontLeft.driveOutput, 0.001, "FL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_frontRight.driveOutput, 0.001, "FR ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_backLeft.driveOutput, 0.001, "BL ctrl output"),
-          () -> assertEquals(0.1, m_swerve.m_backRight.driveOutput, 0.001, "BR ctrl output"));
+          () -> assertEquals(0.1, m_swerve.m_frontLeft.m_driveOutput, 0.001, "FL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_frontRight.m_driveOutput, 0.001, "FR ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_backLeft.m_driveOutput, 0.001, "BL ctrl output"),
+          () -> assertEquals(0.1, m_swerve.m_backRight.m_driveOutput, 0.001, "BR ctrl output"));
       assertAll( // kv 0.15 ks 0.001, v = 1, so ff is 0.151
-          () -> assertEquals(0.151, m_swerve.m_frontLeft.driveFeedforward, 0.001, "FL ff"),
-          () -> assertEquals(0.151, m_swerve.m_frontRight.driveFeedforward, 0.001, "FR ff"),
-          () -> assertEquals(0.151, m_swerve.m_backLeft.driveFeedforward, 0.001, "BL ff"),
-          () -> assertEquals(0.151, m_swerve.m_backRight.driveFeedforward, 0.001, "BR ff"));
+          () -> assertEquals(0.151, m_swerve.m_frontLeft.m_driveFeedforwardVal, 0.001, "FL ff"),
+          () -> assertEquals(0.151, m_swerve.m_frontRight.m_driveFeedforwardVal, 0.001, "FR ff"),
+          () -> assertEquals(0.151, m_swerve.m_backLeft.m_driveFeedforwardVal, 0.001, "BL ff"),
+          () -> assertEquals(0.151, m_swerve.m_backRight.m_driveFeedforwardVal, 0.001, "BR ff"));
       assertAll( // add ctrl and ff, 0.251
           () -> assertEquals(0.251, m_swerve.m_frontLeft.getDriveOutput(), 0.001, "FL output"),
           () -> assertEquals(0.251, m_swerve.m_frontRight.getDriveOutput(), 0.001, "FR output"),
@@ -508,11 +507,11 @@ public class SwerveSimTest {
       // chassis moving in x (ahead), note this isn't field relative, it's chassis
       // relative.
       assertEquals(1.667 / m_DistanceErrorFactor,
-          m_swerve.speeds.vxMetersPerSecond,
+          m_swerve.m_speeds.vxMetersPerSecond,
           0.001,
           "chassis speed x");
-      assertEquals(0, m_swerve.speeds.vyMetersPerSecond, 0.001, "chassis speed y");
-      assertEquals(0, m_swerve.speeds.omegaRadiansPerSecond, 0.001, "chassis speed omega");
+      assertEquals(0, m_swerve.m_speeds.vyMetersPerSecond, 0.001, "chassis speed y");
+      assertEquals(0, m_swerve.m_speeds.omegaRadiansPerSecond, 0.001, "chassis speed omega");
 
       // pose shows movement in y, also remember rotation PI/2
       assertAll(() -> assertEquals(0, m_swerve.getPose().getX(), 0.001, "pose x"),

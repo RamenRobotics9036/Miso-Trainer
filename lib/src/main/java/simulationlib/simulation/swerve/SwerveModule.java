@@ -262,7 +262,7 @@ public class SwerveModule {
     m_turningMotor.set(turnOutput + turnFeedforward);
   }
 
-  public double getM_driveOutput() {
+  public double getDriveOutput() {
     return m_driveMotor.get();
   }
 

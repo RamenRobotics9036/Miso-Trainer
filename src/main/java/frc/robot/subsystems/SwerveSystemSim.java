@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
@@ -20,7 +19,7 @@ import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
  * the robot is not running in simulation mode.
  */
-public class TankDriveSystemSim extends TankDriveSystem {
+public class SwerveSystemSim extends TankDriveSystem {
   private final Pose2d m_initialPosition = new Pose2d(2, 2, new Rotation2d());
   private SimManager<DriveInputState, DriveState> m_driveSimManager;
   private DriveState m_driveState = new DriveState();
@@ -28,31 +27,9 @@ public class TankDriveSystemSim extends TankDriveSystem {
       new ArcadeInputParams(0, 0, false));
 
   /**
-   * Factory method to create a TankDriveSystemSim or TankDriveSystem object.
-   */
-  public static TankDriveSystem createTankDriveSystemInstance(XboxController controller) {
-    TankDriveSystem result;
-    boolean isSwerve = true;
-
-    if (RobotBase.isSimulation()) {
-      if (isSwerve) {
-        result = new SwerveSystemSim(controller);
-      }
-      else {
-        result = new TankDriveSystemSim(controller);
-      }
-    }
-    else {
-      result = new TankDriveSystem(controller);
-    }
-
-    return result;
-  }
-
-  /**
    * Constructor.
    */
-  public TankDriveSystemSim(XboxController controller) {
+  public SwerveSystemSim(XboxController controller) {
     // FIRST, we call superclass
     super(controller);
 

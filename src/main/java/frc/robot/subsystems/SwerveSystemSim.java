@@ -1,15 +1,19 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import simulationlib.simulation.swerve.SwerveDrive;
+import simulationlib.simulation.swerve.SwerveSimConstants.Usb;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
  * the robot is not running in simulation mode.
  */
 public class SwerveSystemSim extends TankDriveSystem {
+  private static Joystick m_leftJoystick = new Joystick(Usb.leftJoystick);
   private final Field2d m_field2d = new Field2d();
   private SwerveDrive m_swerveDrive;
 
@@ -23,8 +27,8 @@ public class SwerveSystemSim extends TankDriveSystem {
     m_swerveDrive = new SwerveDrive();
   }
 
-  private boolean isRobotEnabled() {
-    return RobotState.isEnabled();
+  private void updateRobotPoses() {
+    m_field2d.setRobotPose(m_swerveDrive.getPoseMeters());
   }
 
   @Override
@@ -36,9 +40,8 @@ public class SwerveSystemSim extends TankDriveSystem {
   public void simulationPeriodic() {
     super.simulationPeriodic();
 
-    if (isRobotEnabled()) {
-      // NOP
-    }
+    updateRobotPoses();
+    SmartDashboard.putData("Field2d", m_field2d);
   }
 
   @Override
@@ -74,6 +77,11 @@ public class SwerveSystemSim extends TankDriveSystem {
   @Override
   public void arcadeDrive(double xspeed, double zrotation, boolean squareInputs) {
     super.arcadeDrive(xspeed, zrotation, squareInputs);
+
+    // Create command to drive
+    // $TODO
+    // new SetSwerveDrive(m_robotDrive, () -> leftJoystick.getX(),
+    // () -> leftJoystick.getY() * -1.0, () -> leftJoystick.getZ(), true));
   }
 
   @Override

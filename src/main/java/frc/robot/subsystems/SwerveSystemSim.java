@@ -2,12 +2,17 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import simulationlib.simulation.swerve.SwerveDrive;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
  * the robot is not running in simulation mode.
  */
 public class SwerveSystemSim extends TankDriveSystem {
+  private final Field2d m_field2d = new Field2d();
+  private SwerveDrive m_swerveDrive;
+
   /**
    * Constructor.
    */
@@ -15,6 +20,7 @@ public class SwerveSystemSim extends TankDriveSystem {
     // FIRST, we call superclass
     super(controller);
 
+    m_swerveDrive = new SwerveDrive();
   }
 
   private boolean isRobotEnabled() {

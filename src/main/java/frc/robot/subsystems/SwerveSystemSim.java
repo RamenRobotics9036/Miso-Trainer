@@ -1,19 +1,7 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants;
-import simulationlib.shuffle.PrefixedConcurrentMap;
-import simulationlib.simulation.drive.ArcadeInputParams;
-import simulationlib.simulation.drive.DriveDashboardPlugin;
-import simulationlib.simulation.drive.DriveInputState;
-import simulationlib.simulation.drive.DriveSimModel;
-import simulationlib.simulation.drive.DriveState;
-import simulationlib.simulation.framework.SimManager;
-import simulationlib.simulation.framework.inputoutputs.LambdaSimInput;
-import simulationlib.simulation.framework.inputoutputs.LambdaSimOutput;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
@@ -43,6 +31,7 @@ public class SwerveSystemSim extends TankDriveSystem {
     super.simulationPeriodic();
 
     if (isRobotEnabled()) {
+      // NOP
     }
   }
 

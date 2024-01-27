@@ -27,7 +27,7 @@ public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
   private ShuffleboardTab m_tab;
   private ShuffleboardHelpers m_helpers;
-  private final Field2d m_fieldSim = new Field2d();
+  // $TODO private final Field2d m_fieldSim = new Field2d();
   private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
   private boolean m_previousPoseSet = false;
   private Supplier<Pose2d> m_poseSupplier = null;
@@ -62,28 +62,34 @@ public class PopulateShuffleboard {
    * most up-to-date values each cycle.
    */
   public void updateDashOnRobotPeriodic() {
-    if (m_poseSupplier == null) {
-      m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
-    }
-
-    Pose2d newPose = m_poseSupplier.get();
-
-    // Only update the pose if it has changed.
-    if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
-
-      m_fieldSim.setRobotPose(newPose);
-
-      m_previousPose = newPose;
-      m_previousPoseSet = true;
-    }
+    /*
+     * $TODO
+     * if (m_poseSupplier == null) {
+     * m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
+     * }
+     * 
+     * Pose2d newPose = m_poseSupplier.get();
+     * 
+     * // Only update the pose if it has changed.
+     * if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
+     * 
+     * // m_fieldSim.setRobotPose(newPose);
+     * 
+     * m_previousPose = newPose;
+     * m_previousPoseSet = true;
+     * }
+     */
   }
 
   private void addDriveToDash() {
-    addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
+    // $TODO addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
 
-    Widget pos = m_defaultLayout.getWidgetPosition("Field");
-    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
-        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+    /*
+     * $TODO
+     * Widget pos = m_defaultLayout.getWidgetPosition("Field");
+     * Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+     * .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
+     */
   }
 
   private void addArmToDash() {

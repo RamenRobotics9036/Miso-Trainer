@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import static simulationlib.simulation.swerve.SwerveSimConstants.Swerve.kModuleTranslations;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -13,8 +17,11 @@ import simulationlib.simulation.swerve.SwerveSimConstants.Usb;
  */
 public class SwerveSystemSim extends TankDriveSystem {
   private static Joystick m_leftJoystick = new Joystick(Usb.leftJoystick);
-  private final Field2d m_field2d = new Field2d();
   private SwerveDrive m_swerveDrive;
+  private final Field2d m_field2d = new Field2d();
+  private Pose2d[] m_swerveModulePoses = {
+      new Pose2d(), new Pose2d(), new Pose2d(), new Pose2d()
+  };
 
   /**
    * Constructor.
@@ -28,6 +35,16 @@ public class SwerveSystemSim extends TankDriveSystem {
 
   private void updateRobotPoses() {
     m_field2d.setRobotPose(m_swerveDrive.getPoseMeters());
+
+    for (int i = 0; i < kModuleTranslations.length; i++) {
+      Translation2d updatedPositions = kModuleTranslations[i]
+          .rotateBy(m_swerveDrive.getPoseMeters().getRotation())
+          .plus(m_swerveDrive.getPoseMeters().getTranslation());
+      m_swerveModulePoses[i] = new Pose2d(updatedPositions, m_swerveDrive.getSwerveModule(i)
+          .getHeadingRotation2d().plus(m_swerveDrive.getHeadingRotation2d()));
+    }
+
+    m_field2d.getObject("Swerve Modules").setPoses(m_swerveModulePoses);
   }
 
   private void joystickDrive() {

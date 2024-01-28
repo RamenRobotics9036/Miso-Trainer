@@ -22,7 +22,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.HashMap;
 import java.util.Map;
 import simulationlib.simulation.swerve.SwerveSimConstants.Can;
@@ -33,7 +32,7 @@ import simulationlib.simulation.swerve.SwerveSimConstants.Swerve.ModulePosition;
  * Swerve drive implementation.
  */
 // $TODO - This shouldnt be a subsystem
-public class SwerveDrive extends SubsystemBase {
+public class SwerveDrive {
 
   private final HashMap<ModulePosition, SwerveModule> m_swerveModules = new HashMap<>(
       Map.of(ModulePosition.FRONT_LEFT,
@@ -162,13 +161,11 @@ public class SwerveDrive extends SubsystemBase {
   private void updateSmartDashboard() {
   }
 
-  @Override
   public void periodic() {
     updateOdometry();
     updateSmartDashboard();
   }
 
-  @Override
   public void simulationPeriodic() {
     ChassisSpeeds chassisSpeed = kSwerveKinematics.toChassisSpeeds(getModuleStates());
     m_simYaw += chassisSpeed.omegaRadiansPerSecond * 0.02;

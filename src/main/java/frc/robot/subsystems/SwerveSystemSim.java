@@ -1,15 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import simulationlib.simulation.swerve.SwerveDrive;
 import simulationlib.simulation.swerve.SwerveSimConstants.Usb;
-import simulationlib.simulation.swerve.commands.SetSwerveDrive;
 
 /**
  * Subclass of TankDriveSystem that is used for simulation. Note that this code isn't run if
@@ -56,11 +52,15 @@ public class SwerveSystemSim extends TankDriveSystem {
 
     // $TODO - Should only be doing this in teleop
     joystickDrive();
+
+    m_swerveDrive.periodic();
   }
 
   @Override
   public void simulationPeriodic() {
     super.simulationPeriodic();
+
+    m_swerveDrive.simulationPeriodic();
 
     updateRobotPoses();
     SmartDashboard.putData("Field2d", m_field2d);

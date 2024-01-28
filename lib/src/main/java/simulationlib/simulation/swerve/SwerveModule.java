@@ -24,14 +24,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import simulationlib.simulation.swerve.utils.CtreUtils;
 import simulationlib.simulation.swerve.utils.RevUtils;
 
 /**
  * Swerve module implementation.
  */
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule {
   private final int m_posSlot = 0;
   private final int m_velSlot = 1;
   private final int m_simSlot = 2;
@@ -205,11 +204,9 @@ public class SwerveModule extends SubsystemBase {
     return m_pose;
   }
 
-  @Override
   public void periodic() {
   }
 
-  @Override
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
   }

@@ -164,6 +164,10 @@ public class SwerveDrive {
   public void periodic() {
     updateOdometry();
     updateSmartDashboard();
+
+    for (SwerveModule module : m_swerveModules.values()) {
+      module.periodic();
+    }
   }
 
   public void simulationPeriodic() {
@@ -172,5 +176,9 @@ public class SwerveDrive {
 
     Unmanaged.feedEnable(20);
     m_pigeon.getSimCollection().setRawHeading(-Units.radiansToDegrees(m_simYaw));
+
+    for (SwerveModule module : m_swerveModules.values()) {
+      module.simulationPeriodic();
+    }
   }
 }

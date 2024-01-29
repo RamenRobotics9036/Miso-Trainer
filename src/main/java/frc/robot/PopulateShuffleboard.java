@@ -31,6 +31,8 @@ public class PopulateShuffleboard {
   private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
   private boolean m_previousPoseSet = false;
   private Supplier<Pose2d> m_poseSupplier = null;
+  private boolean m_isSwerve = false;
+  private boolean m_queriedSwerve = false;
 
   /**
    * Constructor.
@@ -51,8 +53,36 @@ public class PopulateShuffleboard {
     addWinchToDash();
     addExtenderToDash();
     addArmToDash();
-    addDriveToDash();
-    addSwerveToDash();
+
+    if (isSwerve()) {
+      addSwerveToDash();
+    }
+    else {
+      addDriveToDash();
+    }
+  }
+
+  /**
+   * Called every 20ms to update Shuffleboard widgets.
+   * Note that most widgets are automatically updated by the Shuffleboard
+   * since we passed in lambdas to update values. This function
+   * updates the remaining widgets that didn't support lambdas.
+   */
+  public void updateDashOnRobotPeriodic() {
+    if (isSwerve()) {
+      updateSwerveDrive();
+    }
+    else {
+      updateTankDrive();
+    }
+  }
+
+  private void addDriveToDash() {
+    addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
+
+    Widget pos = m_defaultLayout.getWidgetPosition("Field");
+    Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
+        .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
   }
 
   /**
@@ -62,42 +92,52 @@ public class PopulateShuffleboard {
    * robotPeriodic(). Since robotPeriodic() runs last, it will display the
    * most up-to-date values each cycle.
    */
-  public void updateDashOnRobotPeriodic() {
-    /*
-     * $TODO
-     * if (m_poseSupplier == null) {
-     * m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
-     * }
-     * 
-     * Pose2d newPose = m_poseSupplier.get();
-     * 
-     * // Only update the pose if it has changed.
-     * if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
-     * 
-     * // m_fieldSim.setRobotPose(newPose);
-     * 
-     * m_previousPose = newPose;
-     * m_previousPoseSet = true;
-     * }
-     */
+  private void updateTankDrive() {
+    if (m_poseSupplier == null) {
+      m_poseSupplier = m_helpers.getPoseSupplier("DriveSystem/RobotPose");
+    }
 
-    Supplier<Pose2d> supplier = m_helpers.getPoseSupplier("SwerveSystem/RobotPose");
-    System.out.println("Pose: " + supplier.get());
-  }
+    Pose2d newPose = m_poseSupplier.get();
 
-  private void addDriveToDash() {
-    // $TODO addHeadingWidget("Heading", "Heading", "DriveSystem/GyroHeadingDegrees", 90.0);
+    // Only update the pose if it has changed.
+    if (!m_previousPoseSet || !newPose.equals(m_previousPose)) {
 
-    /*
-     * $TODO
-     * Widget pos = m_defaultLayout.getWidgetPosition("Field");
-     * Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
-     * .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
-     */
+      m_fieldSim.setRobotPose(newPose);
+
+      m_previousPose = newPose;
+      m_previousPoseSet = true;
+    }
   }
 
   private void addSwerveToDash() {
     // $TODO
+    // Supplier<Pose2d> supplier = m_helpers.getPoseSupplier("SwerveSystem/RobotPose");
+    // System.out.println("Pose: " + supplier.get());
+  }
+
+  private void updateSwerveDrive() {
+  }
+
+  private boolean isSwerve() {
+    if (m_queriedSwerve) {
+      return m_isSwerve;
+    }
+
+    // We check to see if SwerveSystem/RobotPose exists. If it does, we assume
+    // that we are running swerve. Otherwise, we assume tank drive.
+    try {
+      m_helpers.getPoseSupplier("SwerveSystem/RobotPose");
+      m_isSwerve = true;
+      System.out.println("Shuffleboard display: Swerve detected");
+    }
+    catch (Exception e) {
+      m_isSwerve = false;
+      System.out.println("Shuffleboard display: Tank drive detected");
+    }
+
+    m_queriedSwerve = true;
+
+    return m_isSwerve;
   }
 
   private void addArmToDash() {

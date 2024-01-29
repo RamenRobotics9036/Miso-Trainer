@@ -27,7 +27,7 @@ public class PopulateShuffleboard {
   private final DefaultLayout m_defaultLayout;
   private ShuffleboardTab m_tab;
   private ShuffleboardHelpers m_helpers;
-  // $TODO private final Field2d m_fieldSim = new Field2d();
+  private final Field2d m_fieldSim = new Field2d();
   private Pose2d m_previousPose = new Pose2d(0, 0, new Rotation2d());
   private boolean m_previousPoseSet = false;
   private Supplier<Pose2d> m_poseSupplier = null;

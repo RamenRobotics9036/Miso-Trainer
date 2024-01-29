@@ -52,6 +52,7 @@ public class PopulateShuffleboard {
     addExtenderToDash();
     addArmToDash();
     addDriveToDash();
+    addSwerveToDash();
   }
 
   /**
@@ -79,6 +80,9 @@ public class PopulateShuffleboard {
      * m_previousPoseSet = true;
      * }
      */
+
+    Supplier<Pose2d> supplier = m_helpers.getPoseSupplier("SwerveSystem/RobotPose");
+    System.out.println("Pose: " + supplier.get());
   }
 
   private void addDriveToDash() {
@@ -90,6 +94,10 @@ public class PopulateShuffleboard {
      * Shuffleboard.getTab("Simulation").add("Field", m_fieldSim).withWidget(BuiltInWidgets.kField)
      * .withPosition(pos.x, pos.y).withSize(pos.width, pos.height);
      */
+  }
+
+  private void addSwerveToDash() {
+    // $TODO
   }
 
   private void addArmToDash() {

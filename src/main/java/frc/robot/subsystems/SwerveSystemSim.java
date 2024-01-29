@@ -2,12 +2,17 @@ package frc.robot.subsystems;
 
 import static simulationlib.simulation.swerve.SwerveSimConstants.Swerve.kModuleTranslations;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import simulationlib.shuffle.MultiType;
+import simulationlib.shuffle.PrefixedConcurrentMap;
+import simulationlib.shuffle.PrefixedConcurrentMap.Client;
 import simulationlib.simulation.swerve.SwerveDrive;
 import simulationlib.simulation.swerve.SwerveSimConstants.Usb;
 
@@ -19,7 +24,10 @@ public class SwerveSystemSim extends TankDriveSystem {
   private static Joystick m_leftJoystick = new Joystick(Usb.leftJoystick);
   private SwerveDrive m_swerveDrive;
   private final Field2d m_field2d = new Field2d();
-  private Pose2d[] m_swerveModulePoses = {
+  private final Pose2d[] m_robotPose = {
+      new Pose2d()
+  };
+  private final Pose2d[] m_swerveModulePoses = {
       new Pose2d(), new Pose2d(), new Pose2d(), new Pose2d()
   };
 
@@ -31,10 +39,16 @@ public class SwerveSystemSim extends TankDriveSystem {
     super(controller);
 
     m_swerveDrive = new SwerveDrive();
+
+    // $TODO - This can go away later. For now, expose pose for Shuffleboard
+    Client<Supplier<MultiType>> shuffleClient = PrefixedConcurrentMap
+        .createShuffleboardClientForSubsystem("SwerveSystem");
+    shuffleClient.addItem("RobotPose", () -> MultiType.of(m_robotPose[0]));
   }
 
   private void updateRobotPoses() {
-    m_field2d.setRobotPose(m_swerveDrive.getPoseMeters());
+    m_robotPose[0] = m_swerveDrive.getPoseMeters();
+    m_field2d.setRobotPose(m_robotPose[0]);
 
     for (int i = 0; i < kModuleTranslations.length; i++) {
       Translation2d updatedPositions = kModuleTranslations[i]

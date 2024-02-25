@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TankDriveSystem;
 
 /**
  * Command to drive the robot a certain distance.
  */
-public class DriveCommand extends CommandBase {
+public class DriveCommand extends Command {
   private double m_distance;
   private double m_gearBoxRatio;
   private double m_percentOutput;

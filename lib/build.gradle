@@ -9,7 +9,7 @@
 plugins {
     id "checkstyle"
     id 'java-library'
-    id "edu.wpi.first.GradleRIO" version "2023.4.3"
+    id "edu.wpi.first.GradleRIO" version "2024.3.1"
 }
 
 apply plugin: 'checkstyle'
@@ -21,8 +21,7 @@ checkstyle {
     showViolations = true  // whether to show the violations in the console
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -43,8 +42,10 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation "org.mockito:mockito-core:3.+"
 }
 

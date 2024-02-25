@@ -2,14 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TankDriveSystem;
 
 /**
  * This class represents a command for an automated balance control system for a tank drive system.
  * It makes use of a gyroscope to perform balance corrections at a defined rate.
  */
-public class AutoBalanceCommand extends CommandBase {
+public class AutoBalanceCommand extends Command {
   private TankDriveSystem m_driveSystem;
   private double m_rate;
   private Timer m_timer = new Timer();

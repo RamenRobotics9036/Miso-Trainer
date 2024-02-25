@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.GrabberSystem;
 
 /**
  * Command to open the grabber.
  */
-public class GrabberOpenCommand extends CommandBase {
+public class GrabberOpenCommand extends Command {
   private boolean m_finished = false;
   GrabberSystem m_grabSystem;
 

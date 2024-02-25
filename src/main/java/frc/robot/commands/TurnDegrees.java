@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TankDriveSystem;
 
 /**
  * Command to turn the robot a certain number of degrees.
  */
-public class TurnDegrees extends CommandBase {
+public class TurnDegrees extends Command {
   private double m_percentOutput;
   private double m_degrees;
   private double m_initialHeading;

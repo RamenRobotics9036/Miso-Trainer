@@ -1,14 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSystem;
 
 /**
  * Command to set the winch to a certain angle.
  */
-public class SetWinchToAngle extends CommandBase {
+public class SetWinchToAngle extends Command {
   private ArmSystem m_armSystem;
   private double m_angle;
   private double m_speed;

@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSystem;
 
 /**
  * Command to set extender to a certain length.
  */
-public class SetExtenderToLength extends CommandBase {
+public class SetExtenderToLength extends Command {
   private ArmSystem m_armSystem;
   private double m_rotations;
   private double m_speed;

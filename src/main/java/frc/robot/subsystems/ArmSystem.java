@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -90,8 +90,8 @@ public class ArmSystem extends SubsystemBase {
    * Returns the default command for the arm subsystem. Note that default
    * commands are always run when the arm is idle (no other commands running).
    */
-  public CommandBase getDefaultArmCommand() {
-    CommandBase defaultCommand = run(() -> {
+  public Command getDefaultArmCommand() {
+    Command defaultCommand = run(() -> {
       // System.out.println("ARMCOMMAND");
       processJoystickInputForArm();
     });

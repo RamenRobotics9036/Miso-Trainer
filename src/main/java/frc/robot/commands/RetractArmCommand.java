@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSystem;
 
 /**
  * Command to retract the arm fully.
  */
-public class RetractArmCommand extends CommandBase {
+public class RetractArmCommand extends Command {
   ArmSystem m_armSystem;
 
   public RetractArmCommand(ArmSystem armSystem) {

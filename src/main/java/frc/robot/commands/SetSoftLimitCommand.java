@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSystem;
 
 /**
  * Command to set the soft limit of the arm.
  */
-public class SetSoftLimitCommand extends CommandBase {
+public class SetSoftLimitCommand extends Command {
   ArmSystem m_armSystem;
 
   public SetSoftLimitCommand(ArmSystem armSystem) {
